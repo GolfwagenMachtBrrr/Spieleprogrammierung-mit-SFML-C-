@@ -1,0 +1,12 @@
+[Map]
+version=1
+tilesheet=C:/Users/JanSa/source/repos/Chess Engine/IntoSFML_Bilder/World/Pixel Art Top Down - Basic/Texture/TX Tileset Grass.png
+name=Level1
+tilewidth=32
+tileheight=32
+scalex=5
+scaley=5
+datalength=8
+dataSizeY=2
+dataSizeX=4
+data= 1, 2, 3, 4, 5, 6, 7, 8
