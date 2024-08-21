@@ -134,24 +134,43 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BiomSetter.cpp" />
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Grid_Gen.cpp" />
+    <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="GameWindow.cpp" />
+    <ClCompile Include="Gun.cpp" />
+    <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MapGenerator.cpp" />
+    <ClCompile Include="MenuWindow.cpp" />
     <ClCompile Include="NoizeGenerator.cpp" />
-    <ClCompile Include="PerlinNoise.h" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Settings.cpp" />
     <ClCompile Include="TileMap.cpp" />
+    <ClCompile Include="Viewer.cpp" />
     <ClCompile Include="Wave.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bioms.h" />
     <ClInclude Include="BiomSetter.h" />
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="Grid_Gen.h" />
+    <ClInclude Include="Bullet.h" />
+    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="EnemyManager.h" />
+    <ClInclude Include="Enemy_High.h" />
+    <ClInclude Include="GameWindow.h" />
+    <ClInclude Include="Gun.h" />
+    <ClInclude Include="Inventory.h" />
+    <ClInclude Include="MenuWindow.h" />
     <ClInclude Include="MapGenerator.h" />
     <ClInclude Include="NoizeGenerator.h" />
+    <ClInclude Include="PerlinMath.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="Settings.h" />
+    <ClInclude Include="TextureHolder.h" />
+    <ClInclude Include="Tile.h" />
     <ClInclude Include="TileMap.h" />
+    <ClInclude Include="Viewer.h" />
     <ClInclude Include="Wave.h" />
+    <ClInclude Include="WayPoint.h" />
+    <ClInclude Include="WayPointManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

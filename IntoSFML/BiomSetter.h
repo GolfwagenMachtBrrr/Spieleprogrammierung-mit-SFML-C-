@@ -7,10 +7,13 @@ class BiomeSetter
 {
 
 public:
+
 	void Initialize(); 
-	int GetBiome(const float& prop1, const float& prop2, const float& prop3);
+
+	int GetBiome(std::vector<float> properties);
 
 private:
 	std::vector<Biome> m_biomes;
+	int m_size = 3; // Anzahl der "Properties" | Oktaven
 };
 

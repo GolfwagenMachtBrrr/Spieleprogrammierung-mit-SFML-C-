@@ -3,7 +3,7 @@
 void BiomeSetter::Initialize()
 {
 	// Biome sollen später via Engine hinzugefügt werden können.  
-	std::cout << "iam here - biosetter init" << std::endl;
+
 	// "Dessert"
 	m_biomes.push_back(Biome(1, 0, 0, 0));
 	// "Forest"
@@ -21,27 +21,26 @@ void BiomeSetter::Initialize()
 }
 
 
-int BiomeSetter::GetBiome(const float &prop1, const float &prop2, const float &prop3)
+int BiomeSetter::GetBiome(std::vector<float> properties)
 {
 	std::vector<Biome> possibleBiomes;
 	for (auto& i_biome : m_biomes)
 	{
-		if (i_biome.MatchConditions(prop1, prop2, prop3))
+		if (i_biome.MatchConditions(properties))
 		{
-			// std::cout << i_biome.GetID() << " ";
 			possibleBiomes.push_back(i_biome);
 		}
 	}
 
 	Biome biomeToReturn(possibleBiomes[0]);
-	float curVal = biomeToReturn.GetDiffVal(prop1, prop2, prop3);
+	float curVal = biomeToReturn.GetDiffVal(properties);
 
 	for (auto &i_biome : possibleBiomes)
 	{
-		if (i_biome.GetDiffVal(prop1, prop2, prop3))
+		if (i_biome.GetDiffVal(properties))
 		{
 			biomeToReturn = i_biome; 
-			curVal = biomeToReturn.GetDiffVal(prop1, prop2, prop3);
+			curVal = biomeToReturn.GetDiffVal(properties);
 		} 
 	}
 	return biomeToReturn.GetID();
