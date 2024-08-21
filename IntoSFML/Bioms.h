@@ -1,45 +1,58 @@
 #pragma once
 #include <iostream>
+#include <vector>
+
+// valueScope == Intervall an Noise Werten in denen das Biom gilt
 
 class Biome
 {
 public:
 
 	Biome()
-		: m_minProperty1(-1), m_minProperty2(-1), m_minProperty3(-1), m_ID(-1)
+		: m_ID(-1)
 	{}
 
-	Biome(int ID, float minPropertyVal1, float minPropertyVal2, float minPropertyVal3)
-		: m_minProperty1(minPropertyVal1), m_minProperty2(minPropertyVal2), m_minProperty3(minPropertyVal3), m_ID(ID)
-	{}
-
-
-	float GetDiffVal(const float& valProperty1, const float& valProperty2, const float& valProperty3)
+	Biome(const unsigned int &ID, const float& val, const float& val1, const float& val2)
+		: m_ID(ID)
 	{
-		return (valProperty1 - m_minProperty1) + (valProperty2 - m_minProperty2) + (valProperty3 - m_minProperty3);
+		this->m_valueScopes.push_back(val);
+		this->m_valueScopes.push_back(val1);
+		this->m_valueScopes.push_back(val2);
 	}
 
-	bool MatchConditions(const float &valProperty1, const float &valProperty2, const float &valProperty3)
+
+	float GetDiffVal(const std::vector<float> &properties)
 	{
-		if (valProperty1 >= m_minProperty1 && valProperty2 >= m_minProperty2 && valProperty3 >= m_minProperty3)
+		float difference = 0;
+		for (int i = 0; i < m_size; i++)
 		{
-			return true; 
+			difference += (properties[i] - m_valueScopes[i]);
 		}
-		return false;
+		return difference; 
+	}
+
+	bool MatchConditions(const std::vector<float> &properties)
+	{
+		for (int i = 0; i < m_size; i++)
+		{
+			if (properties[i] < m_valueScopes[i])
+			{
+				return false;
+			}
+		}
+		return true;
 	}
 
 	int GetID()
 	{
-		return m_ID;
+		return this->m_ID;
 	}
 
 private:
+
 	int m_ID;
-
-	float m_minProperty1;
-	float m_minProperty2;
-	float m_minProperty3;
-
+	int m_size = 3; 
+	std::vector<float> m_valueScopes; 
 };
 
 

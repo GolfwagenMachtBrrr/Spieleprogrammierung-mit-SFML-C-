@@ -7,7 +7,8 @@ public:
 	float frequency; 
 	float amplitude; 
 
-	Wave(float Seed, float Frequency, float Amplitude)
+	Wave(const float &Seed, const float &Frequency, const float &Amplitude)
 		: seed(Seed),frequency(Frequency),amplitude(Amplitude)
 	{}
+
 };
