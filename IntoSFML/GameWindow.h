@@ -114,43 +114,40 @@ public:
                     m_window.close();
             }
 
-            sf::Vector2f cursorPosition = static_cast<sf::Vector2f>(sf::Mouse::getPosition(m_window));
-            sf::Vector2f worldPos = m_window.mapPixelToCoords(static_cast<sf::Vector2i>(cursorPosition));
-            sf::Vector2f tmp = m_window.mapPixelToCoords(static_cast<sf::Vector2i>(cursorPosition), m_inventory.p_view);
-
-
-            m_cursor.setPosition(worldPos);
+            sf::Vector2i cursorPosition = sf::Mouse::getPosition(m_window);
+            sf::Vector2f ConvertedPosition1 = m_window.mapPixelToCoords(cursorPosition, m_gameview.GetView());
+            sf::Vector2f ConvertedPosition2 = m_window.mapPixelToCoords(cursorPosition);
 
             m_window.clear();
 
-            m_playergun.Update(m_dt, m_player.GetPosition(), cursorPosition);
-            m_player.Update(m_dt, m_window);
+            this->m_cursor.setPosition(ConvertedPosition2);
 
-            m_inventory.Update(tmp);
-            m_gameview.Update(m_dt);
-            m_spawner.Update(m_dt, m_player.GetPosition());
+            this->m_playergun.Update(m_dt, m_player.GetPosition(), ConvertedPosition1, m_spawner);
+
+            this->m_player.Update(m_dt, m_window);
+
+            this->m_inventory.Update(m_cursor.getPosition());
+            this->m_gameview.Update(m_dt);
+            this->m_spawner.Update(m_dt, m_player.GetPosition());
 
             this->m_enemymanager.Update(this->m_dt, this->m_player.GetPosition(), this->m_player.GetHitBox());
 
-            m_gameview.setViewCenter(m_player.GetPosition());
-            m_window.setView(m_gameview.GetView());
+            this->m_gameview.setViewCenter(m_player.GetPosition());
+            this->m_window.setView(m_gameview.GetView());
 
 
-            m_map.Draw(m_window, m_gameview);
-            m_spawner.Draw(m_window); 
-            m_player.Draw(m_window);
-            m_playergun.Draw(m_window);
-
-            this->m_enemymanager.Draw(this->m_window);
-
-            m_window.draw(m_cursor);
-            m_window.setView(m_inventory.p_view);
+            this->m_map.Draw(m_window, m_gameview);
+            this->m_spawner.Draw(m_window);
+            this->m_player.Draw(m_window);
+            this->m_playergun.Draw(m_window);
+            this->m_enemymanager.Draw(m_window);
 
 
-            m_window.draw(m_cursor);
-            m_inventory.Draw(m_window);
-           
-     
+            this->m_window.setView(m_inventory.p_view);
+            this->m_window.draw(m_cursor);
+            this->m_inventory.Draw(m_window);
+
+
             m_window.display();
         }
 

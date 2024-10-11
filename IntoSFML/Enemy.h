@@ -21,7 +21,7 @@ class Enemy
 public:
 	void LoadAssets(const sf::Vector2f &startingPos, TextureHolder &textureholder)
 	{
-		this->m_bodytexture.loadFromFile("C:/Users/JanSa/source/repos/tmpGameRepo/Assets/Enemy/Textures/zombiesprite.png");
+		this->m_bodytexture.loadFromFile("C:/Users/JanSa/OneDrive/Desktop/Programmieren/Projekte/ProcMapGen/ProcGen/Assets/Enemy/Textures/zombiesprite.png");
 		//m_bodytexture = textureholder.GetTexture("zombie");
 
 		this->m_bodysprite.setTexture(m_bodytexture);

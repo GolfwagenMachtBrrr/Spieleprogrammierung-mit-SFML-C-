@@ -10,7 +10,7 @@
 struct TextureHolder
 {
 public:
-	std::string SYSTEMPATH = "C:/Users/JanSa/source/repos/tmpGameRepo/";
+	std::string SYSTEMPATH = "C:/Users/JanSa/OneDrive/Desktop/Programmieren/Projekte/ProcMapGen/ProcGen/";
 	//( . ) ( . )
 	TextureHolder()
 	{

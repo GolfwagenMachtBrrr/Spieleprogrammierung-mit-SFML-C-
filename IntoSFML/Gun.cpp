@@ -28,7 +28,8 @@ bool AABB(sf::FloatRect a, sf::FloatRect b)
 	return false;
 }
 
-void Gun::Update(const float &dt, const sf::Vector2f &player_position, const sf::Vector2f& mouse_position)
+void Gun::Update(const float &dt, const sf::Vector2f &player_position, const sf::Vector2f& mouse_position,
+				 Spawner &spawner)
 {
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
@@ -57,6 +58,13 @@ void Gun::Update(const float &dt, const sf::Vector2f &player_position, const sf:
 	for (size_t i = 0; i < m_bullets.size(); i++)
 	{
 		if (AABB(m_bullets[i].body.getGlobalBounds(), m_bullets[i].target.getGlobalBounds())) {
+			
+			// Spawner
+			if (AABB(m_bullets[i].target.getGlobalBounds(), spawner.p_hitbox.getGlobalBounds())) {
+				spawner.p_health -= m_bullets[i].damage;
+			}
+			
+
 			m_bullets.erase(m_bullets.begin() + i);
 		}
 	}
