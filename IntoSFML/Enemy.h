@@ -6,35 +6,62 @@
 
 #include <iostream>
 
+#define SPRITEUNIT 32
+#define MOVEMENT 5
+
+#define FORWARD 0
+#define LEFTWARD 1
+#define BACKWARD 2
+#define RIGHTWARD 3
+
+
+
 class Enemy
 {
 public:
-	void LoadAssets(TextureHolder &textureholder)
+	void LoadAssets(const sf::Vector2f &startingPos, TextureHolder &textureholder)
 	{
-		// access texture Holder 
-		// this->m_texture = texture; 
-		this->m_bodytexture = textureholder.GetTexture("Skeleton");
+		this->m_bodytexture.loadFromFile("C:/Users/JanSa/source/repos/tmpGameRepo/Assets/Enemy/Textures/zombiesprite.png");
+		//m_bodytexture = textureholder.GetTexture("zombie");
+
+		this->m_bodysprite.setTexture(m_bodytexture);
+		this->m_bodysprite.setTextureRect(sf::IntRect(32, 32, 32, 32));
+		this->m_bodysprite.setPosition(startingPos);
+
 	}
 	
-	void Initialize(const float& speed, const int& damage, const __int32& attackspeed, const WayPoint& waypoint, const sf::Color& color)
+	void Initialize(const float& speed, const int& damage, const __int32& attackspeed, const WayPoint& waypoint, const sf::Color& color, TextureHolder &textureholder)
 	{
+		LoadAssets(waypoint.position, textureholder);
+
 		this->m_speed = speed;
 		this->m_damage = damage;
 		this->m_attackspeed = attackspeed;
 		this->m_target = waypoint.target;
+		this->m_position = waypoint.position; 
+
+	}
 
 
-		this->m_body.setFillColor(sf::Color::Blue);
-		this->m_body.setSize(sf::Vector2f(10, 10));
-		this->m_body.setPosition(waypoint.position);
+	int Update(const float& dt, const sf::Vector2f& playerPosition)
+	{
+		this->Move(dt, playerPosition);
+		if (this->AttackTimeoutPassed())
+		{
+			//return this->DamageDealtToEnemy(playerHitbox);
+		}
+		return 0;
+	}
 
-		this->m_position = waypoint.position;
-
+	int Update(const float& dt)
+	{
+		this->Move(dt);
+		return 0;
 	}
 
 	void Draw(sf::RenderWindow& window) const
 	{
-		window.draw(m_body);
+		window.draw(m_bodysprite);
 	}
 
 public:
@@ -44,7 +71,7 @@ public:
 		return this->m_position; 
 	}
 
-protected:
+private:
 	// Movement/shooting Calculations
 	sf::Vector2f NormalizeVector(sf::Vector2f& input) const
 	{
@@ -90,11 +117,75 @@ protected:
 
 		return this->GetDirectionVector(secondTarget);
 	}
-protected:
+
+	void WalkAnimation(const sf::Vector2f& direction, const float &deltatime)
+	{
+		sf::Vector2f newPosition = m_position + direction * deltatime * m_speed; 
+
+		if (direction.x == 0 && direction.y < 0) {
+		
+			m_bodysprite.setTextureRect(sf::IntRect((u_movementindicator / MOVEMENT) * SPRITEUNIT, FORWARD, SPRITEUNIT, SPRITEUNIT));
+			u_movementindicator++;
+			if (u_movementindicator / MOVEMENT == 9) {
+				u_movementindicator = 0;
+			}
+		}
+
+		if (direction.x == 0 && direction.y > 0) {
+
+			m_bodysprite.setTextureRect(sf::IntRect((u_movementindicator / MOVEMENT) * SPRITEUNIT, BACKWARD, SPRITEUNIT, SPRITEUNIT));
+			u_movementindicator++;
+			if (u_movementindicator / MOVEMENT == 9) {
+				u_movementindicator = 0;
+			}
+		}
+
+		if (direction.x < 0 && direction.y == 0) {
+			m_bodysprite.setTextureRect(sf::IntRect((u_movementindicator / MOVEMENT) * SPRITEUNIT, LEFTWARD, SPRITEUNIT, SPRITEUNIT));
+			u_movementindicator++;
+			if (u_movementindicator / MOVEMENT == 9) {
+				u_movementindicator = 0;
+			}
+		}
+
+		if (direction.x > 0 && direction.y == 0) {
+
+			m_bodysprite.setTextureRect(sf::IntRect((u_movementindicator / MOVEMENT) * SPRITEUNIT, RIGHTWARD, SPRITEUNIT, SPRITEUNIT));
+			u_movementindicator++;
+			if (u_movementindicator / MOVEMENT == 9) {
+				u_movementindicator = 0;
+			}
+		}
+
+		
+	}
+
+	void Move(const float& dt, const sf::Vector2f& playerPosition)
+	{
+		sf::Vector2f direction; direction = this->GetDirectionVector(playerPosition);
+		this->m_bodysprite.setPosition(this->m_position + direction * this->m_speed * dt);
+		this->m_position = this->m_bodysprite.getPosition();
+
+		//impl enemy animations 
+		this->WalkAnimation(direction, dt);
+	}
+
+	void Move(const float& dt)
+	{
+		sf::Vector2f direction; direction = this->GetDirectionVector();
+		this->m_bodysprite.setPosition(this->m_position + direction * this->m_speed * dt);
+		this->m_position = this->m_bodysprite.getPosition();
+
+		//impl enemy animations 
+		this->WalkAnimation(direction, dt);
+	}
+
+
+private:
 
 	int DamageDealtToEnemy(const sf::FloatRect& object_in_danger_of_collison_with_the_wild_enemy) const
 	{
-		if (object_in_danger_of_collison_with_the_wild_enemy.contains(m_body.getPosition()))
+		if (object_in_danger_of_collison_with_the_wild_enemy.contains(m_bodysprite.getPosition()))
 		{
 			return this->m_damage;
 		}
@@ -130,24 +221,21 @@ protected:
 	}
 
 public: 
-	int p_deflectionRadius; 
+	int		p_deflectionRadius = 5; 
+	int     u_movementindicator = 0;
+
 private:
-	sf::Texture m_bodytexture;
-	sf::Sprite  m_bodysprite; 
-
-protected:
-
 	float   m_speed;
-	float	m_range; //@Lukas Bawaronschütz
+	float	m_range; 
 	int     m_damage;
 	int		m_health;
 
-	sf::Clock m_attacktimer;
-	__int32 m_attackspeed;
-
-	// obviously not a red 10by10 cube 
-	sf::RectangleShape m_body;
+	sf::Clock   m_attacktimer;
+	__int32     m_attackspeed;
 
 	sf::Vector2f m_position;
 	sf::Vector2f m_target;
+
+	sf::Sprite  m_bodysprite;
+	sf::Texture m_bodytexture;
 };

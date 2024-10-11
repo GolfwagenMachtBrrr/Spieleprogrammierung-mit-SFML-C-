@@ -125,9 +125,6 @@
     <ClInclude Include="WayPointManager.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="Enemy_High.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="EnemyManager.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>

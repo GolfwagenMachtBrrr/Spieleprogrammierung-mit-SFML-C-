@@ -29,6 +29,18 @@ public:
 		sf::Texture cursor; 
 		cursor.loadFromFile(SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/UI/Pointers/01.png");
 		m_textures["cursor"] = cursor; 
+
+		sf::Texture tileset_props; 
+		if (tileset_props.loadFromFile(SYSTEMPATH + "Assets/AssetPack/Pixel Art Top Down - Basic/Texture/Statue.png") == -1) {
+			std::cout << "Error at Reading File" << std::endl;
+		}
+		m_textures["tileset_props"] = tileset_props;
+		
+		sf::Texture zombie;
+		zombie.loadFromFile(SYSTEMPATH + "/Assets/AssetPack/Pixel Art Top Down - Basic/Texture/Statue.png");
+		m_textures["zombie"] = zombie; 
+
+
 	}
 
 	const sf::Texture GetTexture(const std::string& ID)

@@ -13,6 +13,7 @@
 #include "TextureHolder.h"
 #include "Inventory.h"
 #include "EnemyManager.h"
+#include "Spawner.h"
 
 #include <iostream>
 #include <random>
@@ -38,9 +39,15 @@ public:
 
     void InitEnemyManager()
     {
-        sf::Vector2f center(this->m_player.GetPosition());
-        this->m_enemymanager.Initialize(center);
 
+
+        int examplePosX = rand() % 1500,
+            examplePosY = rand() % 1000;
+
+        std::vector<Spawner::SpawnType> type; 
+        for (int i = 0; i < 10; i++) { type.push_back(Spawner::ZOMBIE); }
+
+        this->m_spawner.Initialize(sf::Vector2f(examplePosX, examplePosY), type, m_textures);
     }
 
     void IntitOtherValues()
@@ -79,7 +86,7 @@ public:
     {
         sf::Vector2f startingPosition(0, 0);
         float speed = 0.125 / 20;
-        float zoom = 0.2;
+        float zoom = 1;
 
         this->m_gameview.Initialize(startingPosition, speed, zoom);
     }
@@ -117,29 +124,30 @@ public:
             m_window.clear();
 
             m_playergun.Update(m_dt, m_player.GetPosition(), cursorPosition);
-            m_player.Update(m_dt, m_window); 
- 
+            m_player.Update(m_dt, m_window);
+
             m_inventory.Update(tmp);
             m_gameview.Update(m_dt);
+            m_spawner.Update(m_dt, m_player.GetPosition());
 
             this->m_enemymanager.Update(this->m_dt, this->m_player.GetPosition(), this->m_player.GetHitBox());
 
             m_gameview.setViewCenter(m_player.GetPosition());
             m_window.setView(m_gameview.GetView());
 
-     
+
             m_map.Draw(m_window, m_gameview);
-            m_player.Draw(m_window); 
+            m_spawner.Draw(m_window); 
+            m_player.Draw(m_window);
             m_playergun.Draw(m_window);
 
             this->m_enemymanager.Draw(this->m_window);
 
             m_window.draw(m_cursor);
             m_window.setView(m_inventory.p_view);
-           
-   
-            m_window.draw(m_cursor);
 
+
+            m_window.draw(m_cursor);
             m_inventory.Draw(m_window);
            
      
@@ -163,7 +171,9 @@ private:
     Player m_player; 
     Gun m_playergun; 
 
+    // test1 bei einem Spawner 
     EnemieManager m_enemymanager; 
+    Spawner       m_spawner; 
 
     TextureHolder m_textures;
 
