@@ -28,6 +28,12 @@ public:
 		this->m_bodysprite.setTextureRect(sf::IntRect(32, 32, 32, 32));
 		this->m_bodysprite.setPosition(startingPos);
 
+		this->m_font.loadFromFile("C:/Users/JanSa/OneDrive/Desktop/Programmieren/Projekte/ProcMapGen/ProcGen/Assets/Fonts/NotoSansThai-Regular.ttf");
+		this->m_text.setFont(m_font); 
+		this->m_text.setCharacterSize(10); 
+		
+		this->p_hitbox.setSize(sf::Vector2f(32, 32)); 
+		this->p_hitbox.setPosition(startingPos); 
 	}
 	
 	void Initialize(const float& speed, const int& damage, const __int32& attackspeed, const WayPoint& waypoint, const sf::Color& color, TextureHolder &textureholder)
@@ -35,7 +41,7 @@ public:
 		LoadAssets(waypoint.position, textureholder);
 
 		this->m_speed = speed;
-		this->m_damage = damage;
+		this->p_damage = damage;
 		this->m_attackspeed = attackspeed;
 		this->m_target = waypoint.target;
 		this->m_position = waypoint.position; 
@@ -45,11 +51,19 @@ public:
 
 	int Update(const float& dt, const sf::Vector2f& playerPosition)
 	{
+		m_text.setString(std::to_string(p_health)); 
+		m_text.setPosition(m_position); 
+
+		p_hitbox.setPosition(m_position); 
+
 		this->Move(dt, playerPosition);
 		if (this->AttackTimeoutPassed())
 		{
 			//return this->DamageDealtToEnemy(playerHitbox);
 		}
+
+
+
 		return 0;
 	}
 
@@ -61,6 +75,10 @@ public:
 
 	void Draw(sf::RenderWindow& window) const
 	{
+		if (p_health <= 0) {
+			return; 
+		}
+		window.draw(m_text);
 		window.draw(m_bodysprite);
 	}
 
@@ -187,7 +205,7 @@ private:
 	{
 		if (object_in_danger_of_collison_with_the_wild_enemy.contains(m_bodysprite.getPosition()))
 		{
-			return this->m_damage;
+			return this->p_damage;
 		}
 
 		return NULL;
@@ -212,7 +230,7 @@ private:
 			return true;
 		}
 
-		if (this->m_health <= 0)
+		if (this->p_health <= 0)
 		{
 			return true;
 		}
@@ -221,14 +239,19 @@ private:
 	}
 
 public: 
+	sf::RectangleShape p_hitbox; 
+
 	int		p_deflectionRadius = 5; 
-	int     u_movementindicator = 0;
+	int		p_health = 100;
+	int     p_damage;
 
 private:
+
+	int     u_movementindicator = 0;
+
 	float   m_speed;
 	float	m_range; 
-	int     m_damage;
-	int		m_health;
+
 
 	sf::Clock   m_attacktimer;
 	__int32     m_attackspeed;
@@ -238,4 +261,7 @@ private:
 
 	sf::Sprite  m_bodysprite;
 	sf::Texture m_bodytexture;
+
+	sf::Font m_font; 
+	sf::Text m_text; 
 };

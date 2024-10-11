@@ -13,6 +13,8 @@
 // https://www.sfml-dev.org/tutorials/2.6/graphics-text.php
 
 
+
+
 class Spawner
 {
 public:
@@ -85,6 +87,15 @@ public:
 	const void addToStack(const SpawnType& enemy)
 	{
 		m_stack.push_back(enemy);
+	}
+
+	void CheckNPCCollisions(const sf::FloatRect& rect, const int &damage)
+	{
+		for (auto &spawn : m_spawn) {
+			if (CollisionCheck(rect, spawn.p_hitbox.getGlobalBounds())) {
+				spawn.p_health -= damage; 
+			}
+		}
 	}
 
 private: 
@@ -169,6 +180,18 @@ private:
 			}
 		}
 		return true; 
+	}
+
+	bool CollisionCheck(const sf::FloatRect& a, const sf::FloatRect& b)
+	{
+		if (a.left + a.width > b.left &&
+			b.left + b.width > a.left &&
+			b.top + b.height > a.top &&
+			a.top + a.height > b.top)
+		{
+			return true;
+		}
+		return false;
 	}
 
 private:

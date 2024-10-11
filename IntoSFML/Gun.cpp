@@ -64,6 +64,7 @@ void Gun::Update(const float &dt, const sf::Vector2f &player_position, const sf:
 				spawner.p_health -= m_bullets[i].damage;
 			}
 			
+			spawner.CheckNPCCollisions(m_bullets[i].body.getGlobalBounds(), m_bullets[i].damage);
 
 			m_bullets.erase(m_bullets.begin() + i);
 		}
