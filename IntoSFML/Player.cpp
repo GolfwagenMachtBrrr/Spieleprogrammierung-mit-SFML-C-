@@ -16,15 +16,25 @@ void Player::Initalize(TextureHolder& textureholder)
 	m_sprite.setTexture(m_texture);
 	m_sprite.setTextureRect(sf::IntRect(0, 0, 64, 64));
 	m_sprite.setPosition(450, 300);
+
+	p_hitbox.setSize(sf::Vector2f(64, 64)); 
+	p_hitbox.setOutlineColor(sf::Color::Red);
+	p_hitbox.setOutlineThickness(1);
+	p_hitbox.setFillColor(sf::Color::Transparent);
+
 }
 
 void Player::Update(const float& dt, sf::RenderWindow& window)
 {
 	MovePlayer(dt);
+
+	p_hitbox.setPosition(m_position); 
+
 }
 
 void Player::Draw(sf::RenderWindow& window)
 {
+	window.draw(p_hitbox); 
 	window.draw(m_sprite); 
 }
 

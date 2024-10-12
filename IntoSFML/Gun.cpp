@@ -57,15 +57,18 @@ void Gun::Update(const float &dt, const sf::Vector2f &player_position, const sf:
 
 	for (size_t i = 0; i < m_bullets.size(); i++)
 	{
+		// Spawner
+		if (AABB(m_bullets[i].body.getGlobalBounds(), spawner.p_hitbox.getGlobalBounds())) {
+			spawner.p_health -= m_bullets[i].damage;
+			m_bullets.erase(m_bullets.begin() + i);
+			break;
+		}
+		if (spawner.CheckNPCCollisions(m_bullets[i].body.getGlobalBounds(), m_bullets[i].damage)) {
+			m_bullets.erase(m_bullets.begin() + i);
+			break;
+		}
+		
 		if (AABB(m_bullets[i].body.getGlobalBounds(), m_bullets[i].target.getGlobalBounds())) {
-			
-			// Spawner
-			if (AABB(m_bullets[i].target.getGlobalBounds(), spawner.p_hitbox.getGlobalBounds())) {
-				spawner.p_health -= m_bullets[i].damage;
-			}
-			
-			spawner.CheckNPCCollisions(m_bullets[i].body.getGlobalBounds(), m_bullets[i].damage);
-
 			m_bullets.erase(m_bullets.begin() + i);
 		}
 	}

@@ -63,6 +63,12 @@
     <ClCompile Include="Spawner.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="MapEvents.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="EventHandler.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Wave.h">
@@ -129,6 +135,12 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="Spawner.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="MapEvents.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="EventHandler.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

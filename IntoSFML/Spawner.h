@@ -8,6 +8,7 @@
 #include <iostream>
 
 #include "Enemy.h"
+#include "Player.h"
 
  // https://www.geeksforgeeks.org/rand-and-srand-in-ccpp/ -> random number between upper&lower bound
 // https://www.sfml-dev.org/tutorials/2.6/graphics-text.php
@@ -46,7 +47,7 @@ public:
 
 		for (int i = 0; i < spawntypes.size(); i++) { Enemy enemy;  m_spawn.push_back(enemy); }
 	}
-	void Update(const int &deltatime, const sf::Vector2f &player_position)
+	void Update(const int &deltatime, Player &player)
 	{
 		if (p_health <= 0)
 		{
@@ -58,14 +59,14 @@ public:
 		
 		for (auto& spawn : m_spawn)
 		{
-			spawn.Update(deltatime,player_position);
+			spawn.Update(deltatime, player);
 		}
 
 		SpawnType currtype = m_stack[m_stack.size() - 1]; 
 
 		if (this->TimePassed() && m_stack.size() -1 > 0 && p_isActive)
 		{
-			this->SpawnNPC(player_position, currtype);
+			this->SpawnNPC(player.GetPosition(), currtype);
 		}
 		
 		
@@ -89,13 +90,17 @@ public:
 		m_stack.push_back(enemy);
 	}
 
-	void CheckNPCCollisions(const sf::FloatRect& rect, const int &damage)
+	bool CheckNPCCollisions(const sf::FloatRect& rect, const int &damage)
 	{
+		bool bodyHit = false; 
 		for (auto &spawn : m_spawn) {
 			if (CollisionCheck(rect, spawn.p_hitbox.getGlobalBounds())) {
 				spawn.p_health -= damage; 
+				bodyHit = true; 
 			}
 		}
+
+		return bodyHit; 
 	}
 
 private: 

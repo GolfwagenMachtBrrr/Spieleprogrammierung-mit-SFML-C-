@@ -2,6 +2,7 @@
 #include "SFML/Graphics.hpp"
 #include "WayPoint.h"
 #include "TextureHolder.h"
+#include "Player.h"
 #include <string>
 
 #include <iostream>
@@ -32,8 +33,11 @@ public:
 		this->m_text.setFont(m_font); 
 		this->m_text.setCharacterSize(10); 
 		
-		this->p_hitbox.setSize(sf::Vector2f(32, 32)); 
-		this->p_hitbox.setPosition(startingPos); 
+		p_hitbox.setSize(sf::Vector2f(32, 32)); 
+		p_hitbox.setPosition(startingPos); 
+		p_hitbox.setOutlineColor(sf::Color::Red);
+		p_hitbox.setOutlineThickness(1);
+		p_hitbox.setFillColor(sf::Color::Transparent);
 	}
 	
 	void Initialize(const float& speed, const int& damage, const __int32& attackspeed, const WayPoint& waypoint, const sf::Color& color, TextureHolder &textureholder)
@@ -49,22 +53,22 @@ public:
 	}
 
 
-	int Update(const float& dt, const sf::Vector2f& playerPosition)
+	void Update(const float& dt, Player &player)
 	{
 		m_text.setString(std::to_string(p_health)); 
 		m_text.setPosition(m_position); 
 
 		p_hitbox.setPosition(m_position); 
 
-		this->Move(dt, playerPosition);
+		this->Move(dt, player.GetPosition());
 		if (this->AttackTimeoutPassed())
 		{
-			//return this->DamageDealtToEnemy(playerHitbox);
+			if (CollisionCheck(player.p_hitbox.getGlobalBounds(), p_hitbox.getGlobalBounds())) {
+				player.p_health -= p_damage; 
+				std::cout << player.p_health << std::endl; 
+			}
+			 
 		}
-
-
-
-		return 0;
 	}
 
 	int Update(const float& dt)
@@ -78,6 +82,7 @@ public:
 		if (p_health <= 0) {
 			return; 
 		}
+		window.draw(p_hitbox);
 		window.draw(m_text);
 		window.draw(m_bodysprite);
 	}
@@ -201,10 +206,23 @@ private:
 
 private:
 
-	int DamageDealtToEnemy(const sf::FloatRect& object_in_danger_of_collison_with_the_wild_enemy) const
+	bool CollisionCheck(const sf::FloatRect& a, const sf::FloatRect& b)
 	{
-		if (object_in_danger_of_collison_with_the_wild_enemy.contains(m_bodysprite.getPosition()))
+		if (a.left + a.width > b.left &&
+			b.left + b.width > a.left &&
+			b.top + b.height > a.top &&
+			a.top + a.height > b.top)
 		{
+			return true;
+		}
+		return false;
+	}
+
+	int DamageDealtToEnemy(const sf::FloatRect& object_in_danger_of_collison_with_the_wild_enemy) 
+	{
+		if (CollisionCheck(object_in_danger_of_collison_with_the_wild_enemy, p_hitbox.getGlobalBounds()))
+		{
+			std::cout << p_damage << std::endl;
 			return this->p_damage;
 		}
 
@@ -243,7 +261,7 @@ public:
 
 	int		p_deflectionRadius = 5; 
 	int		p_health = 100;
-	int     p_damage;
+	int     p_damage = 10;
 
 private:
 

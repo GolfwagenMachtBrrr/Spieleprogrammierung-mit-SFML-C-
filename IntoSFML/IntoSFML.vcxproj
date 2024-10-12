@@ -135,6 +135,7 @@
   <ItemGroup>
     <ClCompile Include="BiomSetter.cpp" />
     <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="EventHandler.cpp" />
     <ClCompile Include="GameWindow.cpp" />
     <ClCompile Include="Gun.cpp" />
     <ClCompile Include="Inventory.cpp" />
@@ -156,6 +157,7 @@
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemyManager.h" />
+    <ClInclude Include="EventHandler.h" />
     <ClInclude Include="GameWindow.h" />
     <ClInclude Include="Gun.h" />
     <ClInclude Include="Inventory.h" />

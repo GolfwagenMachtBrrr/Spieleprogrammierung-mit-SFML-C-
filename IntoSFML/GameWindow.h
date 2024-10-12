@@ -128,9 +128,9 @@ public:
 
             this->m_inventory.Update(m_cursor.getPosition());
             this->m_gameview.Update(m_dt);
-            this->m_spawner.Update(m_dt, m_player.GetPosition());
+            this->m_spawner.Update(m_dt, m_player);
 
-            this->m_enemymanager.Update(this->m_dt, this->m_player.GetPosition(), this->m_player.GetHitBox());
+            this->m_enemymanager.Update(this->m_dt, this->m_player.GetPosition(), m_player.p_hitbox.getGlobalBounds());
 
             this->m_gameview.setViewCenter(m_player.GetPosition());
             this->m_window.setView(m_gameview.GetView());
