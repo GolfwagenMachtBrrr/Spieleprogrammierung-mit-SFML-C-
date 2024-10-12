@@ -39,15 +39,23 @@ public:
 
     void InitEnemyManager()
     {
+        for (int i = 0; i < 5; i++)
+        {
+            Spawner spawner;
+            m_spawners.push_back(spawner);
+           
+           
+        }
+        for (int i = 0; i < 5; i++)
+        {
+            int examplePosX = rand() % 1000,
+                examplePosY = rand() % 1000;
 
-
-        int examplePosX = rand() % 1500,
-            examplePosY = rand() % 1000;
-
-        std::vector<Spawner::SpawnType> type; 
-        for (int i = 0; i < 10; i++) { type.push_back(Spawner::ZOMBIE); }
-
-        this->m_spawner.Initialize(sf::Vector2f(examplePosX, examplePosY), type, m_textures);
+            std::vector<Spawner::SpawnType> type;
+            for (int i = 0; i < 2; i++) { type.push_back(Spawner::ZOMBIE); }
+            m_spawners[i].Initialize(sf::Vector2f(examplePosX, examplePosY), type, m_textures);
+        }
+        
     }
 
     void IntitOtherValues()
@@ -122,13 +130,17 @@ public:
 
             this->m_cursor.setPosition(ConvertedPosition2);
 
-            this->m_playergun.Update(m_dt, m_player.GetPosition(), ConvertedPosition1, m_spawner);
+            this->m_playergun.Update(m_dt, m_player.GetPosition(), ConvertedPosition1, m_spawners);
 
             this->m_player.Update(m_dt, m_window);
 
             this->m_inventory.Update(m_cursor.getPosition());
             this->m_gameview.Update(m_dt);
-            this->m_spawner.Update(m_dt, m_player);
+
+            for (auto &spawner : m_spawners)
+            {
+                spawner.Update(m_dt, m_player);
+            }
 
             this->m_enemymanager.Update(this->m_dt, this->m_player.GetPosition(), m_player.p_hitbox.getGlobalBounds());
 
@@ -137,7 +149,11 @@ public:
 
 
             this->m_map.Draw(m_window, m_gameview);
-            this->m_spawner.Draw(m_window);
+            
+            for (auto& spawner : m_spawners) {
+                spawner.Draw(m_window);
+            }
+
             this->m_player.Draw(m_window);
             this->m_playergun.Draw(m_window);
             this->m_enemymanager.Draw(m_window);
@@ -169,8 +185,8 @@ private:
     Gun m_playergun; 
 
     // test1 bei einem Spawner 
-    EnemieManager m_enemymanager; 
-    Spawner       m_spawner; 
+    EnemieManager              m_enemymanager; 
+    std::vector<Spawner>       m_spawners; 
 
     TextureHolder m_textures;
 

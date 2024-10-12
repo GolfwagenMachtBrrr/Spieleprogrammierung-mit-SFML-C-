@@ -29,7 +29,7 @@ bool AABB(sf::FloatRect a, sf::FloatRect b)
 }
 
 void Gun::Update(const float &dt, const sf::Vector2f &player_position, const sf::Vector2f& mouse_position,
-				 Spawner &spawner)
+				 std::vector<Spawner> & spawners)
 {
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
@@ -58,19 +58,32 @@ void Gun::Update(const float &dt, const sf::Vector2f &player_position, const sf:
 	for (size_t i = 0; i < m_bullets.size(); i++)
 	{
 		// Spawner
-		if (AABB(m_bullets[i].body.getGlobalBounds(), spawner.p_hitbox.getGlobalBounds())) {
-			spawner.p_health -= m_bullets[i].damage;
-			m_bullets.erase(m_bullets.begin() + i);
-			break;
+		bool CollisionDetected = false; 
+		for (auto& spawner : spawners)
+		{
+			if (!CollisionDetected) {
+
+				if (AABB(m_bullets[i].body.getGlobalBounds(), spawner.p_hitbox.getGlobalBounds())) {
+					CollisionDetected = true;
+					spawner.p_health -= m_bullets[i].damage;
+					m_bullets.erase(m_bullets.begin() + i);
+					break;
+				}
+				if (spawner.CheckNPCCollisions(m_bullets[i].body.getGlobalBounds(), m_bullets[i].damage)) {
+					CollisionDetected = true;
+					m_bullets.erase(m_bullets.begin() + i);
+					break;
+				}
+			}
+			
 		}
-		if (spawner.CheckNPCCollisions(m_bullets[i].body.getGlobalBounds(), m_bullets[i].damage)) {
-			m_bullets.erase(m_bullets.begin() + i);
-			break;
+		if (!CollisionDetected) {
+			if (AABB(m_bullets[i].body.getGlobalBounds(), m_bullets[i].target.getGlobalBounds())) {
+				m_bullets.erase(m_bullets.begin() + i);
+			}
 		}
 		
-		if (AABB(m_bullets[i].body.getGlobalBounds(), m_bullets[i].target.getGlobalBounds())) {
-			m_bullets.erase(m_bullets.begin() + i);
-		}
+		
 	}
 
 }

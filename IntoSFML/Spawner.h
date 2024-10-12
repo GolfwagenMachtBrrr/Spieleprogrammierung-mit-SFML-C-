@@ -59,7 +59,11 @@ public:
 		
 		for (auto& spawn : m_spawn)
 		{
-			spawn.Update(deltatime, player);
+			std::vector<sf::RectangleShape> spawnpositions; 
+			for (auto& spawn : m_spawn) {
+				spawnpositions.push_back(spawn.p_hitbox);
+			}
+			spawn.Update(deltatime, player, spawnpositions);
 		}
 
 		SpawnType currtype = m_stack[m_stack.size() - 1]; 
@@ -222,8 +226,8 @@ private:
 
 	TextureHolder           m_textureholder; 
 
-	std::vector<SpawnType>  m_stack; 
-	std::vector<Enemy>		m_spawn; 
+	std::vector<SpawnType>    m_stack; 
+	std::vector<Enemy>		  m_spawn; 
 
 public:
 

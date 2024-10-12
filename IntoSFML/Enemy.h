@@ -8,12 +8,12 @@
 #include <iostream>
 
 #define SPRITEUNIT 32
-#define MOVEMENT 5
+#define MOVEMENT 1
 
-#define FORWARD 0
-#define LEFTWARD 1
-#define BACKWARD 2
-#define RIGHTWARD 3
+#define FORWARD 7
+#define LEFTWARD 3
+#define BACKWARD 1
+#define RIGHTWARD 5
 
 
 
@@ -22,11 +22,11 @@ class Enemy
 public:
 	void LoadAssets(const sf::Vector2f &startingPos, TextureHolder &textureholder)
 	{
-		this->m_bodytexture.loadFromFile("C:/Users/JanSa/OneDrive/Desktop/Programmieren/Projekte/ProcMapGen/ProcGen/Assets/Enemy/Textures/zombiesprite.png");
+		this->m_bodytexture.loadFromFile("C:/Users/JanSa/OneDrive/Desktop/Programmieren/Projekte/ProcMapGen/ProcGen/Assets/Enemy/Textures/zombie_n_skeleton2.png");
 		//m_bodytexture = textureholder.GetTexture("zombie");
 
 		this->m_bodysprite.setTexture(m_bodytexture);
-		this->m_bodysprite.setTextureRect(sf::IntRect(32, 32, 32, 32));
+		this->m_bodysprite.setTextureRect(sf::IntRect(32*0, 32*1, 32, 32));
 		this->m_bodysprite.setPosition(startingPos);
 
 		this->m_font.loadFromFile("C:/Users/JanSa/OneDrive/Desktop/Programmieren/Projekte/ProcMapGen/ProcGen/Assets/Fonts/NotoSansThai-Regular.ttf");
@@ -53,14 +53,14 @@ public:
 	}
 
 
-	void Update(const float& dt, Player &player)
+	void Update(const float& dt, Player &player, std::vector<sf::RectangleShape> &spawnpositions)
 	{
 		m_text.setString(std::to_string(p_health)); 
 		m_text.setPosition(m_position); 
 
 		p_hitbox.setPosition(m_position); 
 
-		this->Move(dt, player.GetPosition());
+		this->Move(dt, player.GetPosition(), spawnpositions);
 		if (this->AttackTimeoutPassed())
 		{
 			if (CollisionCheck(player.p_hitbox.getGlobalBounds(), p_hitbox.getGlobalBounds())) {
@@ -71,20 +71,15 @@ public:
 		}
 	}
 
-	int Update(const float& dt)
-	{
-		this->Move(dt);
-		return 0;
-	}
 
 	void Draw(sf::RenderWindow& window) const
 	{
 		if (p_health <= 0) {
 			return; 
 		}
+		window.draw(m_bodysprite);
 		window.draw(p_hitbox);
 		window.draw(m_text);
-		window.draw(m_bodysprite);
 	}
 
 public:
@@ -141,70 +136,89 @@ private:
 		return this->GetDirectionVector(secondTarget);
 	}
 
-	void WalkAnimation(const sf::Vector2f& direction, const float &deltatime)
-	{
-		sf::Vector2f newPosition = m_position + direction * deltatime * m_speed; 
-
-		if (direction.x == 0 && direction.y < 0) {
-		
-			m_bodysprite.setTextureRect(sf::IntRect((u_movementindicator / MOVEMENT) * SPRITEUNIT, FORWARD, SPRITEUNIT, SPRITEUNIT));
-			u_movementindicator++;
-			if (u_movementindicator / MOVEMENT == 9) {
-				u_movementindicator = 0;
-			}
-		}
-
-		if (direction.x == 0 && direction.y > 0) {
-
-			m_bodysprite.setTextureRect(sf::IntRect((u_movementindicator / MOVEMENT) * SPRITEUNIT, BACKWARD, SPRITEUNIT, SPRITEUNIT));
-			u_movementindicator++;
-			if (u_movementindicator / MOVEMENT == 9) {
-				u_movementindicator = 0;
-			}
-		}
-
-		if (direction.x < 0 && direction.y == 0) {
-			m_bodysprite.setTextureRect(sf::IntRect((u_movementindicator / MOVEMENT) * SPRITEUNIT, LEFTWARD, SPRITEUNIT, SPRITEUNIT));
-			u_movementindicator++;
-			if (u_movementindicator / MOVEMENT == 9) {
-				u_movementindicator = 0;
-			}
-		}
-
-		if (direction.x > 0 && direction.y == 0) {
-
-			m_bodysprite.setTextureRect(sf::IntRect((u_movementindicator / MOVEMENT) * SPRITEUNIT, RIGHTWARD, SPRITEUNIT, SPRITEUNIT));
-			u_movementindicator++;
-			if (u_movementindicator / MOVEMENT == 9) {
-				u_movementindicator = 0;
-			}
-		}
-
-		
-	}
-
-	void Move(const float& dt, const sf::Vector2f& playerPosition)
+	void Move(const float& dt, const sf::Vector2f& playerPosition, std::vector<sf::RectangleShape>& spawnpositions)
 	{
 		sf::Vector2f direction; direction = this->GetDirectionVector(playerPosition);
 		this->m_bodysprite.setPosition(this->m_position + direction * this->m_speed * dt);
 		this->m_position = this->m_bodysprite.getPosition();
 
+		sf::Vector2f	   newPosition;
+		sf::RectangleShape hypotheticalHitbox = p_hitbox;
+
+
+		while (true) {
+			newPosition = m_position + direction * dt * m_speed;
+		}
+		
+
+
 		//impl enemy animations 
-		this->WalkAnimation(direction, dt);
+	    this->WalkAnimation(direction, dt);
 	}
 
-	void Move(const float& dt)
-	{
-		sf::Vector2f direction; direction = this->GetDirectionVector();
-		this->m_bodysprite.setPosition(this->m_position + direction * this->m_speed * dt);
-		this->m_position = this->m_bodysprite.getPosition();
+	void WalkAnimation(const sf::Vector2f& direction, const float &deltatime)
+	{	
 
-		//impl enemy animations 
-		this->WalkAnimation(direction, dt);
+		if (direction.x > 0 && direction.y < 0) {
+		
+			//std::cout << "Forward" << std::endl; 
+
+			m_bodysprite.setTextureRect(sf::IntRect((u_movementindicator / MOVEMENT) * SPRITEUNIT, FORWARD*SPRITEUNIT, SPRITEUNIT, SPRITEUNIT));
+			u_movementindicator++;
+			if (u_movementindicator / MOVEMENT == 3) {
+				u_movementindicator = 0;
+			}
+		}
+
+		else if (direction.x > 0 && direction.y > 0 && direction.x < direction.y) {
+
+			//std::cout << "Backward" << std::endl;
+
+			m_bodysprite.setTextureRect(sf::IntRect((u_movementindicator / MOVEMENT) * SPRITEUNIT, BACKWARD * SPRITEUNIT, SPRITEUNIT, SPRITEUNIT));
+			u_movementindicator++;
+			if (u_movementindicator / MOVEMENT == 3) {
+				u_movementindicator = 0;
+			}
+		}
+
+		else if (direction.x < 0 && direction.y > 0) {
+
+			//std::cout << "Leftward" << std::endl;
+
+			m_bodysprite.setTextureRect(sf::IntRect((u_movementindicator / MOVEMENT) * SPRITEUNIT, LEFTWARD * SPRITEUNIT, SPRITEUNIT, SPRITEUNIT));
+			u_movementindicator++;
+			if (u_movementindicator / MOVEMENT == 3) {
+				u_movementindicator = 0;
+			}
+		}
+
+		else if (direction.x > 0 && direction.y > 0 && direction.x > direction.y) {
+
+			//std::cout << "Rightward" << std::endl;
+
+			m_bodysprite.setTextureRect(sf::IntRect((u_movementindicator/MOVEMENT) * SPRITEUNIT, RIGHTWARD * SPRITEUNIT, SPRITEUNIT, SPRITEUNIT));
+			u_movementindicator++;
+			if (u_movementindicator / MOVEMENT == 3) {
+				u_movementindicator = 0;
+			}
+		}
+
+		
 	}
 
 
 private:
+
+	int CollidesWithAlly(std::vector<const sf::RectangleShape>& alliedHitbox, const sf::RectangleShape hitbox)
+	{
+		int collisionID = -1; 
+		for (int i = 0; i < alliedHitbox.size(); i++) {
+			if (CollisionCheck(alliedHitbox[i].getGlobalBounds(), hitbox.getGlobalBounds())) {
+				collisionID = i; 
+			}
+		}
+		return collisionID; 
+	}
 
 	bool CollisionCheck(const sf::FloatRect& a, const sf::FloatRect& b)
 	{
