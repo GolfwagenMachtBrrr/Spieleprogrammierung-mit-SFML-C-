@@ -124,7 +124,7 @@ private:
 		switch (type)
 		{
 		case Spawner::ZOMBIE:
-			m_spawn[m_stack.size() - 1].Initialize(0.125/15, 10, 100, wp, sf::Color::White, m_textureholder); //stats sollen aus zombie.txt gelesen werden
+			m_spawn[m_stack.size() - 1].Initialize(0.125/15, 10, 100, wp, sf::Color::White, m_textureholder, m_stack.size() - 1); //stats sollen aus zombie.txt gelesen werden
 			break;
 		case Spawner::SKELETON:
 			break;
@@ -207,7 +207,7 @@ private:
 	// Utillity
 	sf::Vector2f u_playerposition;
 	int		     u_deltatime; 
-	int		m_spawnradius = 25; // not entire radius
+	int		m_spawnradius = 400; // not entire radius
 	int		m_capacity; 
 	int		m_enemycount; 
 

@@ -15,7 +15,7 @@ public:
 	void Update(const float &dt, sf::RenderWindow& window);
 	void Draw(sf::RenderWindow& window); 
 
-	sf::Vector2f GetPosition() const
+	sf::Vector2f GetPosition()
 	{
 		return this->m_position; 
 	}

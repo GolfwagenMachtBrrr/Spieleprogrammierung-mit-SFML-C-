@@ -39,20 +39,20 @@ public:
 
     void InitEnemyManager()
     {
-        for (int i = 0; i < 5; i++)
+        int numberofSpawners = 1;
+        for (int i = 0; i < numberofSpawners; i++)
         {
-            Spawner spawner;
-            m_spawners.push_back(spawner);
-           
+           Spawner spawner;
+           m_spawners.push_back(spawner);
            
         }
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < numberofSpawners; i++)
         {
             int examplePosX = rand() % 1000,
                 examplePosY = rand() % 1000;
 
             std::vector<Spawner::SpawnType> type;
-            for (int i = 0; i < 2; i++) { type.push_back(Spawner::ZOMBIE); }
+            for (int i = 0; i < 20; i++) { type.push_back(Spawner::ZOMBIE); }
             m_spawners[i].Initialize(sf::Vector2f(examplePosX, examplePosY), type, m_textures);
         }
         

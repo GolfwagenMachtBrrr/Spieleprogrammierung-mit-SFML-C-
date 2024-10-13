@@ -40,7 +40,7 @@ public:
 		p_hitbox.setFillColor(sf::Color::Transparent);
 	}
 	
-	void Initialize(const float& speed, const int& damage, const __int32& attackspeed, const WayPoint& waypoint, const sf::Color& color, TextureHolder &textureholder)
+	void Initialize(const float& speed, const int& damage, const __int32& attackspeed, const WayPoint& waypoint, const sf::Color& color, TextureHolder &textureholder, const int &ID)
 	{
 		LoadAssets(waypoint.position, textureholder);
 
@@ -49,9 +49,8 @@ public:
 		this->m_attackspeed = attackspeed;
 		this->m_target = waypoint.target;
 		this->m_position = waypoint.position; 
-
+		this->p_ID = ID; 
 	}
-
 
 	void Update(const float& dt, Player &player, std::vector<sf::RectangleShape> &spawnpositions)
 	{
@@ -70,7 +69,6 @@ public:
 			 
 		}
 	}
-
 
 	void Draw(sf::RenderWindow& window) const
 	{
@@ -139,18 +137,28 @@ private:
 	void Move(const float& dt, const sf::Vector2f& playerPosition, std::vector<sf::RectangleShape>& spawnpositions)
 	{
 		sf::Vector2f direction; direction = this->GetDirectionVector(playerPosition);
-		this->m_bodysprite.setPosition(this->m_position + direction * this->m_speed * dt);
-		this->m_position = this->m_bodysprite.getPosition();
 
-		sf::Vector2f	   newPosition;
+		sf::Vector2f	   hypotheticalPosition = m_position + direction * dt * m_speed;
 		sf::RectangleShape hypotheticalHitbox = p_hitbox;
 
+		hypotheticalHitbox.setPosition(hypotheticalPosition); 
 
-		while (true) {
-			newPosition = m_position + direction * dt * m_speed;
+		if (CollidesWithAlly(spawnpositions, hypotheticalHitbox) != -1) {
+			int DontDoItJan = rand() % 10;
+
+			if (DontDoItJan <= 5) {
+				direction = sf::Vector2f(0, 0); 
+			}
+			else
+			{
+				direction.x *= (-1);
+				direction.y *= (-1);
+			}
+
 		}
 		
-
+		this->m_bodysprite.setPosition(this->m_position + direction * this->m_speed * dt);
+		this->m_position = this->m_bodysprite.getPosition();
 
 		//impl enemy animations 
 	    this->WalkAnimation(direction, dt);
@@ -209,11 +217,13 @@ private:
 
 private:
 
-	int CollidesWithAlly(std::vector<const sf::RectangleShape>& alliedHitbox, const sf::RectangleShape hitbox)
+	int CollidesWithAlly(const std::vector<sf::RectangleShape>& alliedHitbox, const sf::RectangleShape hitbox)
 	{
 		int collisionID = -1; 
 		for (int i = 0; i < alliedHitbox.size(); i++) {
-			if (CollisionCheck(alliedHitbox[i].getGlobalBounds(), hitbox.getGlobalBounds())) {
+			//std::cout << alliedHitbox[i].getPosition().x << " " << alliedHitbox[i].getPosition().x << "im" << std::endl;
+
+			if (CollisionCheck(alliedHitbox[i].getGlobalBounds(), hitbox.getGlobalBounds()) && i != p_ID) {
 				collisionID = i; 
 			}
 		}
@@ -276,6 +286,8 @@ public:
 	int		p_deflectionRadius = 5; 
 	int		p_health = 100;
 	int     p_damage = 10;
+
+	int		p_ID = -1; 
 
 private:
 
