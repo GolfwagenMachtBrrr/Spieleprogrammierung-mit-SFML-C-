@@ -1,7 +1,7 @@
 #pragma once
 #include "SFML/Graphics.hpp"
 #include "WayPoint.h"
-#include "TextureHolder.h"
+#include "ResourceHolder.h"
 #include "Player.h"
 #include <string>
 
@@ -15,17 +15,18 @@
 #define BACKWARD 1
 #define RIGHTWARD 5
 
-
+typedef ResourceHolder<sf::Texture, Textures::ID> TextureHolder;
 
 class Enemy
 {
 public:
+
+	Enemy(const TextureHolder &textures) 
+		: m_bodysprite(textures.Get(Textures::ID::Zombie))
+	{}
+
 	void LoadAssets(const sf::Vector2f &startingPos, TextureHolder &textureholder)
 	{
-		this->m_bodytexture.loadFromFile("C:/Users/JanSa/OneDrive/Desktop/Programmieren/Projekte/ProcMapGen/ProcGen/Assets/Enemy/Textures/zombie_n_skeleton2.png");
-		//m_bodytexture = textureholder.GetTexture("zombie");
-
-		this->m_bodysprite.setTexture(m_bodytexture);
 		this->m_bodysprite.setTextureRect(sf::IntRect(32*0, 32*1, 32, 32));
 		this->m_bodysprite.setPosition(startingPos);
 
@@ -304,7 +305,6 @@ private:
 	sf::Vector2f m_target;
 
 	sf::Sprite  m_bodysprite;
-	sf::Texture m_bodytexture;
 
 	sf::Font m_font; 
 	sf::Text m_text; 

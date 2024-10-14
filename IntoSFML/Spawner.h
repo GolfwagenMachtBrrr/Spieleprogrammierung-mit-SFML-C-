@@ -1,20 +1,20 @@
 #pragma once
 #include "SFML/Graphics.hpp"
-#include "TextureHolder.h"
-
-
 #include <random>
 #include <vector>
 #include <iostream>
 
 #include "Enemy.h"
 #include "Player.h"
+#include "ResourceHolder.h"
 
  // https://www.geeksforgeeks.org/rand-and-srand-in-ccpp/ -> random number between upper&lower bound
 // https://www.sfml-dev.org/tutorials/2.6/graphics-text.php
 
 
 
+
+typedef ResourceHolder<sf::Texture, Textures::ID> TextureHolder;
 
 class Spawner
 {
@@ -28,10 +28,13 @@ public:
 
 
 public:
-	void Initialize(const sf::Vector2f &position, std::vector<SpawnType> &spawntypes, TextureHolder &textureholder)
+
+	Spawner(Textures::ID id, const TextureHolder& textures)
+		: m_sprite(textures.Get(id))
+	{}
+
+	void Initialize(const sf::Vector2f &position, std::vector<SpawnType> &spawntypes, TextureHolder& textureholder)
 	{
-		m_texture.loadFromFile("C:/Users/JanSa/OneDrive/Desktop/Programmieren/Projekte/ProcMapGen/ProcGen/Assets/AssetPack/Pixel Art Top Down - Basic/Texture/Statue.png");
-		m_sprite.setTexture(m_texture);
 		m_sprite.setPosition(position);
 
 		m_font.loadFromFile("C:/Users/JanSa/OneDrive/Desktop/Programmieren/Projekte/ProcMapGen/ProcGen/Assets/Fonts/NotoSansThai-Regular.ttf");
@@ -40,12 +43,11 @@ public:
 	
 			
 		m_stack = spawntypes; 
-		m_textureholder = textureholder; 
 
 		p_hitbox.setPosition(position);
-		p_hitbox.setSize((sf::Vector2f)m_texture.getSize());
+		//p_hitbox.setSize((sf::Vector2f)m_texture.getSize());
 
-		for (int i = 0; i < spawntypes.size(); i++) { Enemy enemy;  m_spawn.push_back(enemy); }
+		for (int i = 0; i < spawntypes.size(); i++) { Enemy enemy(m_textureholder);  m_spawn.push_back(enemy); }
 	}
 	void Update(const int &deltatime, Player &player)
 	{
@@ -213,7 +215,7 @@ private:
 
 	__int32 m_spawnrate = 2000; 
 
-	sf::Texture	 m_texture; 
+	//sf::Texture	 m_texture; 
 	sf::Sprite	 m_sprite; 
 
 	sf::Font	 m_font; 

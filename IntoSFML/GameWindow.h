@@ -10,14 +10,17 @@
 #include "NoizeGenerator.h"
 #include "Player.h"
 #include "Gun.h"
-#include "TextureHolder.h"
+#include "ResourceHolder.h"
 #include "Inventory.h"
 #include "EnemyManager.h"
 #include "Spawner.h"
 
+
 #include <iostream>
 #include <random>
 
+
+typedef ResourceHolder<sf::Texture, Textures::ID> TextureHolder;
 
 class GameWindow
 {
@@ -27,6 +30,7 @@ public:
     {
         if (start)
         {
+            this->InitTextures(); 
             this->InitEnemyManager();
             this->InitWindow();
             this->InitPlayer(); 
@@ -37,12 +41,24 @@ public:
         }
     }
 
+    void InitTextures()
+    {
+        std::string SYSTEMPATH = "C:/Users/JanSa/OneDrive/Desktop/Programmieren/Projekte/ProcMapGen/ProcGen/";
+        m_textures.Load(Textures::ID::Spawner, SYSTEMPATH + "Assets/AssetPack/Pixel Art Top Down - Basic/Texture/Statue.png");
+        m_textures.Load(Textures::ID::Cursor,  SYSTEMPATH +  "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/UI/Pointers/01.png"); 
+        m_textures.Load(Textures::ID::Skeleton, SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/UI/Pointers/01.png");
+        m_textures.Load(Textures::ID::Grass, SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/UI/Pointers/01.png");
+        m_textures.Load(Textures::ID::Zombie, SYSTEMPATH + "Assets/Enemy/Textures/zombie_n_skeleton2.png");
+        m_textures.Load(Textures::ID::Undefined, SYSTEMPATH + "Assets/Enemy/Textures/zombie_n_skeleton2.png");
+   
+    }
+
     void InitEnemyManager()
     {
         int numberofSpawners = 1;
         for (int i = 0; i < numberofSpawners; i++)
         {
-           Spawner spawner;
+           Spawner spawner(Textures::ID::Spawner, m_textures);
            m_spawners.push_back(spawner);
            
         }
@@ -52,7 +68,7 @@ public:
                 examplePosY = rand() % 1000;
 
             std::vector<Spawner::SpawnType> type;
-            for (int i = 0; i < 20; i++) { type.push_back(Spawner::ZOMBIE); }
+            for (int i = 0; i < 5; i++) { type.push_back(Spawner::ZOMBIE); }
             m_spawners[i].Initialize(sf::Vector2f(examplePosX, examplePosY), type, m_textures);
         }
         
@@ -66,8 +82,7 @@ public:
         this->m_dt = 16;
 
         // Mouse logic
-        m_curor_texture = m_textures.GetTexture("cursor"); 
-        this->m_cursor.setTexture(m_curor_texture);
+        this->m_cursor.setTexture(m_textures.Get(Textures::ID::Cursor));
 
         //Inventory
         
@@ -190,7 +205,6 @@ private:
 
     TextureHolder m_textures;
 
-    sf::Texture m_curor_texture; 
     sf::Sprite m_cursor; 
 
     float m_dt;

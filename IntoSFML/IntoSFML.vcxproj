@@ -147,6 +147,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="Spawner.cpp" />
+    <ClCompile Include="TexturHolderN.cpp" />
     <ClCompile Include="TileMap.cpp" />
     <ClCompile Include="Viewer.cpp" />
     <ClCompile Include="Wave.cpp" />
@@ -169,7 +170,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="Settings.h" />
     <ClInclude Include="Spawner.h" />
-    <ClInclude Include="TextureHolder.h" />
+    <ClInclude Include="ResourceHolder.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="TileMap.h" />
     <ClInclude Include="Viewer.h" />
