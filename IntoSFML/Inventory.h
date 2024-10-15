@@ -23,8 +23,7 @@ public:
 		POTION_DAMAGE
 	};
 
-	Inventory(const TextureHolder &textures) 
-		: m_size(3), m_background(textures.Get(Textures::ID::Undefined))
+	Inventory() : m_size(3)
 	{}
 
 	void Initialize(TextureHolder& textures, const int& width, const int& height)

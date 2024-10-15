@@ -26,6 +26,9 @@ class GameWindow
 {
 public:
 
+    GameWindow()
+    {}
+
     void Start(bool start)
     {
         if (start)
@@ -44,11 +47,11 @@ public:
     void InitTextures()
     {
         std::string SYSTEMPATH = "C:/Users/JanSa/OneDrive/Desktop/Programmieren/Projekte/ProcMapGen/ProcGen/";
-        m_textures.Load(Textures::ID::Spawner, SYSTEMPATH + "Assets/AssetPack/Pixel Art Top Down - Basic/Texture/Statue.png");
-        m_textures.Load(Textures::ID::Cursor,  SYSTEMPATH +  "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/UI/Pointers/01.png"); 
-        m_textures.Load(Textures::ID::Skeleton, SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/UI/Pointers/01.png");
-        m_textures.Load(Textures::ID::Grass, SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/UI/Pointers/01.png");
-        m_textures.Load(Textures::ID::Zombie, SYSTEMPATH + "Assets/Enemy/Textures/zombie_n_skeleton2.png");
+        m_textures.Load(Textures::ID::Spawner,   SYSTEMPATH + "Assets/AssetPack/Pixel Art Top Down - Basic/Texture/Statue.png");
+        m_textures.Load(Textures::ID::Cursor,    SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/UI/Pointers/01.png"); 
+        m_textures.Load(Textures::ID::Skeleton,  SYSTEMPATH + "Assets/Player/Textures/skeletonsprite.png");
+        m_textures.Load(Textures::ID::Grass,     SYSTEMPATH + "Assets/AssetPack/Pixel Art Top Down - Basic/Texture/TX Tileset Grass.png");
+        m_textures.Load(Textures::ID::Zombie,    SYSTEMPATH + "Assets/Enemy/Textures/zombie_n_skeleton2.png");
         m_textures.Load(Textures::ID::Undefined, SYSTEMPATH + "Assets/Enemy/Textures/zombie_n_skeleton2.png");
    
     }
@@ -58,7 +61,7 @@ public:
         int numberofSpawners = 1;
         for (int i = 0; i < numberofSpawners; i++)
         {
-           Spawner spawner(Textures::ID::Spawner, m_textures);
+           Spawner spawner;
            m_spawners.push_back(spawner);
            
         }
@@ -81,11 +84,7 @@ public:
         this->m_tilesize.y = 40;
         this->m_dt = 16;
 
-        // Mouse logic
         this->m_cursor.setTexture(m_textures.Get(Textures::ID::Cursor));
-
-        //Inventory
-        
     }
 
     void InitWindow()
@@ -101,7 +100,7 @@ public:
 
         this->m_inventory.Initialize(m_textures, m_window.getSize().x, m_window.getSize().y);
 
-        this->m_map.Initialize(m_tilesize, m_tilesheet, width, height);
+        this->m_map.Initialize(m_tilesize, m_textures, width, height);
         this->m_map.Generate();
     }
 

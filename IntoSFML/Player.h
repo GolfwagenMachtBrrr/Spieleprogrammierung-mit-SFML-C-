@@ -15,19 +15,17 @@
 #define SECOND 5
 
 
-
-typedef ResourceHolder<sf::Texture, Textures::ID> TextureHolder;
-
 class Player
 {
 public: 
-	Player(const TextureHolder &textures) 
-		: m_speed(0.125/10), p_health(100), m_sprite(textures.Get(Textures::ID::Skeleton))
-	
+
+	Player() 
+		: m_speed(0.125/10), p_health(100)
 	{}
 
-	void Initalize(TextureHolder& textureholder)
+	void Initalize(TextureHolder& textures)
 	{
+		m_sprite.setTexture(textures.Get(Textures::ID::Skeleton));
 		m_sprite.setTextureRect(sf::IntRect(0, 0, 64, 64));
 		m_sprite.setPosition(450, 300);
 

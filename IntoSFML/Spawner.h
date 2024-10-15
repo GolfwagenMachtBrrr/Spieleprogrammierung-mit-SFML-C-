@@ -29,12 +29,12 @@ public:
 
 public:
 
-	Spawner(Textures::ID id, const TextureHolder& textures)
-		: m_sprite(textures.Get(id))
+	Spawner()
 	{}
 
-	void Initialize(const sf::Vector2f &position, std::vector<SpawnType> &spawntypes, TextureHolder& textureholder)
+	void Initialize(const sf::Vector2f &position, std::vector<SpawnType> &spawntypes, const TextureHolder& textures)
 	{
+		m_sprite.setTexture(textures.Get(Textures::ID::Spawner)); 
 		m_sprite.setPosition(position);
 
 		m_font.loadFromFile("C:/Users/JanSa/OneDrive/Desktop/Programmieren/Projekte/ProcMapGen/ProcGen/Assets/Fonts/NotoSansThai-Regular.ttf");
@@ -47,7 +47,7 @@ public:
 		p_hitbox.setPosition(position);
 		//p_hitbox.setSize((sf::Vector2f)m_texture.getSize());
 
-		for (int i = 0; i < spawntypes.size(); i++) { Enemy enemy(m_textureholder);  m_spawn.push_back(enemy); }
+		for (int i = 0; i < spawntypes.size(); i++) { Enemy enemy(textures);  m_spawn.push_back(enemy); }
 	}
 	void Update(const int &deltatime, Player &player)
 	{
@@ -126,7 +126,7 @@ private:
 		switch (type)
 		{
 		case Spawner::ZOMBIE:
-			m_spawn[m_stack.size() - 1].Initialize(0.125/15, 10, 100, wp, sf::Color::White, m_textureholder, m_stack.size() - 1); //stats sollen aus zombie.txt gelesen werden
+			m_spawn[m_stack.size() - 1].Initialize(0.125/15, 10, 100, wp, sf::Color::White, m_stack.size() - 1); //stats sollen aus zombie.txt gelesen werden
 			break;
 		case Spawner::SKELETON:
 			break;
@@ -215,8 +215,8 @@ private:
 
 	__int32 m_spawnrate = 2000; 
 
-	//sf::Texture	 m_texture; 
-	sf::Sprite	 m_sprite; 
+	sf::Sprite	 m_sprite;
+	sf::Sprite	 m_spawnsprite; 
 
 	sf::Font	 m_font; 
 	sf::Text     m_text; 
@@ -225,8 +225,6 @@ private:
 	sf::Vector2f m_position; 
 
 private:
-
-	TextureHolder           m_textureholder; 
 
 	std::vector<SpawnType>    m_stack; 
 	std::vector<Enemy>		  m_spawn; 

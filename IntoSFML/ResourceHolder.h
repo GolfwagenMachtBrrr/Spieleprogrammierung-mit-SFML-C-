@@ -72,3 +72,5 @@ private:
 
 };
 
+typedef ResourceHolder<sf::Texture, Textures::ID> TextureHolder;
+

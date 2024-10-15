@@ -16,16 +16,15 @@ class MapGenerator
 {
 public: 
 
-	MapGenerator(const TextureHolder &textures)
-		: m_textureholder(textures)
+	MapGenerator()
 	{}
 
-	void Initialize(const sf::Vector2u& tilesize, const std::string& tilesheet, const int& width, const int& height)
+	void Initialize(const sf::Vector2u& tilesize, const TextureHolder& textures, const int& width, const int& height)
 	{
-		this->m_tileSize = tilesize;
-		this->m_tileSheet = tilesheet;
-		this->m_width = width; m_width = 100;
-		this->m_height = height; m_height = 100;
+		m_tilesprite.setTexture(textures.Get(Textures::ID::Grass));
+		m_tileSize = tilesize;
+		m_width = width; m_width = 100;
+		m_height = height; m_height = 100;
 
 
 		m_biomeSetter.Initialize();
@@ -42,11 +41,11 @@ public:
 			{
 				int index = j + i * m_height;
 				int biome = m_biomeSetter.GetBiome(m_noise.GetBiomValues(index));
-
+ 
 				sf::IntRect texRect(m_tileSize.x * (biome + 5), 0, m_tileSize.x, m_tileSize.y);
 				sf::Vector2f tilePos(m_tileSize.x * i, m_tileSize.y * j);
 
-				Tile tile(index, biome, m_textureholder, &texRect, tilePos);
+				Tile tile(index, biome, &texRect, m_tilesprite, tilePos);
 
 				tile.SetupSprite();
 
@@ -98,7 +97,7 @@ private:
 	BiomeSetter m_biomeSetter;
 	NoizeGenerator m_noise;
 
-	const TextureHolder &m_textureholder; 
+	sf::Sprite m_tilesprite; 
 
 	std::string m_tileSheet;
 	sf::Vector2u m_tileSize;

@@ -16,13 +16,13 @@ struct Tile
 
 	}
 
-	Tile(const unsigned int& ID, const unsigned int& BiomID, const TextureHolder &textures, sf::IntRect* TextureRectangle, const sf::Vector2f& TilePosition)
-		: tile_ID(ID), tile_Biome(BiomID), tile_sprite(textures.Get(Textures::ID::Grass)), tile_texRect(TextureRectangle), tile_position(TilePosition) {}
+	Tile(const unsigned int& ID, const unsigned int& BiomID, sf::IntRect* TextureRectangle, const sf::Sprite &sprite, const sf::Vector2f& TilePosition)
+		: tile_ID(ID), tile_Biome(BiomID), tile_texRect(TextureRectangle),tile_sprite(sprite), tile_position(TilePosition) {}
 
 	void SetupSprite() 
 	{
-		this->tile_sprite.setTextureRect(*tile_texRect);
-		this->tile_sprite.setPosition(tile_position);
+		tile_sprite.setPosition(tile_position);
+		tile_sprite.setTextureRect(*tile_texRect); 
 	}
 
 	unsigned int tile_ID;

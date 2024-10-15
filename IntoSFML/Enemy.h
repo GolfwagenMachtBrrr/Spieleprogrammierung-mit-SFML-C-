@@ -25,7 +25,7 @@ public:
 		: m_bodysprite(textures.Get(Textures::ID::Zombie))
 	{}
 
-	void LoadAssets(const sf::Vector2f &startingPos, TextureHolder &textureholder)
+	void LoadAssets(const sf::Vector2f &startingPos)
 	{
 		this->m_bodysprite.setTextureRect(sf::IntRect(32*0, 32*1, 32, 32));
 		this->m_bodysprite.setPosition(startingPos);
@@ -41,9 +41,9 @@ public:
 		p_hitbox.setFillColor(sf::Color::Transparent);
 	}
 	
-	void Initialize(const float& speed, const int& damage, const __int32& attackspeed, const WayPoint& waypoint, const sf::Color& color, TextureHolder &textureholder, const int &ID)
+	void Initialize(const float& speed, const int& damage, const __int32& attackspeed, const WayPoint& waypoint, const sf::Color& color, const int &ID)
 	{
-		LoadAssets(waypoint.position, textureholder);
+		LoadAssets(waypoint.position);
 
 		this->m_speed = speed;
 		this->p_damage = damage;
