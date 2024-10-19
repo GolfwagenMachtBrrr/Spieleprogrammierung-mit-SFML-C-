@@ -53,7 +53,10 @@ public:
         m_textures.Load(Textures::ID::Grass,     SYSTEMPATH + "Assets/AssetPack/Pixel Art Top Down - Basic/Texture/TX Tileset Grass.png");
         m_textures.Load(Textures::ID::Zombie,    SYSTEMPATH + "Assets/Enemy/Textures/zombie_n_skeleton2.png");
         m_textures.Load(Textures::ID::Undefined, SYSTEMPATH + "Assets/Enemy/Textures/zombie_n_skeleton2.png");
-   
+        m_textures.Load(Textures::ID::Sword,     SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/Sword.png");
+        m_textures.Load(Textures::ID::Wand,      SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/Wand.png");
+        m_textures.Load(Textures::ID::House,     SYSTEMPATH + "/AssetPack/Tiny Swords/Tiny Swords(Update 010)/Factions/Knights/Buildings/House.png");
+         
     }
 
     void InitEnemyManager()

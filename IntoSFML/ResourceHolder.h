@@ -8,14 +8,25 @@ namespace Textures
 {
 	enum ID
 	{
-		Undefined,
+		Undefined = -1,
 		Spawner,
 		Cursor,
 		Skeleton,
 		Grass,
 		Zombie,
-
+		Wand, 
+		Sword,
+		House,
 	};
+
+	sf::Vector2f GetTextureSize(Textures::ID ID)
+	{
+		switch (ID) {
+
+		case House:
+			return sf::Vector2f(128, 192); 
+		}
+	}
 }
 
 

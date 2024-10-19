@@ -33,7 +33,7 @@ public:
 	{
 		this->m_menuFont.loadFromFile("C:/Users/JanSa/OneDrive/Desktop/Programmieren/Projekte/ProcMapGen/ProcGen/Assets/Fonts/NotoSansThai-Regular.ttf");
 	}
-	void InitTextures() // Schreib endlich den verdammten TextureHolder du fauler Sack! 
+	void InitTextures() // Schreib endlich den verdammten TextureHolder du fauler Sack! Hab ich gemacht du spast!
 	{
 		m_menu_background.setPosition(sf::Vector2f(m_width / 4, 0));
 		m_menu_background.setSize(sf::Vector2f(sf::Vector2f(m_width / 2, m_height)));

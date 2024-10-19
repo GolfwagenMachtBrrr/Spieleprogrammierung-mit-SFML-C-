@@ -63,13 +63,16 @@
     <ClCompile Include="Spawner.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="MapEvents.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="EventHandler.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="TexturHolderN.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="MapManager.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -137,13 +140,19 @@
     <ClInclude Include="Spawner.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="MapEvents.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="EventHandler.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ResourceHolder.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="MapManager.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

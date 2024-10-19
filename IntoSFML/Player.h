@@ -4,6 +4,8 @@
 
 #include "Bullet.h"
 #include "ResourceHolder.h"
+#include "Inventory.h"
+#include "Item.h"
 #include <vector>
 
 #define SPRITEUNIT 64
@@ -90,6 +92,11 @@ private:
 		}
 
 		m_position = m_sprite.getPosition();
+	}
+
+	void PickUpItem(Inventory &inventory, Item &item)
+	{
+		inventory.AddItem(item.id); 
 	}
 
 public: 

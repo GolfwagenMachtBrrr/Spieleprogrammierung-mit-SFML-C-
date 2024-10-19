@@ -135,13 +135,14 @@
   <ItemGroup>
     <ClCompile Include="BiomSetter.cpp" />
     <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="Entity.cpp" />
     <ClCompile Include="EventHandler.cpp" />
     <ClCompile Include="GameWindow.cpp" />
     <ClCompile Include="Gun.cpp" />
     <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="MapEvents.cpp" />
     <ClCompile Include="MapGenerator.cpp" />
+    <ClCompile Include="MapManager.cpp" />
     <ClCompile Include="MenuWindow.cpp" />
     <ClCompile Include="NoizeGenerator.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -158,11 +159,13 @@
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemyManager.h" />
+    <ClInclude Include="Entity.h" />
     <ClInclude Include="EventHandler.h" />
     <ClInclude Include="GameWindow.h" />
     <ClInclude Include="Gun.h" />
     <ClInclude Include="Inventory.h" />
-    <ClInclude Include="MapEvents.h" />
+    <ClInclude Include="Item.h" />
+    <ClInclude Include="MapManager.h" />
     <ClInclude Include="MenuWindow.h" />
     <ClInclude Include="MapGenerator.h" />
     <ClInclude Include="NoizeGenerator.h" />
