@@ -6,7 +6,10 @@
 #include "ResourceHolder.h"
 #include "Inventory.h"
 #include "Item.h"
+#include "MapGenerator.h"
+
 #include <vector>
+
 
 #define SPRITEUNIT 64
 #define FORWARD 0
@@ -37,9 +40,9 @@ public:
 		p_hitbox.setFillColor(sf::Color::Transparent);
 	}
 
-	void Update(const float& dt, sf::RenderWindow& window)
+	void Update(const float& dt, sf::RenderWindow& window, MapGenerator &map)
 	{
-		MovePlayer(dt);
+		MovePlayer(dt, map);
 		p_hitbox.setPosition(m_position);
 	}
 
@@ -56,42 +59,70 @@ public:
 
 
 private: 
-	void MovePlayer(const float& dt)
+	void MovePlayer(const float& dt, MapGenerator& map)
 	{
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-			m_sprite.setPosition(m_position + sf::Vector2f(0, -1) * m_speed * dt);
-			m_sprite.setTextureRect(sf::IntRect((movementIndicator / MOVEMENT) * SPRITEUNIT, FORWARD, SPRITEUNIT, SPRITEUNIT));
-			movementIndicator++;
-			if (movementIndicator / MOVEMENT == 9) {
-				movementIndicator = 0;
+			sf::Vector2f newposition = m_position + sf::Vector2f(0, -1) * m_speed * dt; 
+
+			if (YouShallPass(newposition, map)) {
+				m_sprite.setPosition(newposition);
+				m_sprite.setTextureRect(sf::IntRect((movementIndicator / MOVEMENT) * SPRITEUNIT, FORWARD, SPRITEUNIT, SPRITEUNIT));
+				movementIndicator++;
+				if (movementIndicator / MOVEMENT == 9) {
+					movementIndicator = 0;
+				}
 			}
+			
+			
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-			m_sprite.setPosition(m_position + sf::Vector2f(0, 1) * m_speed * dt);
-			m_sprite.setTextureRect(sf::IntRect((movementIndicator / MOVEMENT) * SPRITEUNIT, BACKWARD * SPRITEUNIT, SPRITEUNIT, SPRITEUNIT));
-			movementIndicator++;
-			if (movementIndicator / MOVEMENT == 9) {
-				movementIndicator = 0;
+			sf::Vector2f newposition = m_position + sf::Vector2f(0, 1) * m_speed * dt;
+
+			if (YouShallPass(newposition, map)) {
+				m_sprite.setPosition(newposition);
+				m_sprite.setTextureRect(sf::IntRect((movementIndicator / MOVEMENT) * SPRITEUNIT, BACKWARD * SPRITEUNIT, SPRITEUNIT, SPRITEUNIT));
+				movementIndicator++;
+				if (movementIndicator / MOVEMENT == 9) {
+					movementIndicator = 0;
+				}
 			}
+			
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-			m_sprite.setPosition(m_position + sf::Vector2f(1, 0) * m_speed * dt);
-			m_sprite.setTextureRect(sf::IntRect((movementIndicator / MOVEMENT) * SPRITEUNIT, RIGHTWARD * SPRITEUNIT, SPRITEUNIT, SPRITEUNIT));
-			movementIndicator++;
-			if (movementIndicator / MOVEMENT == 9) {
-				movementIndicator = 0;
+			sf::Vector2f newposition = m_position + sf::Vector2f(1,0) * m_speed * dt;
+
+			if (YouShallPass(newposition, map)) {
+				m_sprite.setPosition(m_position + sf::Vector2f(1, 0) * m_speed * dt);
+				m_sprite.setTextureRect(sf::IntRect((movementIndicator / MOVEMENT) * SPRITEUNIT, RIGHTWARD * SPRITEUNIT, SPRITEUNIT, SPRITEUNIT));
+				movementIndicator++;
+				if (movementIndicator / MOVEMENT == 9) {
+					movementIndicator = 0;
+				}
 			}
+			
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-			m_sprite.setPosition(m_position + sf::Vector2f(-1, 0) * m_speed * dt);
-			m_sprite.setTextureRect(sf::IntRect((movementIndicator / MOVEMENT) * SPRITEUNIT, LEFTWARD * SPRITEUNIT, SPRITEUNIT, SPRITEUNIT));
-			movementIndicator++;
-			if (movementIndicator / MOVEMENT == 9) {
-				movementIndicator = 0;
+			sf::Vector2f newposition = m_position + sf::Vector2f(-1, 0) * m_speed * dt;
+
+			if (YouShallPass(newposition, map)) {
+				m_sprite.setPosition(m_position + sf::Vector2f(-1, 0) * m_speed * dt);
+				m_sprite.setTextureRect(sf::IntRect((movementIndicator / MOVEMENT) * SPRITEUNIT, LEFTWARD * SPRITEUNIT, SPRITEUNIT, SPRITEUNIT));
+				movementIndicator++;
+				if (movementIndicator / MOVEMENT == 9) {
+					movementIndicator = 0;
+				}
 			}
+			
 		}
 
 		m_position = m_sprite.getPosition();
+	}
+
+	bool YouShallPass(const sf::Vector2f& reisepass, MapGenerator &map) {
+		if (map.p_tileMap[reisepass.x / map.GetTileSize().x][reisepass.y / map.GetTileSize().y].occupied != true) {
+			return true; 
+		}
+		return false; 
 	}
 
 	void PickUpItem(Inventory &inventory, Item &item)

@@ -12,8 +12,14 @@ public:
 	Entity(const TextureHolder& textures, Textures::ID ID, const sf::Vector2f &size, const sf::Vector2f& position)
 		: m_sprite(textures.Get(ID)), m_size(size), p_position(position)
 	{
-		this->p_hitbox.setPosition(position); 
+		this->p_hitbox.setPosition(position);
 		this->p_hitbox.setSize(size);
+	}
+
+	void Update()
+	{
+		p_hitbox.setPosition(p_position);
+		m_sprite.setPosition(p_position);
 	}
 
 	void Draw(sf::RenderWindow& window)

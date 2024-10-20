@@ -19,14 +19,6 @@ namespace Textures
 		House,
 	};
 
-	sf::Vector2f GetTextureSize(Textures::ID ID)
-	{
-		switch (ID) {
-
-		case House:
-			return sf::Vector2f(128, 192); 
-		}
-	}
 }
 
 

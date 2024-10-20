@@ -157,8 +157,6 @@ private:
 		nPosX = (rand() % (ubX - lbX + 1)) + lbX;
 		nPosY = (rand() % (ubY - lbY + 1)) + lbY;
 
-		std::cout << nPosX << " " << nPosY << std::endl;
-
 		nPosition.x = std::abs(nPosX); 
 		nPosition.y = std::abs(nPosY); 
 

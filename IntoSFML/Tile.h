@@ -2,8 +2,6 @@
 #include "SFML/Graphics.hpp"
 #include "ResourceHolder.h"
 
-typedef ResourceHolder<sf::Texture, Textures::ID> TextureHolder;
-
 struct Tile
 {
 	Tile()
@@ -32,4 +30,7 @@ struct Tile
 
 	sf::Vector2f tile_position;
 	sf::Sprite   tile_sprite;
+
+	bool		 occupied	  = false; 
+	Textures::ID occupationID = Textures::ID::Undefined; 
 };

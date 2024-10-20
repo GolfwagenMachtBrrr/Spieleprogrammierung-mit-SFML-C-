@@ -5,21 +5,28 @@
 #include "Item.h"
 #include "ResourceHolder.h"
 #include "Spawner.h"
+#include "Player.h"
+#include "MapGenerator.h"
 
 #include <random>
+
 
 class MapManager
 {
 public: 
-	void Initialize(const TextureHolder& textures)
+	void Initialize(const TextureHolder& textures, MapGenerator& map)
 	{
-
+		InitHouses(textures, 20, map); 
 	}
-	void Update(); 
-	void Draw(sf::RenderWindow& window)
+	void Update(const float &deltatime, Player &player, MapGenerator &map)
 	{
+		for (auto& entity : m_entities) { entity.Update();}
+		for (auto& spawner : m_spawners) { spawner.Update(deltatime, player); }
+	}
+	void Draw(sf::RenderWindow& window)
+	{ 
 		for (auto& spawner : m_spawners) { spawner.Draw(window); }
-		for (auto& entity  : m_entities) { entity.Draw(window);	 }
+		for (auto& entity  :  m_entities) { entity.Draw(window);	}
 		// Item Draw
 	}
 
@@ -34,30 +41,99 @@ private:
 			// Spawner Setup
 		}
 	}
-	void InitHouses(const TextureHolder& textures, const int& amount)
+	void InitHouses(const TextureHolder& textures, const int& amount, MapGenerator &map)
 	{
 		int latestIndex = m_entities.size() - 1; 
-		for (int index = latestIndex; index < latestIndex + amount; index++) {
+		for (int i = 0; i < amount; i++) {
 			// Houses Setup
+			sf::Vector2f newposition = CalculatePosition(map, Textures::ID::House);
 			Entity entity(textures,
 						  Textures::ID::House, 
-						  Textures::GetTextureSize(Textures::ID::House), 
-						  CalculatePosition());
+						  GetTextureSize(Textures::ID::House), 
+						  newposition);
 
 			m_entities.push_back(entity); 
 		}
 	}
 
-	sf::Vector2f CalculatePosition()
+	sf::Vector2f CalculatePosition(MapGenerator& map, Textures::ID ID)
 	{
-		// sollte sich nicht mit anderen instanzen von Entity überschneiden können
-		int randX = rand() % 3000, randY = rand() % 3000;
-		return sf::Vector2f(randX, randY); 
+		sf::Vector2f calculatedposition; 
+
+		calculatedposition.x = rand() % 1500 + 50;
+		calculatedposition.y = rand() % 1500 + 50;
+
+		AdjustTileMap(map, calculatedposition, ID);
+		
+		return calculatedposition;
+	}
+
+	void AdjustTileMap(MapGenerator& map, const sf::Vector2f &calculatedposition, Textures::ID ID)
+	{
+		sf::Vector2f tilesize = static_cast<sf::Vector2f>(map.GetTileSize());
+		int startX = calculatedposition.x / tilesize.x, endX = GetTextureSize(ID).x / tilesize.x;
+		int startY = calculatedposition.y / tilesize.y, endY = GetTextureSize(ID).y / tilesize.y;
+
+		for (int i = startX; i < startX + endX; i++) {
+			for (int j = startY; j < startY + endY; j++)
+			{
+				map.p_tileMap[i][j].occupied = true; 
+				map.p_tileMap[i][j].occupationID = ID; 
+			}
+		}
+	}
+
+	bool EntityIsOverlapping(const sf::Vector2f &position)
+	{
+		sf::RectangleShape hypotheticalHitbox; hypotheticalHitbox.setPosition(position); 
+		for (int i = 0; i < m_entities.size() - 1; i++) {
+			if (CollisionCheck(hypotheticalHitbox.getGlobalBounds(),
+				m_entities[i].p_hitbox.getGlobalBounds()))
+			{
+				return true; 
+			}
+		}
+		return false; 
+	}
+
+	bool CollisionCheck(const sf::FloatRect& a, const sf::FloatRect& b)
+	{
+		if (a.left + a.width > b.left &&
+			b.left + b.width > a.left &&
+			b.top + b.height > a.top &&
+			a.top + a.height > b.top)
+		{
+			return true;
+		}
+		return false;
+	}
+
+	const sf::Vector2f GetTextureSize(Textures::ID ID)
+	{
+		switch (ID) {
+
+		case Textures::ID::House:
+			return sf::Vector2f(128, 192);
+		}
+	}
+
+	bool TimePassed()
+	{
+		int timepassed = m_clock.getElapsedTime().asMilliseconds();
+		if (timepassed >= m_timer) {
+			m_clock.restart();
+			return true;
+		}
+		return false;
 	}
 
 private: 
 	std::vector<Spawner> m_spawners; 
 	std::vector<Entity>  m_entities; 
 	std::vector<Item>	 m_items; 
+
+	sf::Clock m_clock; 
+	int m_timer = 500;
+
 };
 

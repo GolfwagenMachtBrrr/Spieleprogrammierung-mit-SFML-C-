@@ -51,7 +51,7 @@ public:
 
 				tileMap_row.push_back(tile);
 			}
-			m_tileMap.push_back(tileMap_row);
+			p_tileMap.push_back(tileMap_row);
 		}
 	}
 	// https://gist.github.com/lxndrdagreat/da4400e23ac611ec3567
@@ -83,11 +83,18 @@ public:
 		{
 			for (int j = fromY; j < toY; j++)
 			{
-				Window.draw(m_tileMap[i][j].tile_sprite);
+				Window.draw(p_tileMap[i][j].tile_sprite);
 			}
 		}
 	}
 
+	const sf::Vector2u GetTileSize()
+	{
+		return m_tileSize; 
+	}
+
+public:
+	std::vector<std::vector<Tile>> p_tileMap;
 
 private:
 
@@ -102,6 +109,6 @@ private:
 	std::string m_tileSheet;
 	sf::Vector2u m_tileSize;
 
-	std::vector <std::vector<Tile>> m_tileMap; 
+	
 };
 

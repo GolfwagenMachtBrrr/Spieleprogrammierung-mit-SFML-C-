@@ -14,13 +14,12 @@
 #include "Inventory.h"
 #include "EnemyManager.h"
 #include "Spawner.h"
+#include "MapManager.h"
 
 
 #include <iostream>
 #include <random>
 
-
-typedef ResourceHolder<sf::Texture, Textures::ID> TextureHolder;
 
 class GameWindow
 {
@@ -55,7 +54,7 @@ public:
         m_textures.Load(Textures::ID::Undefined, SYSTEMPATH + "Assets/Enemy/Textures/zombie_n_skeleton2.png");
         m_textures.Load(Textures::ID::Sword,     SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/Sword.png");
         m_textures.Load(Textures::ID::Wand,      SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/Wand.png");
-        m_textures.Load(Textures::ID::House,     SYSTEMPATH + "/AssetPack/Tiny Swords/Tiny Swords(Update 010)/Factions/Knights/Buildings/House.png");
+        m_textures.Load(Textures::ID::House,     SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Blue.png");
          
     }
 
@@ -105,6 +104,8 @@ public:
 
         this->m_map.Initialize(m_tilesize, m_textures, width, height);
         this->m_map.Generate();
+        this->m_mapM.Initialize(m_textures, m_map); 
+
     }
 
     void InitViewer()
@@ -148,32 +149,27 @@ public:
             this->m_cursor.setPosition(ConvertedPosition2);
 
             this->m_playergun.Update(m_dt, m_player.GetPosition(), ConvertedPosition1, m_spawners);
-
-            this->m_player.Update(m_dt, m_window);
-
+            this->m_player.Update(m_dt, m_window, m_map);
             this->m_inventory.Update(m_cursor.getPosition());
             this->m_gameview.Update(m_dt);
+            this->m_mapM.Update(m_dt, m_player, m_map);
 
             for (auto &spawner : m_spawners)
             {
                 spawner.Update(m_dt, m_player);
             }
 
-            this->m_enemymanager.Update(this->m_dt, this->m_player.GetPosition(), m_player.p_hitbox.getGlobalBounds());
-
             this->m_gameview.setViewCenter(m_player.GetPosition());
             this->m_window.setView(m_gameview.GetView());
 
+            /*for (auto& spawner : m_spawners) {
+                spawner.Draw(m_window);
+            }*/
 
             this->m_map.Draw(m_window, m_gameview);
-            
-            for (auto& spawner : m_spawners) {
-                spawner.Draw(m_window);
-            }
-
+            this->m_mapM.Draw(m_window);
             this->m_player.Draw(m_window);
             this->m_playergun.Draw(m_window);
-            this->m_enemymanager.Draw(m_window);
 
 
             this->m_window.setView(m_inventory.p_view);
@@ -195,6 +191,8 @@ private:
     sf::Vector2u m_tilesize;
 
     MapGenerator m_map;
+    MapManager   m_mapM; 
+
     Viewer m_gameview;
     Inventory m_inventory; 
 
