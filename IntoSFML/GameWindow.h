@@ -33,7 +33,6 @@ public:
         if (start)
         {
             this->InitTextures(); 
-            this->InitEnemyManager();
             this->InitWindow();
             this->InitPlayer(); 
             this->IntitOtherValues();
@@ -51,32 +50,11 @@ public:
         m_textures.Load(Textures::ID::Skeleton,  SYSTEMPATH + "Assets/Player/Textures/skeletonsprite.png");
         m_textures.Load(Textures::ID::Grass,     SYSTEMPATH + "Assets/AssetPack/Pixel Art Top Down - Basic/Texture/TX Tileset Grass.png");
         m_textures.Load(Textures::ID::Zombie,    SYSTEMPATH + "Assets/Enemy/Textures/zombie_n_skeleton2.png");
-        m_textures.Load(Textures::ID::Undefined, SYSTEMPATH + "Assets/Enemy/Textures/zombie_n_skeleton2.png");
+        m_textures.Load(Textures::ID::Undefined, SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/UI/Icons/Disable_01.png");
         m_textures.Load(Textures::ID::Sword,     SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/Sword.png");
         m_textures.Load(Textures::ID::Wand,      SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/Wand.png");
         m_textures.Load(Textures::ID::House,     SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Blue.png");
          
-    }
-
-    void InitEnemyManager()
-    {
-        int numberofSpawners = 1;
-        for (int i = 0; i < numberofSpawners; i++)
-        {
-           Spawner spawner;
-           m_spawners.push_back(spawner);
-           
-        }
-        for (int i = 0; i < numberofSpawners; i++)
-        {
-            int examplePosX = rand() % 1000,
-                examplePosY = rand() % 1000;
-
-            std::vector<Spawner::SpawnType> type;
-            for (int i = 0; i < 5; i++) { type.push_back(Spawner::ZOMBIE); }
-            m_spawners[i].Initialize(sf::Vector2f(examplePosX, examplePosY), type, m_textures);
-        }
-        
     }
 
     void IntitOtherValues()
@@ -154,17 +132,9 @@ public:
             this->m_gameview.Update(m_dt);
             this->m_mapM.Update(m_dt, m_player, m_map);
 
-            for (auto &spawner : m_spawners)
-            {
-                spawner.Update(m_dt, m_player);
-            }
-
             this->m_gameview.setViewCenter(m_player.GetPosition());
             this->m_window.setView(m_gameview.GetView());
 
-            /*for (auto& spawner : m_spawners) {
-                spawner.Draw(m_window);
-            }*/
 
             this->m_map.Draw(m_window, m_gameview);
             this->m_mapM.Draw(m_window);

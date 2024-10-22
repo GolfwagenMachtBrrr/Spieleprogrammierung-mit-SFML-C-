@@ -9,6 +9,7 @@
 #include "MapGenerator.h"
 
 #include <random>
+#include <vector>
 
 
 class MapManager
@@ -17,15 +18,16 @@ public:
 	void Initialize(const TextureHolder& textures, MapGenerator& map)
 	{
 		InitHouses(textures, 20, map); 
+		InitSpawner(textures, 1, 1, map); 
 	}
 	void Update(const float &deltatime, Player &player, MapGenerator &map)
 	{
 		for (auto& entity : m_entities) { entity.Update();}
-		for (auto& spawner : m_spawners) { spawner.Update(deltatime, player); }
+		for (auto& spawner : m_spawners) { spawner.Update(deltatime, player, map); }
 	}
 	void Draw(sf::RenderWindow& window)
 	{ 
-		for (auto& spawner : m_spawners) { spawner.Draw(window); }
+		for(auto& spawner : m_spawners) { spawner.Draw(window); }
 		for (auto& entity  :  m_entities) { entity.Draw(window);	}
 		// Item Draw
 	}
@@ -34,11 +36,15 @@ public:
 	void AddEntities(Textures::ID ID, const int& amount); 
 
 private: 
-	void InitSpawner(const TextureHolder& textures, const int& amount)
+	void InitSpawner(const TextureHolder& textures, const int& amount, const int& density, MapGenerator &map)
 	{
-		m_spawners = std::vector<Spawner>(amount);
+		for (int i = 0; i < amount; i++) { Spawner spawner; m_spawners.push_back(spawner); }
 		for (auto& spawner : m_spawners) {
-			// Spawner Setup
+			std::vector<Textures::ID> spawntypes; 
+			for (int i = 0; i < density; i++) { spawntypes.push_back(Textures::ID::Zombie); }
+			std::cout << "Iam here" << std::endl; 
+			spawner.Initialize(CalculatePosition(map, Textures::ID::Spawner), spawntypes, textures);
+
 		}
 	}
 	void InitHouses(const TextureHolder& textures, const int& amount, MapGenerator &map)
@@ -60,8 +66,8 @@ private:
 	{
 		sf::Vector2f calculatedposition; 
 
-		calculatedposition.x = rand() % 1500 + 50;
-		calculatedposition.y = rand() % 1500 + 50;
+		calculatedposition.x = rand() % 1500 + 200;
+		calculatedposition.y = rand() % 1500 + 200;
 
 		AdjustTileMap(map, calculatedposition, ID);
 		
@@ -114,6 +120,8 @@ private:
 
 		case Textures::ID::House:
 			return sf::Vector2f(128, 192);
+		case Textures::ID::Spawner:
+			return sf::Vector2f(100, 80); 
 		}
 	}
 
@@ -129,6 +137,7 @@ private:
 
 private: 
 	std::vector<Spawner> m_spawners; 
+	std::vector<Spawner> notavectorofspawners;
 	std::vector<Entity>  m_entities; 
 	std::vector<Item>	 m_items; 
 

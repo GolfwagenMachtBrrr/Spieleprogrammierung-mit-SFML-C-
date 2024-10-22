@@ -18,13 +18,6 @@ typedef ResourceHolder<sf::Texture, Textures::ID> TextureHolder;
 
 class Spawner
 {
-public:
-	enum SpawnType
-	{
-		ZOMBIE,
-		SKELETON,
-		BANDIT
-	};
 
 
 public:
@@ -32,7 +25,7 @@ public:
 	Spawner()
 	{}
 
-	void Initialize(const sf::Vector2f &position, std::vector<SpawnType> &spawntypes, const TextureHolder& textures)
+	void Initialize(const sf::Vector2f &position, std::vector<Textures::ID> &spawntypes, const TextureHolder& textures)
 	{
 		m_sprite.setTexture(textures.Get(Textures::ID::Spawner)); 
 		m_sprite.setPosition(position);
@@ -40,17 +33,20 @@ public:
 		m_font.loadFromFile("C:/Users/JanSa/OneDrive/Desktop/Programmieren/Projekte/ProcMapGen/ProcGen/Assets/Fonts/NotoSansThai-Regular.ttf");
 		m_text.setFont(m_font); 
 		m_text.setPosition(sf::Vector2f(position.x, position.y-50));
-	
-			
-		m_stack = spawntypes; 
 
 		p_hitbox.setPosition(position);
-		//p_hitbox.setSize((sf::Vector2f)m_texture.getSize());
+		p_hitbox.setSize((sf::Vector2f)textures.Get(Textures::ID::Spawner).getSize());
 
-		for (int i = 0; i < spawntypes.size(); i++) { Enemy enemy(textures);  m_spawn.push_back(enemy); }
+		m_stack = spawntypes; 
+		for (int i = 0; i < spawntypes.size(); i++) { Enemy enemy(textures, spawntypes[i]);  m_spawn.push_back(enemy); }
 	}
-	void Update(const int &deltatime, Player &player)
+	void Update(const int &deltatime, Player &player, MapGenerator &map)
 	{
+		
+		if (m_stack.size() == 0) {
+			return;
+		}
+
 		if (p_health <= 0)
 		{
 			KillAllNPCs();
@@ -61,14 +57,10 @@ public:
 		
 		for (auto& spawn : m_spawn)
 		{
-			std::vector<sf::RectangleShape> spawnpositions; 
-			for (auto& spawn : m_spawn) {
-				spawnpositions.push_back(spawn.p_hitbox);
-			}
-			spawn.Update(deltatime, player, spawnpositions);
+			spawn.Update(deltatime, player, map);
 		}
 
-		SpawnType currtype = m_stack[m_stack.size() - 1]; 
+		Textures::ID currtype = m_stack[m_stack.size() - 1]; 
 
 		if (this->TimePassed() && m_stack.size() -1 > 0 && p_isActive)
 		{
@@ -91,7 +83,7 @@ public:
 		}
 	}
 
-	const void addToStack(const SpawnType& enemy)
+	const void addToStack(const Textures::ID& enemy)
 	{
 		m_stack.push_back(enemy);
 	}
@@ -111,9 +103,8 @@ public:
 
 private: 
 
-	void SpawnNPC(const sf::Vector2f &player_position, const SpawnType &type)
+	void SpawnNPC(const sf::Vector2f &player_position, const Textures::ID &type)
 	{
-
 		if (m_stack.size() -1 <= 0)
 		{
 			return;
@@ -123,19 +114,21 @@ private:
 		wp.position = CalculatePosition();
 		wp.target = player_position;
 
+		m_enemycount++;
+
 		switch (type)
 		{
-		case Spawner::ZOMBIE:
-			m_spawn[m_stack.size() - 1].Initialize(0.125/15, 10, 100, wp, sf::Color::White, m_stack.size() - 1); //stats sollen aus zombie.txt gelesen werden
+		case Textures::ID::Zombie:
+			m_spawn[m_stack.size() - 1].Initialize(0.125/15, 10, 100, wp, sf::Color::White, m_enemycount); //stats sollen aus zombie.txt gelesen werden
 			break;
-		case Spawner::SKELETON:
+		case Textures::ID::Skeleton:
 			break;
-		case Spawner::BANDIT:
+		case Textures::ID::Bandit:
 			break;
 		default:
 			break;
 		}
-
+		
 		m_stack.pop_back();
 	}
 	void KillNPC(const int &NPC_index);
@@ -160,6 +153,7 @@ private:
 		nPosition.x = std::abs(nPosX); 
 		nPosition.y = std::abs(nPosY); 
 
+		//std::cout << nPosition.x << " " << nPosition.y << std::endl; 
 
 		return nPosition;
 	}
@@ -207,9 +201,9 @@ private:
 	// Utillity
 	sf::Vector2f u_playerposition;
 	int		     u_deltatime; 
-	int		m_spawnradius = 400; // not entire radius
-	int		m_capacity; 
-	int		m_enemycount; 
+	int		     m_spawnradius = 400; // not entire radius
+	int		     m_capacity = 0; 
+	int		     m_enemycount = 0; 
 
 	__int32 m_spawnrate = 2000; 
 
@@ -224,12 +218,12 @@ private:
 
 private:
 
-	std::vector<SpawnType>    m_stack; 
+	std::vector<Textures::ID>    m_stack; 
 	std::vector<Enemy>		  m_spawn; 
 
 public:
 
-	SpawnType		   p_type;
+	Textures::ID	   p_type;
 	int				   p_health = 100;
 	bool			   p_isActive = true;
 	sf::RectangleShape p_hitbox;

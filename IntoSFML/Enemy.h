@@ -3,8 +3,9 @@
 #include "WayPoint.h"
 #include "ResourceHolder.h"
 #include "Player.h"
-#include <string>
+#include "MapGenerator.h"
 
+#include <string>
 #include <iostream>
 
 #define SPRITEUNIT 32
@@ -21,8 +22,8 @@ class Enemy
 {
 public:
 
-	Enemy(const TextureHolder &textures) 
-		: m_bodysprite(textures.Get(Textures::ID::Zombie))
+	Enemy(const TextureHolder &textures, Textures::ID type) 
+		: m_bodysprite(textures.Get(type)), m_type(type)
 	{}
 
 	void LoadAssets(const sf::Vector2f &startingPos)
@@ -41,7 +42,7 @@ public:
 		p_hitbox.setFillColor(sf::Color::Transparent);
 	}
 	
-	void Initialize(const float& speed, const int& damage, const __int32& attackspeed, const WayPoint& waypoint, const sf::Color& color, const int &ID)
+	void Initialize(const float& speed, const int& damage, const __int32& attackspeed, const WayPoint& waypoint, const sf::Color& color,int ID)
 	{
 		LoadAssets(waypoint.position);
 
@@ -53,14 +54,15 @@ public:
 		this->p_ID = ID; 
 	}
 
-	void Update(const float& dt, Player &player, std::vector<sf::RectangleShape> &spawnpositions)
+	void Update(const float& dt, Player &player, MapGenerator &map)
 	{
 		m_text.setString(std::to_string(p_health)); 
 		m_text.setPosition(m_position); 
 
 		p_hitbox.setPosition(m_position); 
 
-		this->Move(dt, player.GetPosition(), spawnpositions);
+		this->Move(dt, player.GetPosition(), map);
+
 		if (this->AttackTimeoutPassed())
 		{
 			if (CollisionCheck(player.p_hitbox.getGlobalBounds(), p_hitbox.getGlobalBounds())) {
@@ -135,30 +137,26 @@ private:
 		return this->GetDirectionVector(secondTarget);
 	}
 
-	void Move(const float& dt, const sf::Vector2f& playerPosition, std::vector<sf::RectangleShape>& spawnpositions)
+	void Move(const float& dt, const sf::Vector2f& playerPosition, MapGenerator &map)
 	{
 		sf::Vector2f direction; direction = this->GetDirectionVector(playerPosition);
-
 		sf::Vector2f	   hypotheticalPosition = m_position + direction * dt * m_speed;
-		sf::RectangleShape hypotheticalHitbox = p_hitbox;
 
-		hypotheticalHitbox.setPosition(hypotheticalPosition); 
 
-		if (CollidesWithAlly(spawnpositions, hypotheticalHitbox) != -1) {
-			int DontDoItJan = rand() % 10;
+		if (hypotheticalPosition.x < 0 || hypotheticalPosition.y < 0) {
+			direction.x = 0; 
+			direction.y = 0;
+			hypotheticalPosition = m_position + direction * dt * m_speed;
+		}
 
-			if (DontDoItJan <= 5) {
-				direction = sf::Vector2f(0, 0); 
-			}
-			else
-			{
-				direction.x *= (-1);
-				direction.y *= (-1);
-			}
-
+		if (!YouShallPass(hypotheticalPosition, map)) {
+				direction = sf::Vector2f(0, 0);
+				hypotheticalPosition = m_position + direction * dt * m_speed;
 		}
 		
-		this->m_bodysprite.setPosition(this->m_position + direction * this->m_speed * dt);
+
+		AdjustTileMap(map, hypotheticalPosition); 
+		this->m_bodysprite.setPosition(hypotheticalPosition);
 		this->m_position = this->m_bodysprite.getPosition();
 
 		//impl enemy animations 
@@ -222,13 +220,53 @@ private:
 	{
 		int collisionID = -1; 
 		for (int i = 0; i < alliedHitbox.size(); i++) {
-			//std::cout << alliedHitbox[i].getPosition().x << " " << alliedHitbox[i].getPosition().x << "im" << std::endl;
-
 			if (CollisionCheck(alliedHitbox[i].getGlobalBounds(), hitbox.getGlobalBounds()) && i != p_ID) {
 				collisionID = i; 
 			}
 		}
 		return collisionID; 
+	}
+
+	bool YouShallPass(const sf::Vector2f& reisepass, MapGenerator& map) {
+
+		int x = reisepass.x / map.GetTileSize().x; 
+		int y = reisepass.y / map.GetTileSize().y; 
+
+		// until bug is fixed 
+		if (p_ID == -1) {
+			p_ID = 0; 
+		}
+
+		if (map.p_tileMap[x][y].occupied == false || map.p_tileMap[x][y].occupierID == p_ID) {
+			std::cout << map.p_tileMap[x][y].occupied << std::endl; 
+			return true;
+		}
+		return false;
+	}
+		
+	void AdjustTileMap(MapGenerator& map, const sf::Vector2f& calculatedposition)
+	{
+		sf::Vector2f tilesize = static_cast<sf::Vector2f>(map.GetTileSize());
+		int startX = calculatedposition.x / tilesize.x, endX = GetTextureSize(m_type).x / tilesize.x;
+		int startY = calculatedposition.y / tilesize.y, endY = GetTextureSize(m_type).y / tilesize.y;
+
+		for (int i = startX; i < startX + endX; i++) {
+			for (int j = startY; j < startY + endY; j++)
+			{
+				map.p_tileMap[i][j].occupied	 = true;
+				map.p_tileMap[i][j].occupationID = m_type;
+				map.p_tileMap[i][j].occupierID	 = p_ID; 
+			}
+		}
+	}
+
+	const sf::Vector2f GetTextureSize(Textures::ID ID)
+	{
+		switch (ID) {
+			// Spriteunit should be replaced by individual units in sf::vector2f m_spritesize
+		case Textures::ID::Zombie:
+			return sf::Vector2f(SPRITEUNIT, SPRITEUNIT);
+		}
 	}
 
 	bool CollisionCheck(const sf::FloatRect& a, const sf::FloatRect& b)
@@ -291,9 +329,11 @@ public:
 	int		p_ID = -1; 
 
 private:
+	Textures::ID m_type; 
+
+	sf::Vector2f m_spritesize;
 
 	int     u_movementindicator = 0;
-
 	float   m_speed;
 	float	m_range; 
 

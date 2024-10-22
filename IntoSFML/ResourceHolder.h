@@ -17,6 +17,7 @@ namespace Textures
 		Wand, 
 		Sword,
 		House,
+		Bandit,
 	};
 
 }
