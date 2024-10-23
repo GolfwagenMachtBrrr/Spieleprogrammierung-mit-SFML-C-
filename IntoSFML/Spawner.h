@@ -38,15 +38,11 @@ public:
 		p_hitbox.setSize((sf::Vector2f)textures.Get(Textures::ID::Spawner).getSize());
 
 		m_stack = spawntypes; 
-		for (int i = 0; i < spawntypes.size(); i++) { Enemy enemy(textures, spawntypes[i]);  m_spawn.push_back(enemy); }
+		for (int i = 0; i < spawntypes.size(); i++) { Enemy enemy(textures, spawntypes[i]); m_spawn.push_back(enemy); }
 	}
 	void Update(const int &deltatime, Player &player, MapGenerator &map)
 	{
 		
-		if (m_stack.size() == 0) {
-			return;
-		}
-
 		if (p_health <= 0)
 		{
 			KillAllNPCs();
@@ -55,18 +51,16 @@ public:
 
 		m_text.setString(std::to_string(p_health));
 		
+		if (this->TimePassed() && m_stack.size() > 0 && p_isActive)
+		{
+			Textures::ID currtype = m_stack[m_stack.size() - 1];
+			this->SpawnNPC(player.GetPosition(), currtype);
+		}
+		
 		for (auto& spawn : m_spawn)
 		{
 			spawn.Update(deltatime, player, map);
 		}
-
-		Textures::ID currtype = m_stack[m_stack.size() - 1]; 
-
-		if (this->TimePassed() && m_stack.size() -1 > 0 && p_isActive)
-		{
-			this->SpawnNPC(player.GetPosition(), currtype);
-		}
-		
 		
 	}
 	void Draw(sf::RenderWindow& window)
@@ -79,7 +73,9 @@ public:
 
 		for (auto& enemy : m_spawn)
 		{
-			enemy.Draw(window);
+			if (enemy.p_isActive) {
+				enemy.Draw(window);
+			}
 		}
 	}
 
@@ -105,7 +101,7 @@ private:
 
 	void SpawnNPC(const sf::Vector2f &player_position, const Textures::ID &type)
 	{
-		if (m_stack.size() -1 <= 0)
+		if (m_stack.size() == 0)
 		{
 			return;
 		}
@@ -119,7 +115,7 @@ private:
 		switch (type)
 		{
 		case Textures::ID::Zombie:
-			m_spawn[m_stack.size() - 1].Initialize(0.125/15, 10, 100, wp, sf::Color::White, m_enemycount); //stats sollen aus zombie.txt gelesen werden
+			m_spawn[m_stack.size()-1].Initialize(0.125/15, 10, 100, wp, sf::Color::White, m_enemycount); //stats sollen aus zombie.txt gelesen werden
 			break;
 		case Textures::ID::Skeleton:
 			break;
@@ -166,7 +162,6 @@ private:
 			this->m_clock.restart();
 			return true;
 		}
-
 		return false; 
 	}
 

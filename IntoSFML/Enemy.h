@@ -52,6 +52,7 @@ public:
 		this->m_target = waypoint.target;
 		this->m_position = waypoint.position; 
 		this->p_ID = ID; 
+		this->p_isActive = true; 
 	}
 
 	void Update(const float& dt, Player &player, MapGenerator &map)
@@ -165,11 +166,11 @@ private:
 
 	void WalkAnimation(const sf::Vector2f& direction, const float &deltatime)
 	{	
+		if (direction.x == 0 && direction.y == 0) {
+			return; 
+		}
 
 		if (direction.x > 0 && direction.y < 0) {
-		
-			//std::cout << "Forward" << std::endl; 
-
 			m_bodysprite.setTextureRect(sf::IntRect((u_movementindicator / MOVEMENT) * SPRITEUNIT, FORWARD*SPRITEUNIT, SPRITEUNIT, SPRITEUNIT));
 			u_movementindicator++;
 			if (u_movementindicator / MOVEMENT == 3) {
@@ -238,7 +239,7 @@ private:
 		}
 
 		if (map.p_tileMap[x][y].occupied == false || map.p_tileMap[x][y].occupierID == p_ID) {
-			std::cout << map.p_tileMap[x][y].occupied << std::endl; 
+			//std::cout << map.p_tileMap[x][y].occupied << std::endl; 
 			return true;
 		}
 		return false;
@@ -327,7 +328,7 @@ public:
 	int     p_damage = 10;
 
 	int		p_ID = -1; 
-
+	bool    p_isActive = false; 
 private:
 	Textures::ID m_type; 
 

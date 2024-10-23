@@ -18,7 +18,7 @@ public:
 	void Initialize(const TextureHolder& textures, MapGenerator& map)
 	{
 		InitHouses(textures, 20, map); 
-		InitSpawner(textures, 1, 1, map); 
+		InitSpawner(textures, 1, 5, map); 
 	}
 	void Update(const float &deltatime, Player &player, MapGenerator &map)
 	{
@@ -42,9 +42,7 @@ private:
 		for (auto& spawner : m_spawners) {
 			std::vector<Textures::ID> spawntypes; 
 			for (int i = 0; i < density; i++) { spawntypes.push_back(Textures::ID::Zombie); }
-			std::cout << "Iam here" << std::endl; 
 			spawner.Initialize(CalculatePosition(map, Textures::ID::Spawner), spawntypes, textures);
-
 		}
 	}
 	void InitHouses(const TextureHolder& textures, const int& amount, MapGenerator &map)
