@@ -48,7 +48,7 @@ public:
 
 	void Draw(sf::RenderWindow& window)
 	{
-		window.draw(p_hitbox);
+		//window.draw(p_hitbox);
 		window.draw(m_sprite);
 	}
 
@@ -119,9 +119,21 @@ private:
 	}
 
 	bool YouShallPass(const sf::Vector2f& reisepass, MapGenerator &map) {
-		if (map.p_tileMap[reisepass.x / map.GetTileSize().x][reisepass.y / map.GetTileSize().y].occupied != true) {
+		int x = reisepass.x / map.GetTileSize().x, y = reisepass.y / map.GetTileSize().y; 
+		if (map.p_tileMap[x][y].occupied != true || IsEnemy(map, x,y)) {
 			return true; 
 		}
+		return false; 
+	}
+
+	bool IsEnemy(MapGenerator& map, const int& x, const int& y) {
+		Textures::ID type = map.p_tileMap[x][y].occupationID; 
+		switch (type)
+		{
+		case Textures::ID::Zombie:
+			return true; 
+		}
+		
 		return false; 
 	}
 

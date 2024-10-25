@@ -18,7 +18,7 @@ public:
 	void Initialize(const TextureHolder& textures, MapGenerator& map)
 	{
 		InitHouses(textures, 20, map); 
-		InitSpawner(textures, 1, 5, map); 
+		InitSpawner(textures, 1, 2, map); 
 	}
 	void Update(const float &deltatime, Player &player, MapGenerator &map)
 	{
@@ -63,9 +63,12 @@ private:
 	sf::Vector2f CalculatePosition(MapGenerator& map, Textures::ID ID)
 	{
 		sf::Vector2f calculatedposition; 
-
-		calculatedposition.x = rand() % 1500 + 200;
-		calculatedposition.y = rand() % 1500 + 200;
+		
+		do {
+			calculatedposition.x = rand() % 1500 + 200;
+			calculatedposition.y = rand() % 1500 + 200;
+		} while (!Overlapping(map, calculatedposition, ID)); 
+		
 
 		AdjustTileMap(map, calculatedposition, ID);
 		
@@ -85,6 +88,22 @@ private:
 				map.p_tileMap[i][j].occupationID = ID; 
 			}
 		}
+	}
+
+	bool Overlapping(MapGenerator& map, const sf::Vector2f& calculatedposition, Textures::ID ID) {
+		sf::Vector2f tilesize = static_cast<sf::Vector2f>(map.GetTileSize());
+		int startX = calculatedposition.x / tilesize.x, endX = GetTextureSize(ID).x / tilesize.x;
+		int startY = calculatedposition.y / tilesize.y, endY = GetTextureSize(ID).y / tilesize.y;
+
+		for (int i = startX; i < startX + endX; i++) {
+			for (int j = startY; j < startY + endY; j++)
+			{
+				if (map.p_tileMap[i][j].occupied == true) {
+					return false; 
+				}
+			}
+		}
+		return true; 
 	}
 
 	bool EntityIsOverlapping(const sf::Vector2f &position)

@@ -80,7 +80,7 @@ public:
 			return; 
 		}
 		window.draw(m_bodysprite);
-		window.draw(p_hitbox);
+		//window.draw(p_hitbox);
 		window.draw(m_text);
 	}
 
@@ -151,8 +151,17 @@ private:
 		}
 
 		if (!YouShallPass(hypotheticalPosition, map)) {
-				direction = sf::Vector2f(0, 0);
-				hypotheticalPosition = m_position + direction * dt * m_speed;
+			// dont do it Jan
+			int r = rand() % 10;
+			if (r < 5) {
+				direction = sf::Vector2f(0, 0); 
+			}
+			else {
+				direction.x *= -1; 
+				direction.y *= -1; 
+			}
+
+			hypotheticalPosition = m_position + direction * dt * m_speed;
 		}
 		
 
@@ -250,9 +259,27 @@ private:
 		sf::Vector2f tilesize = static_cast<sf::Vector2f>(map.GetTileSize());
 		int startX = calculatedposition.x / tilesize.x, endX = GetTextureSize(m_type).x / tilesize.x;
 		int startY = calculatedposition.y / tilesize.y, endY = GetTextureSize(m_type).y / tilesize.y;
+		int oldX = m_position.x / tilesize.x, oldY = m_position.y / tilesize.y;
 
-		for (int i = startX; i < startX + endX; i++) {
-			for (int j = startY; j < startY + endY; j++)
+		int rangeX = 1, rangeY = 1; 
+		if (startY <=0 || endY >= 100) {
+			rangeY = 0; 
+		}
+		if (startX <= 0 || endX >= 100) {
+			rangeX = 0;
+		}
+
+		for (int i = oldX - rangeX; i < oldX + endX + rangeX; i++) {
+			for (int j = oldY - rangeY; j < oldY + endY + rangeY; j++)
+			{
+				map.p_tileMap[i][j].occupied = false;
+				map.p_tileMap[i][j].occupationID = Textures::ID::Undefined;
+				map.p_tileMap[i][j].occupierID = -1;
+			}
+		}
+
+		for (int i = startX - rangeX; i < startX + endX + rangeX; i++) {
+			for (int j = startY - rangeY; j < startY + endY + rangeY; j++)
 			{
 				map.p_tileMap[i][j].occupied	 = true;
 				map.p_tileMap[i][j].occupationID = m_type;
