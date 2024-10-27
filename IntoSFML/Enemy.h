@@ -4,6 +4,7 @@
 #include "ResourceHolder.h"
 #include "Player.h"
 #include "MapGenerator.h"
+#include "game_algorithm.h"
 
 #include <string>
 #include <iostream>
@@ -346,6 +347,8 @@ private:
 
 		return false;
 	}
+
+
 
 public: 
 	sf::RectangleShape p_hitbox; 

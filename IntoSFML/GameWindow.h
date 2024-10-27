@@ -44,7 +44,7 @@ public:
 
     void InitTextures()
     {
-        std::string SYSTEMPATH = "C:/Users/JanSa/OneDrive/Desktop/Programmieren/Projekte/ProcMapGen/ProcGen/";
+        std::string SYSTEMPATH = "C:/Users/JanSa/source/repos/tmpGameRepo/";
         m_textures.Load(Textures::ID::Spawner,   SYSTEMPATH + "Assets/AssetPack/Pixel Art Top Down - Basic/Texture/Statue.png");
         m_textures.Load(Textures::ID::Cursor,    SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/UI/Pointers/01.png"); 
         m_textures.Load(Textures::ID::Skeleton,  SYSTEMPATH + "Assets/Player/Textures/skeletonsprite.png");
@@ -60,8 +60,8 @@ public:
     void IntitOtherValues()
     {
         this->m_tilesheet = "../Assets/World/NumsVer3.png";
-        this->m_tilesize.x = 25;
-        this->m_tilesize.y = 40;
+        this->m_tilesize.x = 32;
+        this->m_tilesize.y = 32;
         this->m_dt = 16;
 
         this->m_cursor.setTexture(m_textures.Get(Textures::ID::Cursor));

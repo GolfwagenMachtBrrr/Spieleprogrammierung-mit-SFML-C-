@@ -2,7 +2,6 @@
 #include "SFML/Graphics.hpp"
 #include "ResourceHolder.h"
 
-
 struct Item
 {
 	Item()
@@ -18,4 +17,6 @@ struct Item
 	sf::Vector2f*		 position = new sf::Vector2f(); 
 	sf::RectangleShape*	 hitbox   = new sf::RectangleShape();
 	bool				 isActive = false; 
+
+
 };

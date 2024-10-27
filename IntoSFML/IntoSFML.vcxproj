@@ -138,6 +138,7 @@
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="EventHandler.cpp" />
     <ClCompile Include="GameWindow.cpp" />
+    <ClCompile Include="game_algorithm.cpp" />
     <ClCompile Include="Gun.cpp" />
     <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -162,6 +163,7 @@
     <ClInclude Include="Entity.h" />
     <ClInclude Include="EventHandler.h" />
     <ClInclude Include="GameWindow.h" />
+    <ClInclude Include="game_algorithm.h" />
     <ClInclude Include="Gun.h" />
     <ClInclude Include="Inventory.h" />
     <ClInclude Include="Item.h" />
