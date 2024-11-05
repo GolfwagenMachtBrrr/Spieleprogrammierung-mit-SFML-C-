@@ -47,8 +47,6 @@ public:
 
 				Tile tile(index, biome, &texRect, m_tilesprite, tilePos);
 
-				tile.SetupSprite();
-
 				tileMap_row.push_back(tile);
 			}
 			p_tileMap.push_back(tileMap_row);
@@ -109,6 +107,6 @@ private:
 	std::string m_tileSheet;
 	sf::Vector2u m_tileSize;
 
-	
 };
+
 

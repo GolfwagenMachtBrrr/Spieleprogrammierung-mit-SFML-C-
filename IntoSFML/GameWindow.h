@@ -44,7 +44,7 @@ public:
 
     void InitTextures()
     {
-        std::string SYSTEMPATH = "C:/Users/JanSa/source/repos/tmpGameRepo/";
+        std::string SYSTEMPATH = "C:/Users/JanSa/OneDrive/Desktop/Programmieren/Projekte/ProcMapGen/ProcGen/";
         m_textures.Load(Textures::ID::Spawner,   SYSTEMPATH + "Assets/AssetPack/Pixel Art Top Down - Basic/Texture/Statue.png");
         m_textures.Load(Textures::ID::Cursor,    SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/UI/Pointers/01.png"); 
         m_textures.Load(Textures::ID::Skeleton,  SYSTEMPATH + "Assets/Player/Textures/skeletonsprite.png");
@@ -156,7 +156,6 @@ public:
 
 private:
     sf::RenderWindow m_window;
-
     std::string m_tilesheet;
     sf::Vector2u m_tilesize;
 
@@ -169,8 +168,6 @@ private:
     Player m_player; 
     Gun m_playergun; 
 
-    // test1 bei einem Spawner 
-    EnemieManager              m_enemymanager; 
     std::vector<Spawner>       m_spawners; 
 
     TextureHolder m_textures;

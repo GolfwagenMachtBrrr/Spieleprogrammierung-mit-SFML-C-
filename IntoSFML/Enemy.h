@@ -19,7 +19,7 @@
 
 typedef ResourceHolder<sf::Texture, Textures::ID> TextureHolder;
 
-class Enemy
+class Enemy : Algorithms
 {
 public:
 
@@ -141,7 +141,8 @@ private:
 
 	void Move(const float& dt, const sf::Vector2f& playerPosition, MapGenerator &map)
 	{
-		sf::Vector2f direction; direction = this->GetDirectionVector(playerPosition);
+		sf::Vector2f direction; //direction = this->GetDirectionVector(tracePath(map, m_position, playerPosition));
+		direction = 
 		sf::Vector2f	   hypotheticalPosition = m_position + direction * dt * m_speed;
 
 

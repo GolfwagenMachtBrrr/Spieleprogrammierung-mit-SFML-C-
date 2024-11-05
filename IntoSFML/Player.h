@@ -48,7 +48,6 @@ public:
 
 	void Draw(sf::RenderWindow& window)
 	{
-		//window.draw(p_hitbox);
 		window.draw(m_sprite);
 	}
 
@@ -156,3 +155,25 @@ private:
 	int movementIndicator = 0; 
 };
 
+
+//class Player
+//{
+//public:
+//	Player(){}
+//
+//	void Initalize();
+//	void Update();
+//	void Draw();
+//
+//private:
+//	void MovePlayer();
+//
+//public:
+//	sf::RectangleShape p_hitbox;
+//	int				   p_health;
+//private:
+//	sf::Sprite		   m_sprite;
+//	sf::Vector2f	   m_position;
+//	float			   m_speed;
+//	int movementIndicator = 0;
+//};
