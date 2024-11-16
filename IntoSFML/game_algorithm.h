@@ -1,399 +1,368 @@
 #pragma once
 #include "SFML/Graphics.hpp"
 
-#include <queue>
 #include <stack>
 #include <vector>
 #include <set>
+#include <array>
+#include <list>
+
+#include <algorithm>
 
 #include <iostream>
 
 #include "Tile.h"
 #include "MapGenerator.h"
 
-struct Cell
-{
-    Cell(){}
-    Cell(int row, int column) : coordinateX(row), coordinateY(column){}
 
-	int coordinateX = -1, coordinateY = -1;
-    bool visited = false; 
-	double f = -1, g = -1, h = -1;
-};
 
 namespace Algorithms
 {
-    class Astar
-    {
-    protected:
-        sf::Vector2f GetDirectionVector()
-        {
-            std::vector<std::vector<Cell>> path;
-        }
+	struct tile
+	{
+		int x, y;
+		float g, h, f; 
 
-    private:
-        bool isValid(const Cell& cell) const
-        {
-            return (cell.coordinateX >= 0) &&
-                (cell.coordinateX < m_rows) &&
-                (cell.coordinateY >= 0) &&
-                (cell.coordinateY < m_columns);
-        }
+		bool enabled;
+		bool IsInOpenList; 
 
-        bool Compare(const Cell& a, const Cell& b) const
-        {
-            return std::max(a.f, b.f);
-        }
+		sf::RectangleShape box;
+	};
 
-        bool isUnBlocked(const MapGenerator& map, Cell coordinate) const
-        {
-            if (map.p_tileMap[coordinate.coordinateX][coordinate.coordinateY].occupied == true) {
-                return false;
-            }
-            return true;
+	class MazeGenaration
+	{
+	public:
+		// Prims
+		// https://www.youtube.com/watch?v=Y37-gB83HKE
 
-        }
+		enum globdir
+		{
+			North = 0,
+			South = 1,
+			West = 2,
+			East = 3,
+		};
 
-        bool isDestination(const Cell& start, const Cell& target) const
-        {
-            if (start.coordinateX == target.coordinateX && start.coordinateY == target.coordinateY) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
+		void GenerateMaze(std::vector<std::vector<tile>>& grid)
+		{
+			int width = grid.size(), height = grid[0].size();
+			for (auto& i : grid) { for (auto& j : i) { j.enabled = true; j.box.setFillColor(sf::Color::Black); } }
+			sf::Vector2f start((int)(width * (rand() / (RAND_MAX + 1.0))), (int)(height * (rand() / (RAND_MAX + 1.0))));
 
-        double CalculateDistance(const Cell start, Cell target) const
-        {
-            return ((double)sqrt((start.coordinateX - target.coordinateX) * (start.coordinateX - target.coordinateX) +
-                (start.coordinateY - target.coordinateY) * (start.coordinateY - target.coordinateY)));
-        }
+			grid[(int)start.x][(int)start.y].enabled = false;
+			grid[(int)start.x][(int)start.y].box.setFillColor(sf::Color::White);
 
-        std::vector<std::vector<Cell>> aStarSearch(const MapGenerator& map, Cell& start, Cell& target)
-        {
-            cellinfo = std::vector<std::vector<Cell>>(100, std::vector<Cell>(100));
+			std::vector<sf::Vector2i> directions = {sf::Vector2i(0,-1), sf::Vector2i(0,1), sf::Vector2i(-1, 0), sf::Vector2i(1,0)};
+			
+			std::vector<std::vector<bool>> visited(width, std::vector<bool>(height, false));
+			std::stack<tile> path; 
+		
+			path.push(grid[start.x][start.y]); 
+			int visitedCells = 0;
+			while (visitedCells < width * height) {
 
-            if (isValid(start) == false || isValid(target)) {
-                return cellinfo;
-            }
-
-            if (isUnBlocked(map, start) == false || isUnBlocked(map, target) == false) {
-                return cellinfo;
-            }
-
-            if (isDestination(target, target) == true) {
-                return cellinfo;
-            }
-
-            std::vector<std::vector<bool>> closedlist = std::vector<std::vector<bool>>(100, std::vector<bool>(100));;
-
-            for (int i = 0; i < m_rows; i++) {
-                for (int j = 0; j < m_columns; j++) {
-                    cellinfo[i][j].f = FLT_MAX;
-                    cellinfo[i][j].g = FLT_MAX;
-                    cellinfo[i][j].h = FLT_MAX;
-                    cellinfo[i][j].coordinateX = -1;
-                    cellinfo[i][j].coordinateY = -1;
-                }
-            }
-
-            int x = start.coordinateX, y = start.coordinateY;
-            cellinfo[x][y].f = 0.0;
-            cellinfo[x][y].g = 0.0;
-            cellinfo[x][y].h = 0.0;
-            cellinfo[x][y].coordinateX = x;
-            cellinfo[x][y].coordinateY = y;
-
-            std::vector<std::pair<double, Cell>> openlist;
-            openlist.push_back(std::make_pair(0, Cell(x, y)));
-
-            bool foundDest = false;
-
-            while (!openlist.empty()) {
-
-                std::pair<double, Cell> p = openlist[0];
-                openlist.erase(openlist.begin());
-
-                x = p.second.coordinateX;
-                y = p.second.coordinateY;
-                closedlist[x][y] = true;
-
-                /*
-                 Generating all the 8 successor of this cell
-
-                     N.W   N   N.E
-                       \   |   /
-                        \  |  /
-                     W----Cell----E
-                          / | \
-                        /   |  \
-                     S.W    S   S.E
-
-                 Cell-->Popped Cell (i, j)
-                 N -->  North       (i-1, j)
-                 S -->  South       (i+1, j)
-                 E -->  East        (i, j+1)
-                 W -->  West           (i, j-1)
-                 N.E--> North-East  (i-1, j+1)
-                 N.W--> North-West  (i-1, j-1)
-                 S.E--> South-East  (i+1, j+1)
-                 S.W--> South-West  (i+1, j-1)*/
-
-                double gNew, hNew, fNew;
-
-                // North
-                if (isValid(Cell(x - 1, y)) == true) {
-                    if (isDestination(Cell(x - 1, y), target) == true) {
-                        cellinfo[x - 1][y].coordinateX = x;
-                        cellinfo[x - 1][y].coordinateY = y;
-                        foundDest = true;
-                        return cellinfo;
-                    }
-                    else if (cellinfo[x - 1][y].visited == false && isUnBlocked(map, Cell(x - 1, y)) == true) {
-                        gNew = cellinfo[x][y].g + 1.0;
-                        hNew = CalculateDistance(Cell(x - 1, y), target);
-                        fNew = gNew + hNew;
-
-                        if (cellinfo[x - 1][y].f == FLT_MAX || cellinfo[x - 1][y].f > fNew) {
-                            openlist.push_back(std::make_pair(fNew, Cell(x - 1, y)));
-
-                            cellinfo[x - 1][y].f = fNew;
-                            cellinfo[x - 1][y].g = gNew;
-                            cellinfo[x - 1][y].h = hNew;
-                            cellinfo[x - 1][y].coordinateX = x;
-                            cellinfo[x - 1][y].coordinateY = y;
-                        }
-                    }
-                }
-                // south
-                if (isValid(Cell(x + 1, y)) == true) {
-                    if (isDestination(Cell(x + 1, y), target) == true) {
-                        cellinfo[x + 1][y].coordinateX = x;
-                        cellinfo[x + 1][y].coordinateY = y;
-                        foundDest = true;
-                        return cellinfo;
-                    }
-
-                    else if (cellinfo[x + 1][y].visited == false && isUnBlocked(map, Cell(x + 1, y)) == true) {
-                        gNew = cellinfo[x][y].g + 1.0;
-                        hNew = CalculateDistance(Cell(x + 1, y), target);
-                        fNew = gNew + hNew;
-
-                        if (cellinfo[x + 1][y].f == FLT_MAX || cellinfo[x + 1][y].f > fNew) {
-                            openlist.push_back(std::make_pair(fNew, Cell(x - 1, y)));
-
-                            cellinfo[x + 1][y].f = fNew;
-                            cellinfo[x + 1][y].g = gNew;
-                            cellinfo[x + 1][y].h = hNew;
-                            cellinfo[x + 1][y].coordinateX = x;
-                            cellinfo[x + 1][y].coordinateY = y;
-                        }
-                    }
-                }
-                // east
-                if (isValid(Cell(x, y + 1)) == true) {
-                    if (isDestination(Cell(x + 1, y), target) == true) {
-                        cellinfo[x][y + 1].coordinateX = x;
-                        cellinfo[x][y + 1].coordinateY = y;
-                        foundDest = true;
-                        return cellinfo;
-                    }
-
-                    else if (cellinfo[x][y + 1].visited == false && isUnBlocked(map, Cell(x, y + 1)) == true) {
-                        gNew = cellinfo[x][y + 1].g + 1.0;
-                        hNew = CalculateDistance(Cell(x + 1, y), target);
-                        fNew = gNew + hNew;
-
-                        if (cellinfo[x][y + 1].f == FLT_MAX || cellinfo[x][y + 1].f > fNew) {
-                            openlist.push_back(std::make_pair(fNew, Cell(x, y + 1)));
-
-                            cellinfo[x][y + 1].f = fNew;
-                            cellinfo[x][y + 1].g = gNew;
-                            cellinfo[x][y + 1].h = hNew;
-                            cellinfo[x][y + 1].coordinateX = x;
-                            cellinfo[x][y + 1].coordinateY = y;
-                        }
-                    }
-                }
-                // west
-                if (isValid(Cell(x, y - 1)) == true) {
-                    if (isDestination(Cell(x, y - 1), target) == true) {
-                        cellinfo[x][y - 1].coordinateX = x;
-                        cellinfo[x][y - 1].coordinateY = y;
-                        foundDest = true;
-                        return cellinfo;
-                    }
-
-                    else if (cellinfo[x][y - 1].visited == false && isUnBlocked(map, Cell(x + 1, y)) == true) {
-                        gNew = cellinfo[x][y - 1].g + 1.0;
-                        hNew = CalculateDistance(Cell(x, y - 1), target);
-                        fNew = gNew + hNew;
-
-                        if (cellinfo[x][y - 1].f == FLT_MAX || cellinfo[x][y - 1].f > fNew) {
-                            openlist.push_back(std::make_pair(fNew, Cell(x, y - 1)));
-
-                            cellinfo[x][y - 1].f = fNew;
-                            cellinfo[x][y - 1].g = gNew;
-                            cellinfo[x][y - 1].h = hNew;
-                            cellinfo[x][y - 1].coordinateX = x;
-                            cellinfo[x][y - 1].coordinateY = y;
-                        }
-                    }
-                }
-                // North-East
-                if (isValid(Cell(x - 1, y + 1)) == true) {
-                    if (isDestination(Cell(x - 1, y + 1), target) == true) {
-                        cellinfo[x - 1][y + 1].coordinateX = x;
-                        cellinfo[x - 1][y + 1].coordinateY = y;
-                        foundDest = true;
-                        return cellinfo;
-                    }
-
-                    else if (cellinfo[x - 1][y + 1].visited == false && isUnBlocked(map, Cell(x - 1, y + 1)) == true) {
-                        gNew = cellinfo[x - 1][y + 1].g + 1.0;
-                        hNew = CalculateDistance(Cell(x - 1, y + 1), target);
-                        fNew = gNew + hNew;
-
-                        if (cellinfo[x - 1][y + 1].f == FLT_MAX || cellinfo[x - 1][y + 1].f > fNew) {
-                            openlist.push_back(std::make_pair(fNew, Cell(x - 1, y + 1)));
-
-                            cellinfo[x - 1][y + 1].f = fNew;
-                            cellinfo[x - 1][y + 1].g = gNew;
-                            cellinfo[x - 1][y + 1].h = hNew;
-                            cellinfo[x - 1][y + 1].coordinateX = x;
-                            cellinfo[x - 1][y + 1].coordinateY = y;
-                        }
-                    }
-                }
-                // North-West
-                if (isValid(Cell(x + 1, y - 1)) == true) {
-                    if (isDestination(Cell(x + 1, y - 1), target) == true) {
-                        cellinfo[x + 1][y - 1].coordinateX = x;
-                        cellinfo[x + 1][y - 1].coordinateY = y;
-                        foundDest = true;
-                        return cellinfo;
-                    }
-
-                    else if (cellinfo[x + 1][y - 1].visited == false && isUnBlocked(map, Cell(x + 1, y - 1)) == true) {
-                        gNew = cellinfo[x + 1][y - 1].g + 1.0;
-                        hNew = CalculateDistance(Cell(x + 1, y - 1), target);
-                        fNew = gNew + hNew;
-
-                        if (cellinfo[x + 1][y - 1].f == FLT_MAX || cellinfo[x + 1][y - 1].f > fNew) {
-                            openlist.push_back(std::make_pair(fNew, Cell(x + 1, y - 1)));
-
-                            cellinfo[x + 1][y - 1].f = fNew;
-                            cellinfo[x + 1][y - 1].g = gNew;
-                            cellinfo[x + 1][y - 1].h = hNew;
-                            cellinfo[x + 1][y - 1].coordinateX = x;
-                            cellinfo[x + 1][y - 1].coordinateY = y;
-                        }
-                    }
-                }
-                // South - East
-                if (isValid(Cell(x - 1, y - 1)) == true) {
-                    if (isDestination(Cell(x + 1, y - 1), target) == true) {
-                        cellinfo[x - 1][y - 1].coordinateX = x;
-                        cellinfo[x - 1][y - 1].coordinateY = y;
-                        foundDest = true;
-                        return cellinfo;
-                    }
-
-                    else if (cellinfo[x - 1][y - 1].visited == false && isUnBlocked(map, Cell(x - 1, y - 1)) == true) {
-                        gNew = cellinfo[x - 1][y - 1].g + 1.0;
-                        hNew = CalculateDistance(Cell(x - 1, y - 1), target);
-                        fNew = gNew + hNew;
-
-                        if (cellinfo[x - 1][y - 1].f == FLT_MAX || cellinfo[x - 1][y - 1].f > fNew) {
-                            openlist.push_back(std::make_pair(fNew, Cell(x - 1, y - 1)));
-
-                            cellinfo[x - 1][y - 1].f = fNew;
-                            cellinfo[x - 1][y - 1].g = gNew;
-                            cellinfo[x - 1][y - 1].h = hNew;
-                            cellinfo[x - 1][y - 1].coordinateX = x;
-                            cellinfo[x - 1][y - 1].coordinateY = y;
-                        }
-                    }
-                }
-                // South-West
-                if (isValid(Cell(x + 1, y + 1)) == true) {
-                    if (isDestination(Cell(x + 1, y + 1), target) == true) {
-                        cellinfo[x + 1][y + 1].coordinateX = x;
-                        cellinfo[x + 1][y + 1].coordinateY = y;
-                        foundDest = true;
-                        return cellinfo;
-                    }
-
-                    else if (cellinfo[x + 1][y + 1].visited == false && isUnBlocked(map, Cell(x + 1, y + 1)) == true) {
-                        gNew = cellinfo[x + 1][y + 1].g + 1.0;
-                        hNew = CalculateDistance(Cell(x + 1, y + 1), target);
-                        fNew = gNew + hNew;
-
-                        if (cellinfo[x + 1][y + 1].f == FLT_MAX || cellinfo[x + 1][y + 1].f > fNew) {
-                            openlist.push_back(std::make_pair(fNew, Cell(x + 1, y + 1)));
-
-                            cellinfo[x + 1][y + 1].f = fNew;
-                            cellinfo[x + 1][y + 1].g = gNew;
-                            cellinfo[x + 1][y + 1].h = hNew;
-                            cellinfo[x + 1][y + 1].coordinateX = x;
-                            cellinfo[x + 1][y + 1].coordinateY = y;
-                        }
-                    }
-                }
-
-                return cellinfo;
-            }
-        }
-
-    protected:
-        int m_rows = 100, m_columns = 100;
-
-    private:
-        std::vector<std::vector<Cell>> cellinfo;
+				std::vector<int> neighbours;
+				tile& currenttile = path.top(); 
 
 
-    protected:
-        //Endless hellfire of utility functions which are thrown into the trash after debugging
+				for (int index = 0; index < 4; index++) {
+					int x = currenttile.x + directions[index].x, y = currenttile.y + directions[index].y;
 
-        // Just utillity (Printing out the Path)
-        sf::Vector2f tracePath(MapGenerator& map, const sf::Vector2f& start, const sf::Vector2f& target)
-        {
-            Cell conStart(start.x / 32, start.y / 32);
-            Cell conTarget(target.x / 32, target.y / 32);
-            cellinfo = aStarSearch(map, conStart, conTarget);
+					if (x < 0 || y < 0)          { continue; }
+					if (x >= width || y >= height) { continue; }
+					if (visited[x][y] == true)   { continue; }
 
-            int x = conTarget.coordinateX;
-            int y = conTarget.coordinateY;
+					neighbours.push_back(index); 
+				}
 
-            std::vector<Cell> path;
+				if (!neighbours.empty())
+				{
+					int nextcell = neighbours[rand() % neighbours.size()];
+					std::cout << nextcell << std::endl; 
+					int x = currenttile.x, y = currenttile.y; 
+					// am switch statement erkennt man dass das nicht mein Code ist. Ein echter Jan benutzt keinen Switch!
+					switch (nextcell)
+					{
+					case North: 
+						visited[x + directions[North].x][y + directions[North].y] = true; 
+						path.push(grid[x + directions[North].x][y + directions[North].y]);
+						/*grid[x + directions[North].x][y + directions[North].y].enabled = false;
+						grid[x + directions[North].x][y + directions[North].y].box.setFillColor(sf::Color::White);*/
+						break;
+					case South:
+						visited[x + directions[South].x][y + directions[South].y] = true;
+						path.push(grid[x + directions[South].x][y + directions[South].y]);
+						grid[x + directions[South].x][y + directions[South].y].enabled = false;
+						grid[x + directions[South].x][y + directions[South].y].box.setFillColor(sf::Color::White);
+						break;
+					case West:
+						visited[x + directions[West].x][y + directions[West].y] = true;
+						path.push(grid[x + directions[West].x][y + directions[West].y]);
+						/*grid[x + directions[West].x][y + directions[West].y].enabled = false;
+						grid[x + directions[West].x][y + directions[West].y].box.setFillColor(sf::Color::White);*/
+						break;
+					case East:
+						visited[x + directions[East].x][y + directions[East].y] = true;
+						path.push(grid[x + directions[East].x][y + directions[East].y]);
+						grid[x + directions[East].x][y + directions[East].y].enabled = false; 
+						grid[x + directions[East].x][y + directions[East].y].box.setFillColor(sf::Color::White); 
+						break;
+					}
 
-            std::cout << cellinfo[x].size() << std::endl;
+					visitedCells++; 
+				}
+				else
+				{
+					
+				  path.pop();
+					
+				}
 
-            while (!(cellinfo[x][y].coordinateX == x && cellinfo[x][y].coordinateY == y)) {
-                std::cout << "Path: " << x << " " << y << std::endl;
-                path.push_back(Cell(x, y));
-                int temp_row = cellinfo[x][y].coordinateX;
-                int temp_col = cellinfo[x][y].coordinateY;
-                x = temp_row;
-                y = temp_col;
-                std::cout << "Path: " << x << " " << y << std::endl;
-            }
+			}
 
-            path.push_back(Cell(x, y));
+			
 
-            while (!cellinfo.empty()) { cellinfo.pop_back(); }
-            for (int i = 0; i < path.size(); i++) {
-                std::cout << "Path: " << path[i].coordinateX << " " << path[i].coordinateY << std::endl;
-            }
+			
+			
 
-            return sf::Vector2f(x, y);
-        }
-    };
+		}
 
-    class DFS
-    {
+	};
 
-    };
+	class BFS
+	{
+	private: 
+		std::array<sf::Vector2f, 8> directions = {sf::Vector2f(1, 0), sf::Vector2f(-1, 0), sf::Vector2f(0, 1), sf::Vector2f(0, -1),
+												 sf::Vector2f(1, -1), sf::Vector2f(-1, 1), sf::Vector2f(1, 1), sf::Vector2f(-1, -1)};
+
+	protected:
+		std::vector<sf::Vector2f> Search(sf::Vector2f start, sf::Vector2f dest, MapGenerator& map)
+		{
+			// Oft wiederholt sollte das ausbessern* 
+			start.x /= (float)map.GetTileSize().x, start.y /= (float)map.GetTileSize().y; 
+			dest.x /= (float)map.GetTileSize().x, dest.y /= (float)map.GetTileSize().y;
+
+			std::vector<sf::Vector2f> path; //path.push_back(sf::Vector2f(0, 0)); 
+			int width = map.GetMapSize().x, height = map.GetMapSize().y;
+
+			// Setup
+			if (start.x == dest.x && start.y == dest.y) {
+				return path;
+			}
+			std::vector<std::vector<bool>> visited(width, std::vector<bool>(height));
+
+			for (int i = 0; i < width; i++) {
+				for (int j = 0; j < height; j++) {
+					visited[i][j] = false;
+				}
+			}
+			std::stack<sf::Vector2f> stack;
+
+			bool reached_end = false;
+
+			stack.push(start);
+			visited[start.x][start.y] = true;
+
+			sf::Vector2f cords;
+
+
+			while (stack.size() > 0) {
+
+				cords = stack.top();
+				stack.pop();
+
+				if (cords == dest) {
+					reached_end = true;
+					break;
+				}
+
+				for (int i = 0; i < 8; i++)
+				{
+					sf::Vector2f tmp;
+					tmp.x = cords.x + directions[i].x;
+					tmp.y = cords.y + directions[i].y;
+
+					if (tmp.x < 0 or tmp.y < 0) { continue; }
+					if (tmp.x >= width or tmp.x >= height or tmp.y >= width or tmp.y >= height) { continue; }
+
+					if (visited[tmp.x][tmp.y]) { continue; }
+					if (map.p_tileMap[tmp.x][tmp.y].occupied) { continue; }
+
+					stack.push(tmp);
+					visited[tmp.x][tmp.y] = true;
+				}
+			}
+
+			return path;
+		}
+	};
+
+	class Astar
+	{
+	public:
+		void Update(std::vector<std::vector<tile>>& grid, sf::RenderWindow& window)
+		{
+			if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			{
+				for (auto& i : grid)
+				{
+					for (auto& j : i) {
+						if (j.box.getGlobalBounds().contains((sf::Vector2f)sf::Mouse::getPosition(window))) {
+							j.enabled = true; 
+							j.box.setFillColor(sf::Color::Black); 
+						}
+					}
+				}
+			}
+
+			if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+			{
+				for (auto& i : grid)
+				{
+					for (auto& j : i) {
+						if (j.box.getGlobalBounds().contains((sf::Vector2f)sf::Mouse::getPosition(window))) {
+							j.enabled = false;
+							j.box.setFillColor(sf::Color::White);
+						}
+					}
+				}
+			}
+
+			if (sf::Mouse::isButtonPressed(sf::Mouse::Middle))
+			{
+				src = dst; 
+			}
+		}
+
+		void Search(tile& A, tile& B, std::vector<std::vector<tile>>& grid, sf::RenderWindow &window)
+		{
+			src = A; dst = B; 
+			int width = grid.size(), height = grid[0].size();
+			for (int x = 0; x < width; x++) {
+				for (int y = 0; y < height; y++) {
+					window.draw(grid[x][y].box);
+				}
+			}
+
+			std::vector<std::vector<bool>> visited(width, std::vector<bool>(height, false));
+
+			std::stack<tile> open; 
+			open.push(src);
+
+			while (!open.empty())
+			{
+				tile current = open.top();
+				open.pop(); 
+
+				int x = current.x, y = current.y;
+				visited[x][y] = true; 
+
+				if (src.x == dst.x && src.y == dst.y) {
+					std::cout << "success - Manual" << std::endl;
+					reset(grid, window);
+					return;
+				}
+
+				if (current.x == dst.x && current.y == dst.y) {
+					std::cout << "success" << std::endl;
+					reset(grid, window); 
+					return; 
+				}
+
+				float minFval = FLT_MAX, minHval = FLT_MAX; 
+				tile nexttile = current; 
+
+				for (int i = 0; i < 8; i++) 
+				{
+					int xnew = x + directions[i].x, ynew = y + directions[i].y; 
+				
+					if (xnew < 0 || ynew < 0)			 { continue; }
+					if (xnew >= width || ynew >= height) { continue; }
+
+					if (visited[xnew][ynew])			 { continue; }
+					if (grid[xnew][ynew].enabled)        { continue; }
+
+					// Die Werte für H, G und F berechnen
+					grid[xnew][ynew].h = CalculateDistance(sf::Vector2i(xnew, ynew), sf::Vector2i(B.x, B.y));
+					grid[xnew][ynew].g = CalculateDistance(sf::Vector2i(xnew, ynew), sf::Vector2i(A.x, A.y));
+					grid[xnew][ynew].f = grid[xnew][ynew].g + grid[xnew][ynew].h; 
+
+					// Schlechter Code
+					if (minFval > grid[xnew][ynew].f) {
+						nexttile = grid[xnew][ynew];
+						grid[xnew][ynew].box.setFillColor(sf::Color::Yellow);
+						minHval = std::min(minHval, grid[xnew][ynew].h);
+					}
+					else if (minFval == grid[xnew][ynew].f) {
+						if (minHval > grid[xnew][ynew].h)
+						{
+							nexttile = grid[xnew][ynew];
+							grid[xnew][ynew].box.setFillColor(sf::Color::Yellow);
+						}
+					}
+					minFval = std::min(minFval, grid[xnew][ynew].f);
+					
+					open.push(nexttile); 
+
+					Update(grid, window); 
+
+					window.clear(); 
+
+					for (int x = 0; x < width; x++) {
+						for (int y = 0; y < height; y++) {
+							window.draw(grid[x][y].box);
+						}
+					}
+					window.display(); 
+
+				}
+			}
+		}
+
+		void reset(std::vector<std::vector<tile>>& grid, sf::RenderWindow& window)
+		{
+			for (auto& tiles : grid)
+			{
+				for (auto& tile : tiles) {
+					tile.IsInOpenList = false;
+				}
+			}
+			mg.GenerateMaze(grid); 
+			int width = grid.size(), height = grid[0].size(); 
+
+			sf::Vector2f start((int)(width * (rand() / (RAND_MAX + 1.0))),(int)(height * (rand() / (RAND_MAX + 1.0))));
+			sf::Vector2f dest((int)(width * (rand() / (RAND_MAX + 1.0))), (int)(height * (rand() / (RAND_MAX + 1.0))));
+
+			src.x = start.x, src.y = start.y; 
+			dst.x = dest.x, dst.y = dest.y;
+
+			grid[(int)start.x][(int)start.y].box.setFillColor(sf::Color::Green);
+			grid[(int)dest.x][(int)dest.y].box.setFillColor(sf::Color::Red);
+
+			grid[(int)start.x][(int)start.y].enabled = true; 
+			grid[(int)dest.x][(int)dest.y].enabled = false;
+
+			Search(src, dst, grid, window); 
+		}
+
+	private:
+		float CalculateDistance(sf::Vector2i src, sf::Vector2i dst)
+		{
+			float a = abs(dst.x - src.x);
+			float b = abs(dst.y - src.y);
+
+			return (float)sqrt(a * a + b * b);
+		}
+		
+	private:
+		tile src, dst; 
+
+		MazeGenaration mg; 
+
+		std::vector<sf::Vector2i> directions = { sf::Vector2i(1, 0), sf::Vector2i(-1, 0), sf::Vector2i(0, 1), sf::Vector2i(0, -1),
+												 sf::Vector2i(1, -1), sf::Vector2i(-1, 1), sf::Vector2i(1, 1), sf::Vector2i(-1, -1) }; 
+	};
+
+	
 }
 

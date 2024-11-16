@@ -51,7 +51,7 @@ void Gun::Update(const float &dt, const sf::Vector2f &player_position, const sf:
 		sf::Vector2f bulletDirection = m_bullets[i].target.getPosition() - m_bullets[i].body.getPosition();
 		bulletDirection = Normalize(bulletDirection);
 
-		m_bullets[i].body.setPosition(m_bullets[i].body.getPosition() + bulletDirection * m_bullets[i].speed);
+		m_bullets[i].body.setPosition(m_bullets[i].body.getPosition() + bulletDirection * m_bullets[i].speed * dt);
 	}
 
 

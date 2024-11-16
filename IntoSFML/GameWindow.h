@@ -62,7 +62,6 @@ public:
         this->m_tilesheet = "../Assets/World/NumsVer3.png";
         this->m_tilesize.x = 32;
         this->m_tilesize.y = 32;
-        this->m_dt = 16;
 
         this->m_cursor.setTexture(m_textures.Get(Textures::ID::Cursor));
     }
@@ -89,7 +88,7 @@ public:
     void InitViewer()
     {
         sf::Vector2f startingPosition(0, 0);
-        float speed = 0.125 / 20;
+        float speed = 100;
         float zoom = 1;
 
         this->m_gameview.Initialize(startingPosition, speed, zoom);
@@ -104,10 +103,15 @@ public:
     
     int GameLoop()
     {
+        sf::Clock time; 
         while (m_window.isOpen())
         {
             // Calculate DeltaTime
-            m_dt = 16;
+            m_dt = time.getElapsedTime().asMilliseconds(); 
+            if (m_dt != 0) {
+                time.restart();
+            }
+             
 
             // Process events
             sf::Event event;
@@ -148,6 +152,8 @@ public:
 
 
             m_window.display();
+
+            sf::sleep(sf::microseconds(1));
         }
 
         return EXIT_SUCCESS;

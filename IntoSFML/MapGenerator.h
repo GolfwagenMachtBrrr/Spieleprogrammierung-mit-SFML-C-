@@ -86,9 +86,14 @@ public:
 		}
 	}
 
-	const sf::Vector2u GetTileSize()
+	sf::Vector2u GetTileSize() const
 	{
 		return m_tileSize; 
+	}
+
+	sf::Vector2f GetMapSize() const
+	{
+		return sf::Vector2f(m_width, m_height);
 	}
 
 public:
