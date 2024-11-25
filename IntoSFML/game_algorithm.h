@@ -52,42 +52,42 @@ namespace Algorithms
 			grid[(int)start.x][(int)start.y].enabled = false;
 			grid[(int)start.x][(int)start.y].box.setFillColor(sf::Color::White);
 
-			std::vector<sf::Vector2i> directions = {sf::Vector2i(0,-1), sf::Vector2i(0,1), sf::Vector2i(-1, 0), sf::Vector2i(1,0)};
-			
+			std::vector<sf::Vector2i> directions = { sf::Vector2i(0,-1), sf::Vector2i(0,1), sf::Vector2i(-1, 0), sf::Vector2i(1,0) };
+
 			std::vector<std::vector<bool>> visited(width, std::vector<bool>(height, false));
-			std::stack<tile> path; 
-		
-			path.push(grid[start.x][start.y]); 
+			std::stack<tile> path;
+
+			path.push(grid[start.x][start.y]);
 			int visitedCells = 0;
 			while (visitedCells < width * height) {
 
 				std::vector<int> neighbours;
-				tile& currenttile = path.top(); 
+				tile& currenttile = path.top();
 
 
 				for (int index = 0; index < 4; index++) {
 					int x = currenttile.x + directions[index].x, y = currenttile.y + directions[index].y;
 
-					if (x < 0 || y < 0)          { continue; }
+					if (x < 0 || y < 0) { continue; }
 					if (x >= width || y >= height) { continue; }
-					if (visited[x][y] == true)   { continue; }
+					if (visited[x][y] == true) { continue; }
 
-					neighbours.push_back(index); 
+					neighbours.push_back(index);
 				}
 
 				if (!neighbours.empty())
 				{
 					int nextcell = neighbours[rand() % neighbours.size()];
-					std::cout << nextcell << std::endl; 
-					int x = currenttile.x, y = currenttile.y; 
+					std::cout << nextcell << std::endl;
+					int x = currenttile.x, y = currenttile.y;
 					// am switch statement erkennt man dass das nicht mein Code ist. Ein echter Jan benutzt keinen Switch!
 					switch (nextcell)
 					{
-					case North: 
-						visited[x + directions[North].x][y + directions[North].y] = true; 
+					case North:
+						visited[x + directions[North].x][y + directions[North].y] = true;
 						path.push(grid[x + directions[North].x][y + directions[North].y]);
-						/*grid[x + directions[North].x][y + directions[North].y].enabled = false;
-						grid[x + directions[North].x][y + directions[North].y].box.setFillColor(sf::Color::White);*/
+						grid[x + directions[North].x][y + directions[North].y].enabled = false;
+						grid[x + directions[North].x][y + directions[North].y].box.setFillColor(sf::Color::White);
 						break;
 					case South:
 						visited[x + directions[South].x][y + directions[South].y] = true;
@@ -98,35 +98,28 @@ namespace Algorithms
 					case West:
 						visited[x + directions[West].x][y + directions[West].y] = true;
 						path.push(grid[x + directions[West].x][y + directions[West].y]);
-						/*grid[x + directions[West].x][y + directions[West].y].enabled = false;
-						grid[x + directions[West].x][y + directions[West].y].box.setFillColor(sf::Color::White);*/
+						grid[x + directions[West].x][y + directions[West].y].enabled = false;
+						grid[x + directions[West].x][y + directions[West].y].box.setFillColor(sf::Color::White);
 						break;
 					case East:
 						visited[x + directions[East].x][y + directions[East].y] = true;
 						path.push(grid[x + directions[East].x][y + directions[East].y]);
-						grid[x + directions[East].x][y + directions[East].y].enabled = false; 
-						grid[x + directions[East].x][y + directions[East].y].box.setFillColor(sf::Color::White); 
+						grid[x + directions[East].x][y + directions[East].y].enabled = false;
+						grid[x + directions[East].x][y + directions[East].y].box.setFillColor(sf::Color::White);
 						break;
 					}
 
-					visitedCells++; 
+					visitedCells++;
 				}
 				else
 				{
-					
-				  path.pop();
-					
+
+					path.pop();
+
 				}
 
 			}
-
-			
-
-			
-			
-
 		}
-
 	};
 
 	class BFS

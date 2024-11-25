@@ -16,32 +16,32 @@
 //https://www.sfml-dev.org/tutorials/2.6/graphics-view.php
 
 
-int main()
+void test_astar_with_labyrinth()
 {
-    sf::RenderWindow window(sf::VideoMode(1920, 1080), "Pathfinding"); 
+    sf::RenderWindow window(sf::VideoMode(1920, 1080), "Pathfinding");
 
-    const int width = 1920/16, height = 1080/16; 
-    
+    const int width = 1920 / 16, height = 1080 / 16;
+
     std::vector<std::vector<Algorithms::tile>> grid;
 
     for (int x = 0; x < width; x++) {
-        std::vector<Algorithms::tile> tiles; 
+        std::vector<Algorithms::tile> tiles;
         for (int y = 0; y < height; y++)
         {
-            Algorithms::tile cell; 
+            Algorithms::tile cell;
 
             cell.enabled = false;
             cell.x = x;
             cell.y = y;
 
-            cell.box = sf::RectangleShape(sf::Vector2f(16,16));
+            cell.box = sf::RectangleShape(sf::Vector2f(16, 16));
 
             cell.box.setFillColor(sf::Color::White);
             cell.box.setOutlineColor(sf::Color::Black);
             cell.box.setOutlineThickness(1);
-            cell.box.setPosition(sf::Vector2f(cell.x*16, cell.y*16)); 
-            
-            tiles.push_back(cell); 
+            cell.box.setPosition(sf::Vector2f(cell.x * 16, cell.y * 16));
+
+            tiles.push_back(cell);
         }
         grid.push_back(tiles);
     }
@@ -52,7 +52,7 @@ int main()
     grid[(int)start.x][(int)start.y].box.setFillColor(sf::Color::Green);
     grid[(int)dest.x][(int)dest.y].box.setFillColor(sf::Color::Red);
 
-    Algorithms::Astar astar; 
+    Algorithms::Astar astar;
 
     while (window.isOpen())
     {
@@ -65,12 +65,19 @@ int main()
                 window.close();
         }
 
-        astar.Search(grid[(int)start.x][(int)start.y], grid[(int)dest.x][(int)dest.y], grid, window); 
-    
+        astar.Search(grid[(int)start.x][(int)start.y], grid[(int)dest.x][(int)dest.y], grid, window);
+
         window.display();
-   
+
         sf::sleep(sf::microseconds(1));
     }
 
+}
+
+int main()
+{
+    MenuWindow mw; 
+    GameWindow gw; 
+    gw.Start(1); 
     return 0;
 }

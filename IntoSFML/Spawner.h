@@ -115,7 +115,7 @@ private:
 		switch (type)
 		{
 		case Textures::ID::Zombie:
-			m_spawn[m_stack.size()-1].Initialize(0.125/15, 10, 100, wp, sf::Color::White, m_enemycount); //stats sollen aus zombie.txt gelesen werden
+			m_spawn[m_stack.size()-1].Initialize(0.125/2, 10, 100, wp, sf::Color::White, m_enemycount); //stats sollen aus zombie.txt gelesen werden
 			break;
 		case Textures::ID::Skeleton:
 			break;

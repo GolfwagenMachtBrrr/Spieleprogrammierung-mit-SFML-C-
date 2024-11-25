@@ -25,7 +25,7 @@ class Player
 public: 
 
 	Player() 
-		: m_speed(0.125/10), p_health(100)
+		: m_speed(0.125), p_health(100)
 	{}
 
 	void Initalize(TextureHolder& textures)
