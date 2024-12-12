@@ -28,8 +28,7 @@ bool AABB(sf::FloatRect a, sf::FloatRect b)
 	return false;
 }
 
-void Gun::Update(const float &dt, const sf::Vector2f &player_position, const sf::Vector2f& mouse_position,
-				 std::vector<Spawner> & spawners)
+void Gun::Update(const float &dt, const sf::Vector2f &player_position, const sf::Vector2f& mouse_position, MapManager &mapm)
 {
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
@@ -59,17 +58,35 @@ void Gun::Update(const float &dt, const sf::Vector2f &player_position, const sf:
 	{
 		// Spawner
 		bool CollisionDetected = false; 
-		for (auto& spawner : spawners)
+		for (auto& spawner : mapm.p_spawners)
 		{
 			if (!CollisionDetected) {
 
-				if (AABB(m_bullets[i].body.getGlobalBounds(), spawner.p_hitbox.getGlobalBounds())) {
+				// Spawner Itself
+				if (AABB(m_bullets[i].body.getGlobalBounds(), spawner->p_hitbox.getGlobalBounds())) {
 					CollisionDetected = true;
-					spawner.p_health -= m_bullets[i].damage;
+					spawner->p_health -= m_bullets[i].damage;
 					m_bullets.erase(m_bullets.begin() + i);
 					break;
 				}
-				if (spawner.CheckNPCCollisions(m_bullets[i].body.getGlobalBounds(), m_bullets[i].damage)) {
+				// Spawn of Spawner
+				if (spawner->CheckNPCCollisions(m_bullets[i].body.getGlobalBounds(), m_bullets[i].damage)) {
+					std::cout << CollisionDetected << std::endl; 
+					CollisionDetected = true;
+					m_bullets.erase(m_bullets.begin() + i);
+					break;
+				}
+
+
+			}
+			
+		}
+		// Entities
+		for (auto& spawner : mapm.p_entities)
+		{
+			if (!CollisionDetected) {
+
+				if (AABB(m_bullets[i].body.getGlobalBounds(), spawner->p_hitbox.getGlobalBounds())) {
 					CollisionDetected = true;
 					m_bullets.erase(m_bullets.begin() + i);
 					break;
@@ -77,13 +94,15 @@ void Gun::Update(const float &dt, const sf::Vector2f &player_position, const sf:
 			}
 			
 		}
+
+		// No Collision detected
 		if (!CollisionDetected) {
 			if (AABB(m_bullets[i].body.getGlobalBounds(), m_bullets[i].target.getGlobalBounds())) {
 				m_bullets.erase(m_bullets.begin() + i);
 			}
 		}
-		
-		
+
+
 	}
 
 }

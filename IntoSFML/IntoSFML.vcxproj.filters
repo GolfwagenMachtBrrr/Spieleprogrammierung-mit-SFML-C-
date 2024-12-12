@@ -161,6 +161,12 @@
     <ClInclude Include="game_algorithm.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionManager.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Zombie.txt" />

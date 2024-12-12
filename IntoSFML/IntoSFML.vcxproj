@@ -158,10 +158,12 @@
     <ClInclude Include="Bioms.h" />
     <ClInclude Include="BiomSetter.h" />
     <ClInclude Include="Bullet.h" />
+    <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemyManager.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="EventHandler.h" />
+    <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameWindow.h" />
     <ClInclude Include="game_algorithm.h" />
     <ClInclude Include="Gun.h" />

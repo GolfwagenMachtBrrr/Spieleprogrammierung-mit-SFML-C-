@@ -7,25 +7,22 @@
 #include "Enemy.h"
 #include "Player.h"
 #include "ResourceHolder.h"
+#include "CollisionManager.h"
 
  // https://www.geeksforgeeks.org/rand-and-srand-in-ccpp/ -> random number between upper&lower bound
 // https://www.sfml-dev.org/tutorials/2.6/graphics-text.php
-
-
-
 
 typedef ResourceHolder<sf::Texture, Textures::ID> TextureHolder;
 
 class Spawner
 {
 
-
 public:
 
 	Spawner()
 	{}
 
-	void Initialize(const sf::Vector2f &position, std::vector<Textures::ID> &spawntypes, const TextureHolder& textures)
+	void Initialize(const sf::Vector2f &position, std::vector<Textures::ID> &spawntypes, const TextureHolder& textures, CollisionManager &collisionmanager)
 	{
 		m_sprite.setTexture(textures.Get(Textures::ID::Spawner)); 
 		m_sprite.setPosition(position);
@@ -36,9 +33,17 @@ public:
 
 		p_hitbox.setPosition(position);
 		p_hitbox.setSize((sf::Vector2f)textures.Get(Textures::ID::Spawner).getSize());
+		p_hitbox.setOutlineColor(sf::Color::Red);
+		p_hitbox.setOutlineThickness(1);
+		p_hitbox.setFillColor(sf::Color::Transparent);
 
 		m_stack = spawntypes; 
-		for (int i = 0; i < spawntypes.size(); i++) { Enemy enemy(textures, spawntypes[i]); m_spawn.push_back(enemy); }
+		for (int i = 0; i < spawntypes.size(); i++) 
+		{ 
+			Enemy* enemy = new Enemy(textures, spawntypes[i]);
+			collisionmanager.addObject(enemy); 
+			m_spawn.push_back(enemy); 
+		}
 	}
 	void Update(const int &deltatime, Player &player, MapGenerator &map)
 	{
@@ -59,7 +64,7 @@ public:
 		
 		for (auto& spawn : m_spawn)
 		{
-			spawn.Update(deltatime, player, map);
+			spawn->Update(deltatime, player, map);
 		}
 		
 	}
@@ -73,8 +78,8 @@ public:
 
 		for (auto& enemy : m_spawn)
 		{
-			if (enemy.p_isActive) {
-				enemy.Draw(window);
+			if (enemy->p_isActive) {
+				enemy->Draw(window);
 			}
 		}
 	}
@@ -88,8 +93,8 @@ public:
 	{
 		bool bodyHit = false; 
 		for (auto &spawn : m_spawn) {
-			if (CollisionCheck(rect, spawn.p_hitbox.getGlobalBounds())) {
-				spawn.p_health -= damage; 
+			if (CollisionCheck(rect, spawn->p_hitbox.getGlobalBounds())) {
+				spawn->p_health -= damage; 
 				bodyHit = true; 
 			}
 		}
@@ -115,7 +120,7 @@ private:
 		switch (type)
 		{
 		case Textures::ID::Zombie:
-			m_spawn[m_stack.size()-1].Initialize(0.125/2, 10, 100, wp, sf::Color::White, m_enemycount); //stats sollen aus zombie.txt gelesen werden
+			m_spawn[m_stack.size()-1]->Initialize(0.125/2, 10, 100, wp, sf::Color::White, m_enemycount); //stats sollen aus zombie.txt gelesen werden
 			break;
 		case Textures::ID::Skeleton:
 			break;
@@ -128,10 +133,11 @@ private:
 		m_stack.pop_back();
 	}
 	void KillNPC(const int &NPC_index);
+
 	void KillAllNPCs()
 	{
 		while (!m_spawn.empty()) {
-			m_spawn.pop_back(); 
+			m_spawn.pop_back();
 		}
 	}
 
@@ -149,8 +155,6 @@ private:
 		nPosition.x = std::abs(nPosX); 
 		nPosition.y = std::abs(nPosY); 
 
-		//std::cout << nPosition.x << " " << nPosition.y << std::endl; 
-
 		return nPosition;
 	}
 
@@ -165,20 +169,6 @@ private:
 		return false; 
 	}
 
-	bool IsOverlapping(const sf::Vector2f &position)
-	{
-		for (auto& enemy : m_spawn)
-		{
-			if (position.x > enemy.GetPosition().x + enemy.p_deflectionRadius,
-				position.x < enemy.GetPosition().x - enemy.p_deflectionRadius,
-				position.y > enemy.GetPosition().y + enemy.p_deflectionRadius,
-				position.y < enemy.GetPosition().y - enemy.p_deflectionRadius)
-			{
-				return false; 
-			}
-		}
-		return true; 
-	}
 
 	bool CollisionCheck(const sf::FloatRect& a, const sf::FloatRect& b)
 	{
@@ -212,12 +202,10 @@ private:
 	sf::Vector2f m_position; 
 
 private:
-
-	std::vector<Textures::ID>    m_stack; 
-	std::vector<Enemy>		  m_spawn; 
-
+	std::vector<Textures::ID> m_stack; 
 public:
 
+	std::vector<Enemy*> m_spawn;
 	Textures::ID	   p_type;
 	int				   p_health = 100;
 	bool			   p_isActive = true;

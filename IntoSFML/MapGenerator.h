@@ -42,7 +42,7 @@ public:
 				int index = j + i * m_height;
 				int biome = m_biomeSetter.GetBiome(m_noise.GetBiomValues(index));
  
-				sf::IntRect texRect(m_tileSize.x * (biome + 5), m_tileSize.y * (biome + 5), m_tileSize.x, m_tileSize.y);
+				sf::IntRect texRect(m_tileSize.x * (biome + 5), m_tileSize.y * (biome + 10), m_tileSize.x, m_tileSize.y);
 				sf::Vector2f tilePos(m_tileSize.x * i, m_tileSize.y * j);
 
 				Tile tile(index, biome, &texRect, m_tilesprite, tilePos);

@@ -5,6 +5,7 @@
 #include "Player.h"
 #include "MapGenerator.h"
 #include "game_algorithm.h"
+#include "GameObject.h"
 
 #include <string>
 #include <iostream>
@@ -19,7 +20,7 @@
 
 typedef ResourceHolder<sf::Texture, Textures::ID> TextureHolder;
 
-class Enemy
+class Enemy : public GameObject
 {
 public:
 
@@ -58,6 +59,9 @@ public:
 
 	void Update(const float& dt, Player &player, MapGenerator &map)
 	{
+		if (!p_health) {
+			return; 
+		}
 		m_text.setString(std::to_string(p_health)); 
 		m_text.setPosition(m_position); 
 
@@ -67,6 +71,7 @@ public:
 
 		if (this->AttackTimeoutPassed())
 		{
+			// doesnt work for some reason
 			if (CollisionCheck(player.p_hitbox.getGlobalBounds(), p_hitbox.getGlobalBounds())) {
 				player.p_health -= p_damage; 
 				std::cout << player.p_health << std::endl; 
@@ -81,7 +86,7 @@ public:
 			return; 
 		}
 		window.draw(m_bodysprite);
-		//window.draw(p_hitbox);
+		window.draw(p_hitbox);
 		window.draw(m_text);
 	}
 
@@ -90,6 +95,16 @@ public:
 	sf::Vector2f GetPosition() const
 	{
 		return this->m_position; 
+	}
+
+	sf::FloatRect GetBoundingBox() const override
+	{
+		return p_hitbox.getGlobalBounds();
+	}
+
+	void OnCollision(GameObject& other) override
+	{
+		std::cout << "Iam colldiding" << std::endl;
 	}
 
 private:
@@ -155,19 +170,17 @@ private:
 		}
 
 		if (!YouShallPass(hypotheticalPosition, map)) {
-			// dont do it Jan
 			int r = rand() % 10;
-			if (r < 5) {
+			if (r < 0) {
 				direction = sf::Vector2f(0, 0); 
 			}
 			else {
 				direction.x *= -1; 
 				direction.y *= -1; 
 			}
-
 			hypotheticalPosition = m_position + direction * dt * m_speed;
 		}
-		
+
 
 		AdjustTileMap(map, hypotheticalPosition); 
 		this->m_bodysprite.setPosition(hypotheticalPosition);
@@ -252,9 +265,9 @@ private:
 		}
 
 		if (map.p_tileMap[x][y].occupied == false || map.p_tileMap[x][y].occupierID == p_ID) {
-			//std::cout << map.p_tileMap[x][y].occupied << std::endl; 
 			return true;
 		}
+
 		return false;
 	}
 		
@@ -265,7 +278,7 @@ private:
 		int startY = calculatedposition.y / tilesize.y, endY = GetTextureSize(m_type).y / tilesize.y;
 		int oldX = m_position.x / tilesize.x, oldY = m_position.y / tilesize.y;
 
-		int rangeX = 1, rangeY = 1; 
+		int rangeX = 0, rangeY = 0; 
 		if (startY <=0 || endY >= 100) {
 			rangeY = 0; 
 		}
@@ -276,18 +289,26 @@ private:
 		for (int i = oldX - rangeX; i < oldX + endX + rangeX; i++) {
 			for (int j = oldY - rangeY; j < oldY + endY + rangeY; j++)
 			{
-				map.p_tileMap[i][j].occupied = false;
-				map.p_tileMap[i][j].occupationID = Textures::ID::Undefined;
-				map.p_tileMap[i][j].occupierID = -1;
+				if (map.p_tileMap[i][j].occupationID == m_type) {
+					map.p_tileMap[i][j].occupied = false;
+					map.p_tileMap[i][j].occupationID = Textures::ID::Undefined;
+					map.p_tileMap[i][j].occupierID = -1;
+					map.p_tileMap[i][j].tile_sprite.setColor(sf::Color::Magenta);
+				}
+				
 			}
 		}
 
 		for (int i = startX - rangeX; i < startX + endX + rangeX; i++) {
 			for (int j = startY - rangeY; j < startY + endY + rangeY; j++)
 			{
-				map.p_tileMap[i][j].occupied	 = true;
-				map.p_tileMap[i][j].occupationID = m_type;
-				map.p_tileMap[i][j].occupierID	 = p_ID; 
+				if (!map.p_tileMap[i][j].occupied) {
+					map.p_tileMap[i][j].occupied = true;
+					map.p_tileMap[i][j].occupationID = m_type;
+					map.p_tileMap[i][j].occupierID = p_ID;
+					map.p_tileMap[i][j].tile_sprite.setColor(sf::Color::Yellow); 
+				}
+
 			}
 		}
 	}

@@ -15,6 +15,7 @@
 #include "EnemyManager.h"
 #include "Spawner.h"
 #include "MapManager.h"
+#include "CollisionManager.h"
 
 
 #include <iostream>
@@ -60,8 +61,8 @@ public:
     void IntitOtherValues()
     {
         this->m_tilesheet = "../Assets/World/NumsVer3.png";
-        this->m_tilesize.x = 32;
-        this->m_tilesize.y = 32;
+        this->m_tilesize.x = 16;
+        this->m_tilesize.y = 16;
 
         this->m_cursor.setTexture(m_textures.Get(Textures::ID::Cursor));
     }
@@ -81,8 +82,8 @@ public:
 
         this->m_map.Initialize(m_tilesize, m_textures, width, height);
         this->m_map.Generate();
-        this->m_mapM.Initialize(m_textures, m_map); 
-
+        this->m_mapM.Initialize(m_textures, m_map, m_collisionmanager); 
+        
     }
 
     void InitViewer()
@@ -97,8 +98,6 @@ public:
     void InitPlayer()
     {
         this->m_player.Initalize(m_textures);
-       
-       
     }
     
     int GameLoop()
@@ -127,25 +126,27 @@ public:
             sf::Vector2f ConvertedPosition2 = m_window.mapPixelToCoords(cursorPosition);
 
             m_window.clear();
-
             this->m_cursor.setPosition(ConvertedPosition2);
 
-            this->m_playergun.Update(m_dt, m_player.GetPosition(), ConvertedPosition1, m_spawners);
+            // Updates
             this->m_player.Update(m_dt, m_window, m_map);
+            this->m_mapM.Update(m_dt, m_player, m_map);
+            this->m_playergun.Update(m_dt, m_player.GetPosition(), ConvertedPosition1, m_mapM);
             this->m_inventory.Update(m_cursor.getPosition());
             this->m_gameview.Update(m_dt);
-            this->m_mapM.Update(m_dt, m_player, m_map);
+            this->m_collisionmanager.checkCollisions(); 
+          
 
             this->m_gameview.setViewCenter(m_player.GetPosition());
             this->m_window.setView(m_gameview.GetView());
 
-
+            // Draws
             this->m_map.Draw(m_window, m_gameview);
             this->m_mapM.Draw(m_window);
             this->m_player.Draw(m_window);
             this->m_playergun.Draw(m_window);
 
-
+            // Changing Views
             this->m_window.setView(m_inventory.p_view);
             this->m_window.draw(m_cursor);
             this->m_inventory.Draw(m_window);
@@ -162,11 +163,13 @@ public:
 
 private:
     sf::RenderWindow m_window;
-    std::string m_tilesheet;
-    sf::Vector2u m_tilesize;
+    std::string      m_tilesheet;
+    sf::Vector2u     m_tilesize;
 
-    MapGenerator m_map;
-    MapManager   m_mapM; 
+    TextureHolder    m_textures;
+    CollisionManager m_collisionmanager; 
+    MapGenerator     m_map;
+    MapManager       m_mapM; 
 
     Viewer m_gameview;
     Inventory m_inventory; 
@@ -174,12 +177,9 @@ private:
     Player m_player; 
     Gun m_playergun; 
 
-    std::vector<Spawner>       m_spawners; 
-
-    TextureHolder m_textures;
+   
 
     sf::Sprite m_cursor; 
-
     float m_dt;
 };
 

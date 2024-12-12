@@ -1,19 +1,26 @@
 #pragma once
 #include "SFML/Graphics.hpp"
 #include "ResourceHolder.h"
+#include "GameObject.h"
 
-class Entity
+#include <iostream>
+
+class Entity : public GameObject
 {
 public: 
 	Entity()
 	{
 	}
 
-	Entity(const TextureHolder& textures, Textures::ID ID, const sf::Vector2f &size, const sf::Vector2f& position)
+	Entity(const TextureHolder& textures, 
+		   const Textures::ID ID,
+		   const sf::Vector2f &size, 
+		   const sf::Vector2f& position)
 		: m_sprite(textures.Get(ID)), m_size(size), p_position(position)
 	{
 		this->p_hitbox.setPosition(position);
 		this->p_hitbox.setSize(size);
+
 	}
 
 	void Update()
@@ -27,6 +34,15 @@ public:
 		window.draw(m_sprite); 
 	}
 
+	sf::FloatRect GetBoundingBox() const override
+	{
+		return p_hitbox.getGlobalBounds(); 
+	}
+
+	void OnCollision(GameObject& other) override
+	{
+		std::cout << "Iam colldiding" << std::endl; 
+	}
 
 public:
 

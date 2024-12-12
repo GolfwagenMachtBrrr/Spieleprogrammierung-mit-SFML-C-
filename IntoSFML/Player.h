@@ -118,14 +118,16 @@ private:
 	}
 
 	bool YouShallPass(const sf::Vector2f& reisepass, MapGenerator &map) {
-		int x = reisepass.x / map.GetTileSize().x, y = reisepass.y / map.GetTileSize().y; 
-		if (map.p_tileMap[x][y].occupied != true || IsEnemy(map, x,y)) {
+		float x = reisepass.x / map.GetTileSize().x, y = reisepass.y / map.GetTileSize().y;
+		std::cout << x << " " << y << std::endl; 
+		if (map.p_tileMap[x][y].occupied == false || IsEnemy(map, x,y)) {
 			return true; 
 		}
+		std::cout << "Is occupied" << std::endl;
 		return false; 
 	}
 
-	bool IsEnemy(MapGenerator& map, const int& x, const int& y) {
+	bool IsEnemy(MapGenerator& map, int x, int y) {
 		Textures::ID type = map.p_tileMap[x][y].occupationID; 
 		switch (type)
 		{
