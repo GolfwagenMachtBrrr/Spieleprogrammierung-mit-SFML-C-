@@ -4,6 +4,7 @@
 #include "Spawner.h"
 #include "MapManager.h"
 #include <vector>
+#include "CollisionManager.h"
 
 class Gun
 {
@@ -18,7 +19,7 @@ public:
 
 	Gun(){}
 
-	void Update(const float& dt, const sf::Vector2f& player_position, const sf::Vector2f& mouse_position, MapManager& mapm);
+	void Update(const float& dt, const sf::Vector2f& player_position, const sf::Vector2f& mouse_position, MapManager& mapm, CollisionManager &collisionmanager);
 	void Draw(sf::RenderWindow& window); 
 
 private:
@@ -26,7 +27,7 @@ private:
 	const bool GetAttackTimer(); 
 	
 private: 
-	std::vector<Bullet> m_bullets; 
+	std::vector<Bullet*> m_bullets; 
 
 	sf::Clock m_attacktimer; 
 	sf::Int32 m_attacktimermax = 300; 

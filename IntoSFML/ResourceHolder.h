@@ -14,11 +14,13 @@ namespace Textures
 		Skeleton,
 		Grass,
 		Zombie,
-		Wand, 
+		Wand,
+		Wand_bullet,
 		Sword,
 		House,
 		Bandit,
 	};
+
 
 }
 

@@ -19,6 +19,20 @@ public:
         }
     }
 
+    void checkCollisions(GameObject* self, const sf::FloatRect &hypobox) {
+        for (int i = 0; i < m_objects.size(); i++)
+        {
+            if (i == self->objectID-1) {
+                continue;
+            }
+
+            if (hypobox.intersects(m_objects[i]->GetBoundingBox())) {
+
+            }
+
+        }
+    }
+
     void addObject(GameObject* obj) {
         obj->objectID = m_objects.size(); 
         m_objects.push_back(obj);

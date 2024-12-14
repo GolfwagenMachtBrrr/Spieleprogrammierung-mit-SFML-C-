@@ -45,7 +45,7 @@ public:
 
     void InitTextures()
     {
-        std::string SYSTEMPATH = "C:/Users/JanSa/OneDrive/Desktop/Programmieren/Projekte/ProcMapGen/ProcGen/";
+        std::string SYSTEMPATH = "C:/Users/JanSa/source/repos/tmpGameRepo/";
         m_textures.Load(Textures::ID::Spawner,   SYSTEMPATH + "Assets/AssetPack/Pixel Art Top Down - Basic/Texture/Statue.png");
         m_textures.Load(Textures::ID::Cursor,    SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/UI/Pointers/01.png"); 
         m_textures.Load(Textures::ID::Skeleton,  SYSTEMPATH + "Assets/Player/Textures/skeletonsprite.png");
@@ -131,7 +131,7 @@ public:
             // Updates
             this->m_player.Update(m_dt, m_window, m_map);
             this->m_mapM.Update(m_dt, m_player, m_map);
-            this->m_playergun.Update(m_dt, m_player.GetPosition(), ConvertedPosition1, m_mapM);
+            this->m_playergun.Update(m_dt, m_player.GetPosition(), ConvertedPosition1, m_mapM, m_collisionmanager);
             this->m_inventory.Update(m_cursor.getPosition());
             this->m_gameview.Update(m_dt);
             this->m_collisionmanager.checkCollisions(); 

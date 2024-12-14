@@ -28,17 +28,19 @@ bool AABB(sf::FloatRect a, sf::FloatRect b)
 	return false;
 }
 
-void Gun::Update(const float &dt, const sf::Vector2f &player_position, const sf::Vector2f& mouse_position, MapManager &mapm)
+void Gun::Update(const float &dt, const sf::Vector2f &player_position, const sf::Vector2f& mouse_position, MapManager &mapm, CollisionManager& collisionmanager)
 {
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
 		
 		if (this->GetAttackTimer())
 		{
-			Bullet bullet(10, 0.5);
-			bullet.body.setSize(sf::Vector2f(5, 2.5));
-			bullet.body.setPosition(player_position);
+			Bullet* bullet = new Bullet(10, 0.5, Textures::ID::Wand_bullet);
+			bullet->body.setSize(sf::Vector2f(5, 2.5));
+			bullet->body.setPosition(player_position);
+			bullet->objectType = bullet->type; 
 			m_bullets.push_back(bullet);
+			collisionmanager.addObject(bullet);
 
 			CreateBulletTarget(m_bullets.size() - 1, mouse_position);
 		}
@@ -47,62 +49,24 @@ void Gun::Update(const float &dt, const sf::Vector2f &player_position, const sf:
 
 	for (int i = 0; i < m_bullets.size(); i++)
 	{
-		sf::Vector2f bulletDirection = m_bullets[i].target.getPosition() - m_bullets[i].body.getPosition();
+		sf::Vector2f bulletDirection = m_bullets[i]->target.getPosition() - m_bullets[i]->body.getPosition();
 		bulletDirection = Normalize(bulletDirection);
 
-		m_bullets[i].body.setPosition(m_bullets[i].body.getPosition() + bulletDirection * m_bullets[i].speed * dt);
+		m_bullets[i]->body.setPosition(m_bullets[i]->body.getPosition() + bulletDirection * m_bullets[i]->speed * dt);
 	}
 
 
 	for (size_t i = 0; i < m_bullets.size(); i++)
 	{
-		// Spawner
-		bool CollisionDetected = false; 
-		for (auto& spawner : mapm.p_spawners)
-		{
-			if (!CollisionDetected) {
-
-				// Spawner Itself
-				if (AABB(m_bullets[i].body.getGlobalBounds(), spawner->p_hitbox.getGlobalBounds())) {
-					CollisionDetected = true;
-					spawner->p_health -= m_bullets[i].damage;
-					m_bullets.erase(m_bullets.begin() + i);
-					break;
-				}
-				// Spawn of Spawner
-				if (spawner->CheckNPCCollisions(m_bullets[i].body.getGlobalBounds(), m_bullets[i].damage)) {
-					std::cout << CollisionDetected << std::endl; 
-					CollisionDetected = true;
-					m_bullets.erase(m_bullets.begin() + i);
-					break;
-				}
-
-
-			}
-			
+		bool erased = false; 
+		if (m_bullets[i]->target_reached) {
+			m_bullets.erase(m_bullets.begin() + i);
+			erased = true;
+			break; 
 		}
-		// Entities
-		for (auto& spawner : mapm.p_entities)
-		{
-			if (!CollisionDetected) {
-
-				if (AABB(m_bullets[i].body.getGlobalBounds(), spawner->p_hitbox.getGlobalBounds())) {
-					CollisionDetected = true;
-					m_bullets.erase(m_bullets.begin() + i);
-					break;
-				}
-			}
-			
+		if (m_bullets[i]->GetBoundingBox().intersects(m_bullets[i]->target.getGlobalBounds())) {
+			m_bullets.erase(m_bullets.begin() + i);
 		}
-
-		// No Collision detected
-		if (!CollisionDetected) {
-			if (AABB(m_bullets[i].body.getGlobalBounds(), m_bullets[i].target.getGlobalBounds())) {
-				m_bullets.erase(m_bullets.begin() + i);
-			}
-		}
-
-
 	}
 
 }
@@ -115,7 +79,7 @@ void Gun::CreateBulletTarget(const int& index, const sf::Vector2f& mousePos)
 	boundingRect.setOutlineColor(sf::Color::Blue);
 	boundingRect.setOutlineThickness(1);
 	boundingRect.setPosition(sf::Vector2f(mousePos.x, mousePos.y));
-	this->m_bullets[index].target = boundingRect;
+	this->m_bullets[index]->target = boundingRect;
 }
 
 const bool Gun::GetAttackTimer()
@@ -130,6 +94,6 @@ const bool Gun::GetAttackTimer()
 
 void Gun::Draw(sf::RenderWindow& window)
 {
-	for (const auto& bullet : m_bullets) { window.draw(bullet.body); }
-	for (const auto& bullet : m_bullets) { window.draw(bullet.target); }
+	for (const auto& bullet : m_bullets) { window.draw(bullet->body); }
+	for (const auto& bullet : m_bullets) { window.draw(bullet->target); }
 }

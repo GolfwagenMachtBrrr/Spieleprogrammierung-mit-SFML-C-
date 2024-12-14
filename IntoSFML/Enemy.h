@@ -55,11 +55,14 @@ public:
 		this->m_position = waypoint.position; 
 		this->p_ID = ID; 
 		this->p_isActive = true; 
+		
+		objectType = m_type; 
 	}
 
 	void Update(const float& dt, Player &player, MapGenerator &map)
 	{
 		if (!p_health) {
+			p_isActive = false; 
 			return; 
 		}
 		m_text.setString(std::to_string(p_health)); 
@@ -104,7 +107,16 @@ public:
 
 	void OnCollision(GameObject& other) override
 	{
-		std::cout << "Iam colldiding" << std::endl;
+		switch (other.objectType)
+		{
+		case Textures::ID::Zombie:
+			m_oncollision = true;
+			break; 
+		case Textures::ID::Wand_bullet:
+			p_health -= 10; 
+			break; 
+		}
+		
 	}
 
 private:
@@ -169,16 +181,16 @@ private:
 			hypotheticalPosition = m_position + direction * dt * m_speed;
 		}
 
-		if (!YouShallPass(hypotheticalPosition, map)) {
-			int r = rand() % 10;
-			if (r < 0) {
-				direction = sf::Vector2f(0, 0); 
+		if (m_oncollision) {
+			direction.x *= -1; 
+			direction.y *= -1; 
+
+			for (int i = 0; i < 10; i++) {
+				hypotheticalPosition = m_position + direction * dt * m_speed;
+				this->m_bodysprite.setPosition(hypotheticalPosition);
 			}
-			else {
-				direction.x *= -1; 
-				direction.y *= -1; 
-			}
-			hypotheticalPosition = m_position + direction * dt * m_speed;
+			
+			m_oncollision = false; 
 		}
 
 
@@ -383,7 +395,10 @@ public:
 
 	int		p_ID = -1; 
 	bool    p_isActive = false; 
+
 private:
+	bool m_oncollision = false; 
+
 	Textures::ID m_type; 
 
 	sf::Vector2f m_spritesize;

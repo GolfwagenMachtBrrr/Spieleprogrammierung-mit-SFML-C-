@@ -62,9 +62,14 @@ public:
 			this->SpawnNPC(player.GetPosition(), currtype);
 		}
 		
-		for (auto& spawn : m_spawn)
+		for (int i = 0; i < m_spawn.size(); i++)
 		{
-			spawn->Update(deltatime, player, map);
+			m_spawn[i]->Update(deltatime, player, map);
+			if (m_spawn[i]->p_health <= 0) {
+				m_spawn.erase(m_spawn.begin()+i); 
+				break; 
+			}
+	
 		}
 		
 	}
