@@ -27,7 +27,8 @@ public:
             }
 
             if (hypobox.intersects(m_objects[i]->GetBoundingBox())) {
-
+                self->OnCollision(*m_objects[i]);
+                m_objects[i]->OnCollision(*self);
             }
 
         }

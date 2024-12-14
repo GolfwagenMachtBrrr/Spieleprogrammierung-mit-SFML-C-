@@ -58,10 +58,8 @@ void Gun::Update(const float &dt, const sf::Vector2f &player_position, const sf:
 
 	for (size_t i = 0; i < m_bullets.size(); i++)
 	{
-		bool erased = false; 
 		if (m_bullets[i]->target_reached) {
 			m_bullets.erase(m_bullets.begin() + i);
-			erased = true;
 			break; 
 		}
 		if (m_bullets[i]->GetBoundingBox().intersects(m_bullets[i]->target.getGlobalBounds())) {

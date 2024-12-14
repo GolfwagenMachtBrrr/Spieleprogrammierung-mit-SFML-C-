@@ -72,26 +72,14 @@ public:
 
 		this->Move(dt, player.GetPosition(), map);
 
-		if (this->AttackTimeoutPassed())
-		{
-			// doesnt work for some reason
-			if (CollisionCheck(player.p_hitbox.getGlobalBounds(), p_hitbox.getGlobalBounds())) {
-				player.p_health -= p_damage; 
-				std::cout << player.p_health << std::endl; 
-			}
-			 
-		}
 	}
 
 	void Draw(sf::RenderWindow& window) const
 	{
-		if (p_health <= 0) {
-			return; 
-		}
 		window.draw(m_bodysprite);
 		window.draw(p_hitbox);
 		window.draw(m_text);
-	}
+	} 55 
 
 public:
 	// Getter Functions
@@ -107,17 +95,26 @@ public:
 
 	void OnCollision(GameObject& other) override
 	{
+
 		switch (other.objectType)
 		{
 		case Textures::ID::Zombie:
 			m_oncollision = true;
 			break; 
 		case Textures::ID::Wand_bullet:
-			p_health -= 10; 
+			if (LastBulletID != other.objectID) {
+				p_health -= 10;
+				LastBulletID = other.objectID;
+			}
 			break; 
 		}
 		
 	}
+
+	//quickfix
+
+private: 
+	int LastBulletID = -23; 
 
 private:
 	// Movement/shooting Calculations
@@ -254,34 +251,6 @@ private:
 
 
 private:
-
-	int CollidesWithAlly(const std::vector<sf::RectangleShape>& alliedHitbox, const sf::RectangleShape hitbox)
-	{
-		int collisionID = -1; 
-		for (int i = 0; i < alliedHitbox.size(); i++) {
-			if (CollisionCheck(alliedHitbox[i].getGlobalBounds(), hitbox.getGlobalBounds()) && i != p_ID) {
-				collisionID = i; 
-			}
-		}
-		return collisionID; 
-	}
-
-	bool YouShallPass(const sf::Vector2f& reisepass, MapGenerator& map) {
-
-		int x = reisepass.x / map.GetTileSize().x; 
-		int y = reisepass.y / map.GetTileSize().y; 
-
-		// until bug is fixed 
-		if (p_ID == -1) {
-			p_ID = 0; 
-		}
-
-		if (map.p_tileMap[x][y].occupied == false || map.p_tileMap[x][y].occupierID == p_ID) {
-			return true;
-		}
-
-		return false;
-	}
 		
 	void AdjustTileMap(MapGenerator& map, const sf::Vector2f& calculatedposition)
 	{
@@ -334,28 +303,6 @@ private:
 		}
 	}
 
-	bool CollisionCheck(const sf::FloatRect& a, const sf::FloatRect& b)
-	{
-		if (a.left + a.width > b.left &&
-			b.left + b.width > a.left &&
-			b.top + b.height > a.top &&
-			a.top + a.height > b.top)
-		{
-			return true;
-		}
-		return false;
-	}
-
-	int DamageDealtToEnemy(const sf::FloatRect& object_in_danger_of_collison_with_the_wild_enemy) 
-	{
-		if (CollisionCheck(object_in_danger_of_collison_with_the_wild_enemy, p_hitbox.getGlobalBounds()))
-		{
-			std::cout << p_damage << std::endl;
-			return this->p_damage;
-		}
-
-		return NULL;
-	}
 
 	bool AttackTimeoutPassed()
 	{
@@ -366,21 +313,6 @@ private:
 			return true;
 		}
 		this->m_attacktimer.restart();
-		return false;
-	}
-
-	bool TargetReached()
-	{
-		if (this->m_position == this->m_target)
-		{
-			return true;
-		}
-
-		if (this->p_health <= 0)
-		{
-			return true;
-		}
-
 		return false;
 	}
 

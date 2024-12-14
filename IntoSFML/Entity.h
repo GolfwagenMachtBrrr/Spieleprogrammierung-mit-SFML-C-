@@ -41,7 +41,6 @@ public:
 
 	void OnCollision(GameObject& other) override
 	{
-		std::cout << "Iam colldiding" << std::endl; 
 	}
 
 public:

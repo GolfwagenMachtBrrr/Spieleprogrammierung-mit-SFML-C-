@@ -64,6 +64,7 @@ public:
 		
 		for (int i = 0; i < m_spawn.size(); i++)
 		{
+			std::cout << m_spawn.size() << std::endl; 
 			m_spawn[i]->Update(deltatime, player, map);
 			if (m_spawn[i]->p_health <= 0) {
 				m_spawn.erase(m_spawn.begin()+i); 
@@ -94,18 +95,6 @@ public:
 		m_stack.push_back(enemy);
 	}
 
-	bool CheckNPCCollisions(const sf::FloatRect& rect, const int &damage)
-	{
-		bool bodyHit = false; 
-		for (auto &spawn : m_spawn) {
-			if (CollisionCheck(rect, spawn->p_hitbox.getGlobalBounds())) {
-				spawn->p_health -= damage; 
-				bodyHit = true; 
-			}
-		}
-
-		return bodyHit; 
-	}
 
 private: 
 
@@ -137,7 +126,6 @@ private:
 		
 		m_stack.pop_back();
 	}
-	void KillNPC(const int &NPC_index);
 
 	void KillAllNPCs()
 	{
@@ -172,19 +160,6 @@ private:
 			return true;
 		}
 		return false; 
-	}
-
-
-	bool CollisionCheck(const sf::FloatRect& a, const sf::FloatRect& b)
-	{
-		if (a.left + a.width > b.left &&
-			b.left + b.width > a.left &&
-			b.top + b.height > a.top &&
-			a.top + a.height > b.top)
-		{
-			return true;
-		}
-		return false;
 	}
 
 private:
