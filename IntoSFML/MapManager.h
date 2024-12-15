@@ -18,11 +18,12 @@ class MapManager
 public: 
 	void Initialize(const TextureHolder& textures, MapGenerator& map, CollisionManager &collisionmanager)
 	{
-		InitHouses(textures, 1, map, collisionmanager); 
-		InitSpawner(textures, 1, 2, map, collisionmanager);
+		InitHouses(textures, 150, map, collisionmanager); 
+
+		InitSpawner(textures, 10, 20, map, collisionmanager);
 
 	}
-	void Update(const float &deltatime, Player &player, MapGenerator &map)
+	void Update(const float &deltatime, Player* player, MapGenerator &map)
 	{
 		for (auto& entity : p_entities) { entity->Update();}
 		for (auto& spawner :p_spawners) { spawner->Update(deltatime, player, map); }
@@ -67,8 +68,10 @@ private:
 		sf::Vector2f calculatedposition; 
 		
 		do {
-			calculatedposition.x = rand() % 1500 + 200;
-			calculatedposition.y = rand() % 1500 + 200;
+			calculatedposition.x = rand() % 1490 + 10;
+			calculatedposition.y = rand() % 1490 + 10;
+			std::cout << calculatedposition.x << " " << calculatedposition.y << std::endl; 
+
 		} while (!Overlapping(map, calculatedposition, ID));
 
 		AdjustTileMap(map, calculatedposition, ID);
@@ -81,15 +84,13 @@ private:
 		sf::Vector2f tilesize = static_cast<sf::Vector2f>(map.GetTileSize());
 		int startX = calculatedposition.x / tilesize.x, endX = GetTextureSize(ID).x / tilesize.x;
 		int startY = calculatedposition.y / tilesize.y, endY = GetTextureSize(ID).y / tilesize.y;
-		int range = 3; 
+		int range = 0; 
 
-		for (int i = startX; i < startX + endX+range-2; i++) {
-			for (int j = startY+1; j < startY + endY + range-2; j++)
+		for (int i = startX; i < startX + endX+range; i++) {
+			for (int j = startY; j < startY + endY + range; j++)
 			{
 				map.p_tileMap[i][j].occupied = true; 
 				map.p_tileMap[i][j].occupationID = ID; 
-
-				map.p_tileMap[i][j].tile_sprite.setColor(sf::Color::Red); 
 			}
 		}
 	}
@@ -99,6 +100,14 @@ private:
 		int startX = calculatedposition.x / tilesize.x, endX = GetTextureSize(ID).x / tilesize.x;
 		int startY = calculatedposition.y / tilesize.y, endY = GetTextureSize(ID).y / tilesize.y;
 	
+		if (startX <= 0 || startY <= 0) {
+			return false;
+		}
+
+		if (endX >= 100 || endX >= 100) {
+			return false;
+		}
+
 		for (int i = startX; i < startX + endX; i++) {
 			for (int j = startY; j < startY + endY; j++)
 			{
@@ -107,6 +116,8 @@ private:
 				}
 			}
 		}
+
+
 		return true; 
 	}
 

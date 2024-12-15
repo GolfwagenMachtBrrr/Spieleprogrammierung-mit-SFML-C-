@@ -30,13 +30,13 @@ public:
                 self->OnCollision(*m_objects[i]);
                 m_objects[i]->OnCollision(*self);
             }
-
+            
         }
     }
 
     void addObject(GameObject* obj) {
-        obj->objectID = m_objects.size(); 
         m_objects.push_back(obj);
+        obj->objectID = m_objects.size(); 
     }
 
     void clearObjects() {

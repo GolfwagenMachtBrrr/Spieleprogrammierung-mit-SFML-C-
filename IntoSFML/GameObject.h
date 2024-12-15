@@ -2,6 +2,7 @@
 #include "SFML/Graphics.hpp"
 #include "ResourceHolder.h"
 
+
 class GameObject
 {
 public: 
@@ -11,4 +12,6 @@ public:
 	virtual sf::FloatRect GetBoundingBox() const = 0;
 	virtual void OnCollision(GameObject &other) = 0; 
 
+private: 
+	sf::Vector2f m_position; 
 };

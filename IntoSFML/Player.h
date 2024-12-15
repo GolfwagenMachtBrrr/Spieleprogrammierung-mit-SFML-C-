@@ -7,6 +7,8 @@
 #include "Inventory.h"
 #include "Item.h"
 #include "MapGenerator.h"
+#include "GameObject.h"
+#include "Entity.h"
 
 #include <vector>
 
@@ -20,7 +22,7 @@
 #define SECOND 5
 
 
-class Player
+class Player : public GameObject
 {
 public: 
 
@@ -56,6 +58,41 @@ public:
 		return this->m_position; 
 	}
 
+	sf::FloatRect GetBoundingBox() const override
+	{
+		return p_hitbox.getGlobalBounds();
+	}
+
+	void OnCollision(GameObject& other) override
+	{
+		std::cout << "this is hapening" << std::endl;
+		Entity* otherEntity = dynamic_cast<Entity*>(&other);
+
+		if (otherEntity) {
+			HandleEntityCollision(otherEntity);
+		}
+
+		switch (other.objectID)
+		{
+		case Textures::ID::House:
+			std::cout << "this is hapening" << std::endl;
+			HandleEntityCollision(otherEntity);
+			break;
+		case Textures::ID::Zombie:
+			std::cout << " with a zombie" << std::endl;
+			break; 
+		}
+	}
+
+	void HandleEntityCollision(Entity* entity) {
+		// Einfache Abstoßungslogik (basierend auf den Positionen)
+		sf::Vector2f direction = m_position - entity->p_position;
+		float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+		if (length > 0) {
+			direction /= length; // Normalisieren
+			m_sprite.setPosition(m_position + direction * 5.0f);
+		}
+	}
 
 private: 
 	void MovePlayer(const float& dt, MapGenerator& map)
@@ -63,7 +100,7 @@ private:
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
 			sf::Vector2f newposition = m_position + sf::Vector2f(0, -1) * m_speed * dt; 
 
-			if (YouShallPass(newposition, map)) {
+			if (true) {
 				m_sprite.setPosition(newposition);
 				m_sprite.setTextureRect(sf::IntRect((movementIndicator / MOVEMENT) * SPRITEUNIT, FORWARD, SPRITEUNIT, SPRITEUNIT));
 				movementIndicator++;
@@ -77,7 +114,7 @@ private:
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
 			sf::Vector2f newposition = m_position + sf::Vector2f(0, 1) * m_speed * dt;
 
-			if (YouShallPass(newposition, map)) {
+			if (true) {
 				m_sprite.setPosition(newposition);
 				m_sprite.setTextureRect(sf::IntRect((movementIndicator / MOVEMENT) * SPRITEUNIT, BACKWARD * SPRITEUNIT, SPRITEUNIT, SPRITEUNIT));
 				movementIndicator++;
@@ -90,7 +127,7 @@ private:
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
 			sf::Vector2f newposition = m_position + sf::Vector2f(1,0) * m_speed * dt;
 
-			if (YouShallPass(newposition, map)) {
+			if (true) {
 				m_sprite.setPosition(m_position + sf::Vector2f(1, 0) * m_speed * dt);
 				m_sprite.setTextureRect(sf::IntRect((movementIndicator / MOVEMENT) * SPRITEUNIT, RIGHTWARD * SPRITEUNIT, SPRITEUNIT, SPRITEUNIT));
 				movementIndicator++;
@@ -103,7 +140,7 @@ private:
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
 			sf::Vector2f newposition = m_position + sf::Vector2f(-1, 0) * m_speed * dt;
 
-			if (YouShallPass(newposition, map)) {
+			if (true) {
 				m_sprite.setPosition(m_position + sf::Vector2f(-1, 0) * m_speed * dt);
 				m_sprite.setTextureRect(sf::IntRect((movementIndicator / MOVEMENT) * SPRITEUNIT, LEFTWARD * SPRITEUNIT, SPRITEUNIT, SPRITEUNIT));
 				movementIndicator++;
@@ -119,11 +156,9 @@ private:
 
 	bool YouShallPass(const sf::Vector2f& reisepass, MapGenerator &map) {
 		float x = reisepass.x / map.GetTileSize().x, y = reisepass.y / map.GetTileSize().y;
-		std::cout << x << " " << y << std::endl; 
 		if (map.p_tileMap[x][y].occupied == false || IsEnemy(map, x,y)) {
 			return true; 
 		}
-		std::cout << "Is occupied" << std::endl;
 		return false; 
 	}
 

@@ -20,7 +20,7 @@ public:
 	{
 		this->p_hitbox.setPosition(position);
 		this->p_hitbox.setSize(size);
-
+		this->objectType = ID; 
 	}
 
 	void Update()

@@ -6,6 +6,7 @@
 #include "MapGenerator.h"
 #include "game_algorithm.h"
 #include "GameObject.h"
+#include "Entity.h"
 
 #include <string>
 #include <iostream>
@@ -33,9 +34,9 @@ public:
 		this->m_bodysprite.setTextureRect(sf::IntRect(32*0, 32*1, 32, 32));
 		this->m_bodysprite.setPosition(startingPos);
 
-		this->m_font.loadFromFile("C:/Users/JanSa/OneDrive/Desktop/Programmieren/Projekte/ProcMapGen/ProcGen/Assets/Fonts/NotoSansThai-Regular.ttf");
-		this->m_text.setFont(m_font); 
-		this->m_text.setCharacterSize(10); 
+		//this->m_font.loadFromFile("C:/Users/JanSa/source/repos/tmpGameRepo/Assets/Fonts/NotoSansThai-Regular.ttf");
+		//this->m_text.setFont(m_font); 
+		//this->m_text.setCharacterSize(10); 
 		
 		p_hitbox.setSize(sf::Vector2f(32, 32)); 
 		p_hitbox.setPosition(startingPos); 
@@ -59,7 +60,7 @@ public:
 		objectType = m_type; 
 	}
 
-	void Update(const float& dt, Player &player, MapGenerator &map)
+	void Update(const float& dt, Player* player, MapGenerator &map)
 	{
 		if (!p_health) {
 			p_isActive = false; 
@@ -70,7 +71,7 @@ public:
 
 		p_hitbox.setPosition(m_position); 
 
-		this->Move(dt, player.GetPosition(), map);
+		this->Move(dt, player->GetPosition(), map);
 
 	}
 
@@ -79,7 +80,7 @@ public:
 		window.draw(m_bodysprite);
 		window.draw(p_hitbox);
 		window.draw(m_text);
-	} 55 
+	} 
 
 public:
 	// Getter Functions
@@ -95,12 +96,20 @@ public:
 
 	void OnCollision(GameObject& other) override
 	{
+		Enemy* otherEnemy = dynamic_cast<Enemy*>(&other);
+		Entity* otherEntity = dynamic_cast<Entity*>(&other);
 
 		switch (other.objectType)
 		{
 		case Textures::ID::Zombie:
-			m_oncollision = true;
+			HandleEnemyCollision(otherEnemy);
 			break; 
+		case Textures::ID::House:
+			HandleEntityCollision(otherEntity);
+			break; 
+		case Textures::ID::Spawner:
+			HandleEntityCollision(otherEntity);
+			break;
 		case Textures::ID::Wand_bullet:
 			if (LastBulletID != other.objectID) {
 				p_health -= 10;
@@ -110,6 +119,28 @@ public:
 		}
 		
 	}
+
+	void HandleEntityCollision(Entity* entity) {
+		// Einfache Abstoßungslogik (basierend auf den Positionen)
+		sf::Vector2f direction = m_position - entity->p_position;
+		float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+		if (length > 0) {
+			direction /= length; // Normalisieren
+			m_position += direction * 5.0f;
+		}
+	}
+
+	void HandleEnemyCollision(Enemy* otherEnemy) {
+		// Einfache Abstoßungslogik (basierend auf den Positionen)
+		sf::Vector2f direction = m_position - otherEnemy->GetPosition();
+		float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+		if (length > 0) {
+			direction /= length; // Normalisieren
+			m_position += direction * 3.0f;
+			otherEnemy->GetPosition() = (otherEnemy->GetPosition() - direction * 3.0f);
+		}
+	}
+
 
 	//quickfix
 
@@ -191,7 +222,7 @@ private:
 		}
 
 
-		AdjustTileMap(map, hypotheticalPosition); 
+		//AdjustTileMap(map, hypotheticalPosition); 
 		this->m_bodysprite.setPosition(hypotheticalPosition);
 		this->m_position = this->m_bodysprite.getPosition();
 

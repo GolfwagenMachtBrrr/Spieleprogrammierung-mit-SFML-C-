@@ -45,8 +45,8 @@ public:
 
     void InitTextures()
     {
-        //std::string SYSTEMPATH = "C:/Users/JanSa/source/repos/tmpGameRepo/";
-        std::string SYSTEMPATH = "C:/Users/JanSa/OneDrive/Desktop/Programmieren/Projekte/ProcMapGen/ProcGen/"; 
+        std::string SYSTEMPATH = "C:/Users/JanSa/source/repos/tmpGameRepo/";
+        //std::string SYSTEMPATH = "C:/Users/JanSa/OneDrive/Desktop/Programmieren/Projekte/ProcMapGen/ProcGen/"; 
         m_textures.Load(Textures::ID::Spawner,   SYSTEMPATH + "Assets/AssetPack/Pixel Art Top Down - Basic/Texture/Statue.png");
         m_textures.Load(Textures::ID::Cursor,    SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/UI/Pointers/01.png"); 
         m_textures.Load(Textures::ID::Skeleton,  SYSTEMPATH + "Assets/Player/Textures/skeletonsprite.png");
@@ -98,7 +98,11 @@ public:
 
     void InitPlayer()
     {
-        this->m_player.Initalize(m_textures);
+        m_player = new Player(); 
+        m_player->Initalize(m_textures);
+
+        m_collisionmanager.addObject(m_player);
+
     }
     
     int GameLoop()
@@ -130,21 +134,21 @@ public:
             this->m_cursor.setPosition(ConvertedPosition2);
 
             // Updates
-            this->m_player.Update(m_dt, m_window, m_map);
+            this->m_player->Update(m_dt, m_window, m_map);
             this->m_mapM.Update(m_dt, m_player, m_map);
-            this->m_playergun.Update(m_dt, m_player.GetPosition(), ConvertedPosition1, m_mapM, m_collisionmanager);
+            this->m_playergun.Update(m_dt, m_player->GetPosition(), ConvertedPosition1, m_mapM, m_collisionmanager);
             this->m_inventory.Update(m_cursor.getPosition());
             this->m_gameview.Update(m_dt);
             this->m_collisionmanager.checkCollisions(); 
           
 
-            this->m_gameview.setViewCenter(m_player.GetPosition());
+            this->m_gameview.setViewCenter(m_player->GetPosition());
             this->m_window.setView(m_gameview.GetView());
 
             // Draws
             this->m_map.Draw(m_window, m_gameview);
             this->m_mapM.Draw(m_window);
-            this->m_player.Draw(m_window);
+            this->m_player->Draw(m_window);
             this->m_playergun.Draw(m_window);
 
             // Changing Views
@@ -175,7 +179,7 @@ private:
     Viewer m_gameview;
     Inventory m_inventory; 
 
-    Player m_player; 
+    Player* m_player; 
     Gun m_playergun; 
 
    

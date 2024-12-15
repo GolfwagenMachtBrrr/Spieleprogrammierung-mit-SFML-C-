@@ -45,7 +45,7 @@ public:
 			m_spawn.push_back(enemy); 
 		}
 	}
-	void Update(const int &deltatime, Player &player, MapGenerator &map)
+	void Update(const int &deltatime, Player* player, MapGenerator &map)
 	{
 		
 		if (p_health <= 0)
@@ -59,12 +59,11 @@ public:
 		if (this->TimePassed() && m_stack.size() > 0 && p_isActive)
 		{
 			Textures::ID currtype = m_stack[m_stack.size() - 1];
-			this->SpawnNPC(player.GetPosition(), currtype);
+			this->SpawnNPC(player->GetPosition(), currtype);
 		}
 		
 		for (int i = 0; i < m_spawn.size(); i++)
 		{
-			std::cout << m_spawn.size() << std::endl; 
 			m_spawn[i]->Update(deltatime, player, map);
 			if (m_spawn[i]->p_health <= 0) {
 				m_spawn.erase(m_spawn.begin()+i); 
