@@ -34,9 +34,9 @@ public:
 		this->m_bodysprite.setTextureRect(sf::IntRect(32*0, 32*1, 32, 32));
 		this->m_bodysprite.setPosition(startingPos);
 
-		//this->m_font.loadFromFile("C:/Users/JanSa/source/repos/tmpGameRepo/Assets/Fonts/NotoSansThai-Regular.ttf");
-		//this->m_text.setFont(m_font); 
-		//this->m_text.setCharacterSize(10); 
+		this->m_font.loadFromFile("C:/Users/JanSa/OneDrive/Desktop/Programmieren/Projekte/ProcMapGen/ProcGen/Assets/Fonts/NotoSansThai-Regular.ttf");
+		this->m_text.setFont(m_font); 
+		this->m_text.setCharacterSize(10); 
 		
 		p_hitbox.setSize(sf::Vector2f(32, 32)); 
 		p_hitbox.setPosition(startingPos); 
@@ -126,7 +126,7 @@ public:
 		float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
 		if (length > 0) {
 			direction /= length; // Normalisieren
-			m_position += direction * 5.0f;
+			m_position += direction * 10.0f;
 		}
 	}
 
@@ -136,7 +136,7 @@ public:
 		float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
 		if (length > 0) {
 			direction /= length; // Normalisieren
-			m_position += direction * 3.0f;
+			m_position += direction * 20.0f;
 			otherEnemy->GetPosition() = (otherEnemy->GetPosition() - direction * 3.0f);
 		}
 	}

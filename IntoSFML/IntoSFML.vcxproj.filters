@@ -78,6 +78,9 @@
     <ClCompile Include="game_algorithm.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="HUD.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Wave.h">
@@ -165,6 +168,12 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="CollisionManager.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="HUD.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ScoreBoard.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

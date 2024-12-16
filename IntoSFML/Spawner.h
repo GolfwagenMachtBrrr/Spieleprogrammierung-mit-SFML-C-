@@ -66,6 +66,7 @@ public:
 		{
 			m_spawn[i]->Update(deltatime, player, map);
 			if (m_spawn[i]->p_health <= 0) {
+				m_spawn[i]->active = false; 
 				m_spawn.erase(m_spawn.begin()+i); 
 				break; 
 			}
@@ -94,7 +95,7 @@ public:
 		m_stack.push_back(enemy);
 	}
 
-
+	
 private: 
 
 	void SpawnNPC(const sf::Vector2f &player_position, const Textures::ID &type)

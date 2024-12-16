@@ -18,9 +18,9 @@ class MapManager
 public: 
 	void Initialize(const TextureHolder& textures, MapGenerator& map, CollisionManager &collisionmanager)
 	{
-		InitHouses(textures, 150, map, collisionmanager); 
+		InitHouses(textures, 10, map, collisionmanager); 
 
-		InitSpawner(textures, 10, 20, map, collisionmanager);
+		InitSpawner(textures, 1, 2, map, collisionmanager);
 
 	}
 	void Update(const float &deltatime, Player* player, MapGenerator &map)
@@ -104,8 +104,12 @@ private:
 			return false;
 		}
 
-		if (endX >= 100 || endX >= 100) {
+		if (endX >= 100 || endY >= 100) {
 			return false;
+		}
+
+		if (startX + endX >= 100 || startY + endY >= 100) {
+			return false; 
 		}
 
 		for (int i = startX; i < startX + endX; i++) {

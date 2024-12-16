@@ -3,10 +3,12 @@
 #include "ResourceHolder.h"
 #include <vector>
 #include <map>
+#include "Player.h"
 
 #include <iostream>
 
-
+//tmp
+#include "ScoreBoard.h"
 
 typedef ResourceHolder<sf::Texture, Textures::ID> TextureHolder;
 
@@ -26,6 +28,8 @@ public:
 
 	void Initialize(const TextureHolder& textures, const int& width, const int& height)
 	{
+		m_scorboard.Initialize(); 
+
 		this->p_view = sf::View(sf::FloatRect(0, 0, width, height));
 		std::cout << m_size << " Size " << std::endl; 
 
@@ -53,6 +57,8 @@ public:
 	}
 	void Update(const sf::Vector2f& mouseposition)
 	{
+		//m_scorboard.Update(); 
+
 		for (auto& box : m_storage)
 		{
 			if (box.getGlobalBounds().contains(mouseposition))
@@ -75,6 +81,7 @@ public:
 	}
 	void Draw(sf::RenderWindow& window)
 	{
+		m_scorboard.Draw(window); 
 		window.draw(m_background);
 		for (const auto& box : m_storage) { window.draw(box); }
 		for (const auto& item : m_items) { window.draw(item); }
@@ -139,5 +146,9 @@ private:
 
 	sf::Clock m_clock; 
 	int		  m_itemDropPickTimer = 500; 
+
+	ScoreBoard m_scorboard; 
 };
+
+
 

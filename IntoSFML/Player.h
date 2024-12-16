@@ -4,7 +4,6 @@
 
 #include "Bullet.h"
 #include "ResourceHolder.h"
-#include "Inventory.h"
 #include "Item.h"
 #include "MapGenerator.h"
 #include "GameObject.h"
@@ -65,7 +64,6 @@ public:
 
 	void OnCollision(GameObject& other) override
 	{
-		std::cout << "this is hapening" << std::endl;
 		Entity* otherEntity = dynamic_cast<Entity*>(&other);
 
 		if (otherEntity) {
@@ -75,11 +73,9 @@ public:
 		switch (other.objectID)
 		{
 		case Textures::ID::House:
-			std::cout << "this is hapening" << std::endl;
 			HandleEntityCollision(otherEntity);
 			break;
 		case Textures::ID::Zombie:
-			std::cout << " with a zombie" << std::endl;
 			break; 
 		}
 	}
@@ -173,10 +169,10 @@ private:
 		return false; 
 	}
 
-	void PickUpItem(Inventory &inventory, Item &item)
+	/*void PickUpItem(Inventory &inventory, Item &item)
 	{
 		inventory.AddItem(item.id); 
-	}
+	}*/
 
 public: 
 	sf::RectangleShape p_hitbox;

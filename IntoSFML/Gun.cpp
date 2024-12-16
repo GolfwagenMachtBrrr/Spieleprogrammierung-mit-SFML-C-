@@ -30,21 +30,21 @@ bool AABB(sf::FloatRect a, sf::FloatRect b)
 
 void Gun::Update(const float &dt, const sf::Vector2f &player_position, const sf::Vector2f& mouse_position, MapManager &mapm, CollisionManager& collisionmanager)
 {
+	
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
 		
 		if (this->GetAttackTimer())
 		{
-			Bullet* bullet = new Bullet(10, 0.5, Textures::ID::Wand_bullet);
+			Bullet* bullet = new Bullet(10, 0.0005, Textures::ID::Wand_bullet);
 			bullet->body.setSize(sf::Vector2f(5, 2.5));
 			bullet->body.setPosition(player_position);
-			bullet->objectType = bullet->type; 
+			bullet->objectType = bullet->type;
 			m_bullets.push_back(bullet);
 			collisionmanager.addObject(bullet);
-
 			CreateBulletTarget(m_bullets.size() - 1, mouse_position);
 		}
-			
+
 	}
 
 	for (int i = 0; i < m_bullets.size(); i++)
@@ -59,11 +59,14 @@ void Gun::Update(const float &dt, const sf::Vector2f &player_position, const sf:
 	for (size_t i = 0; i < m_bullets.size(); i++)
 	{
 		if (m_bullets[i]->target_reached) {
+			m_bullets[i]->active = false;
 			m_bullets.erase(m_bullets.begin() + i);
 			break; 
 		}
 		if (m_bullets[i]->GetBoundingBox().intersects(m_bullets[i]->target.getGlobalBounds())) {
+			m_bullets[i]->active = false;
 			m_bullets.erase(m_bullets.begin() + i);
+			break; 
 		}
 	}
 
