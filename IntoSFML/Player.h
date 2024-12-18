@@ -39,17 +39,30 @@ public:
 		p_hitbox.setOutlineColor(sf::Color::Red);
 		p_hitbox.setOutlineThickness(1);
 		p_hitbox.setFillColor(sf::Color::Transparent);
+
+
+		m_bloodyscreen.loadFromFile("C:/Users/JanSa/OneDrive/Desktop/Programmieren/Projekte/ProcMapGen/ProcGen/Assets/Player/Textures/player_received_damage.png"); 
+		m_bloodscreen.setTexture(m_bloodyscreen); 
+		m_bloodscreen.setPosition(0, 0); 
+		m_bloodscreen.setColor(sf::Color(100, 0, 0, 150)); 
+
 	}
 
 	void Update(const float& dt, sf::RenderWindow& window, MapGenerator &map)
 	{
 		MovePlayer(dt, map);
 		p_hitbox.setPosition(m_position);
+		if (p_health < 0) {
+			std::cout << "Huh Dead! " << std::endl; 
+		}
 	}
 
 	void Draw(sf::RenderWindow& window)
 	{
 		window.draw(m_sprite);
+		if (ToBeDrawn) {
+			window.draw(m_bloodscreen); 
+		}
 	}
 
 	sf::Vector2f GetPosition()
@@ -70,12 +83,21 @@ public:
 			HandleEntityCollision(otherEntity);
 		}
 
-		switch (other.objectID)
+		switch (other.objectType)
 		{
 		case Textures::ID::House:
 			HandleEntityCollision(otherEntity);
 			break;
 		case Textures::ID::Zombie:
+			std::cout << "Dammit, it collides" << std::endl; 
+			if (lastEnemyID != other.objectID) {
+				p_health -= 10;
+				lastEnemyID = other.objectID;
+			}
+			if (!DamnThatBloodyDuration())
+			{
+				ToBeDrawn = true; 
+			}
 			break; 
 		}
 	}
@@ -90,7 +112,20 @@ public:
 		}
 	}
 
-private: 
+private:
+
+	// for HUD class
+	bool DamnThatBloodyDuration()
+	{
+		if (this->timer.getElapsedTime().asMilliseconds() >= this->durationinms)
+		{
+			this->timer.restart();
+			ToBeDrawn = false; 
+			return true;
+		}
+		return false;
+	}
+
 	void MovePlayer(const float& dt, MapGenerator& map)
 	{
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
@@ -186,4 +221,13 @@ private:
 
 	// until its fixed
 	int movementIndicator = 0; 
+	int lastEnemyID = -42;
+
+	// Alles kommt dann in die HUD klasse:	
+	sf::Sprite m_bloodscreen; 
+	sf::Texture m_bloodyscreen; 
+
+	sf::Clock timer; 
+	int durationinms = 500; 
+	bool ToBeDrawn = false; 
 };

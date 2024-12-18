@@ -41,6 +41,7 @@ public:
 		for (int i = 0; i < spawntypes.size(); i++) 
 		{ 
 			Enemy* enemy = new Enemy(textures, spawntypes[i]);
+			enemy->objectType = Textures::ID::Zombie; 
 			collisionmanager.addObject(enemy); 
 			m_spawn.push_back(enemy); 
 		}

@@ -26,7 +26,7 @@ public:
 
 private:
 	void CreateBulletTarget(const int& index, const sf::Vector2f& mousePos);
-	const bool GetAttackTimer(); 
+	bool GetAttackTimer(); 
 	
 private: 
 	std::vector<Bullet*> m_bullets_vec; 

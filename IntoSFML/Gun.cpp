@@ -67,15 +67,16 @@ void Gun::Update(const float &dt, const sf::Vector2f &player_position, const sf:
 
 		
 		if (m_bullets[i]->target_reached) {
+			std::cout << "target r" << std::endl; 
 			m_bullets[i]->active = false;
-			/*std::swap(m_bullets[i], m_bullets[m_bullets.size() - 1]); 
-			m_bullets.pop_back(); */
+			std::swap(m_bullets[i], m_bullets[m_bullets.size() - 1]); 
+			m_bullets.pop_back(); 
 			break; 
 		}
 		if (m_bullets[i]->GetBoundingBox().intersects(m_bullets[i]->target.getGlobalBounds())) {
 			m_bullets[i]->active = false;
-			/*std::swap(m_bullets[i], m_bullets[m_bullets.size() - 1]);
-			m_bullets.pop_back();*/
+			std::swap(m_bullets[i], m_bullets[m_bullets.size() - 1]);
+			m_bullets.pop_back();
 			break; 
 		}
 	}
@@ -93,7 +94,7 @@ void Gun::CreateBulletTarget(const int& index, const sf::Vector2f& mousePos)
 	this->m_bullets[index]->target = boundingRect;
 }
 
-const bool Gun::GetAttackTimer()
+bool Gun::GetAttackTimer()
 {
 	if (this->m_attacktimer.getElapsedTime().asMilliseconds() >= this->m_attacktimermax)
 	{

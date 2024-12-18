@@ -19,6 +19,7 @@ namespace Textures
 		Sword,
 		House,
 		Bandit,
+		Player,
 	};
 
 

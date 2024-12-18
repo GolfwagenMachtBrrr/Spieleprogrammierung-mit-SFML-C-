@@ -26,7 +26,16 @@ struct Bullet : public GameObject
 
 	void OnCollision(GameObject& other) override
 	{
-		target_reached = true; 
+		switch (other.objectType)
+		{
+			// Skeleton == Player
+		case Textures::ID::Player:
+			break; 
+
+		default: 
+			target_reached = true;
+			break; 
+		}
 	}
 };
 

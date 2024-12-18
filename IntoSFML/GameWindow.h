@@ -45,8 +45,8 @@ public:
 
     void InitTextures()
     {
-        std::string SYSTEMPATH = "C:/Users/JanSa/source/repos/tmpGameRepo/";
-        //std::string SYSTEMPATH = "C:/Users/JanSa/OneDrive/Desktop/Programmieren/Projekte/ProcMapGen/ProcGen/"; 
+        //std::string SYSTEMPATH = "C:/Users/JanSa/source/repos/tmpGameRepo/";
+        std::string SYSTEMPATH = "C:/Users/JanSa/OneDrive/Desktop/Programmieren/Projekte/ProcMapGen/ProcGen/"; 
         m_textures.Load(Textures::ID::Spawner,   SYSTEMPATH + "Assets/AssetPack/Pixel Art Top Down - Basic/Texture/Statue.png");
         m_textures.Load(Textures::ID::Cursor,    SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/UI/Pointers/01.png"); 
         m_textures.Load(Textures::ID::Skeleton,  SYSTEMPATH + "Assets/Player/Textures/skeletonsprite.png");
@@ -100,6 +100,7 @@ public:
     {
         m_player = new Player(); 
         m_player->Initalize(m_textures);
+        m_player->objectType = Textures::ID::Player; 
 
         m_collisionmanager.addObject(m_player);
 
@@ -116,7 +117,6 @@ public:
                 time.restart();
             }
             
-            m_dt = 0.5; 
 
             // Process events
             sf::Event event;

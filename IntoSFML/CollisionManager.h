@@ -1,16 +1,19 @@
 #pragma once
 #include <vector>
+#include <deque>
 #include "GameObject.h"
 
 class CollisionManager {
 private:
-    std::vector<GameObject*> m_objects;
+    std::deque<GameObject*> m_objects;
 public:
     
     void checkCollisions() {
         clearInactiveObjects(); 
         for (size_t i = 0; i < m_objects.size(); ++i) {
             for (size_t j = i + 1; j < m_objects.size(); ++j) {
+
+                if (i == j) { continue; }
                 if (m_objects[i]->GetBoundingBox().intersects(m_objects[j]->GetBoundingBox())) {
 
                     m_objects[i]->OnCollision(*m_objects[j]);
