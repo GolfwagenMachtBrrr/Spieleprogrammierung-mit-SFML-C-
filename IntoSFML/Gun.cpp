@@ -1,5 +1,10 @@
 #include "Gun.h"
 #include <iostream>
+#include <algorithm>
+
+#define fuck_around try
+#define find_out catch
+
 // https://www.youtube.com/watch?v=k6VIez6pnbc
 // https://gamefromscratch.com/sfml-with-c-tutorial-series-windows-game-loops-and-timers/
 // https://www.youtube.com/watch?v=HccMBtyXwFo
@@ -36,7 +41,7 @@ void Gun::Update(const float &dt, const sf::Vector2f &player_position, const sf:
 		
 		if (this->GetAttackTimer())
 		{
-			Bullet* bullet = new Bullet(10, 0.0005, Textures::ID::Wand_bullet);
+			Bullet* bullet = new Bullet(10, 0.5, Textures::ID::Wand_bullet);
 			bullet->body.setSize(sf::Vector2f(5, 2.5));
 			bullet->body.setPosition(player_position);
 			bullet->objectType = bullet->type;
@@ -52,20 +57,25 @@ void Gun::Update(const float &dt, const sf::Vector2f &player_position, const sf:
 		sf::Vector2f bulletDirection = m_bullets[i]->target.getPosition() - m_bullets[i]->body.getPosition();
 		bulletDirection = Normalize(bulletDirection);
 
-		m_bullets[i]->body.setPosition(m_bullets[i]->body.getPosition() + bulletDirection * m_bullets[i]->speed * dt);
+		m_bullets[i]->body.setPosition(m_bullets[i]->body.getPosition() + bulletDirection * m_bullets[i]->speed);
 	}
 
 
 	for (size_t i = 0; i < m_bullets.size(); i++)
 	{
+		// StackOverflow code: 
+
+		
 		if (m_bullets[i]->target_reached) {
 			m_bullets[i]->active = false;
-			m_bullets.erase(m_bullets.begin() + i);
+			/*std::swap(m_bullets[i], m_bullets[m_bullets.size() - 1]); 
+			m_bullets.pop_back(); */
 			break; 
 		}
 		if (m_bullets[i]->GetBoundingBox().intersects(m_bullets[i]->target.getGlobalBounds())) {
 			m_bullets[i]->active = false;
-			m_bullets.erase(m_bullets.begin() + i);
+			/*std::swap(m_bullets[i], m_bullets[m_bullets.size() - 1]);
+			m_bullets.pop_back();*/
 			break; 
 		}
 	}

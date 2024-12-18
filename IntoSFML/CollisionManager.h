@@ -8,7 +8,6 @@ private:
 public:
     
     void checkCollisions() {
-        std::cout << m_objects.size() << std::endl; 
         clearInactiveObjects(); 
         for (size_t i = 0; i < m_objects.size(); ++i) {
             for (size_t j = i + 1; j < m_objects.size(); ++j) {
@@ -29,7 +28,8 @@ public:
     void clearInactiveObjects() {
         for (int i = 0; i < m_objects.size(); i++) {
             if (!m_objects[i]->active) {
-                m_objects.erase(m_objects.begin() + i);
+                std::swap(m_objects[i], m_objects[m_objects.size() - 1]);
+                m_objects.pop_back();
             }
        }
     }

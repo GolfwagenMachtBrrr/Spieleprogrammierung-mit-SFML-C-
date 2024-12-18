@@ -3,8 +3,10 @@
 #include "Bullet.h"
 #include "Spawner.h"
 #include "MapManager.h"
-#include <vector>
 #include "CollisionManager.h"
+
+#include <vector>
+#include <deque>
 
 class Gun
 {
@@ -27,7 +29,8 @@ private:
 	const bool GetAttackTimer(); 
 	
 private: 
-	std::vector<Bullet*> m_bullets; 
+	std::vector<Bullet*> m_bullets_vec; 
+	std::deque<Bullet* > m_bullets; 
 
 	sf::Clock m_attacktimer; 
 	sf::Int32 m_attacktimermax = 300; 
