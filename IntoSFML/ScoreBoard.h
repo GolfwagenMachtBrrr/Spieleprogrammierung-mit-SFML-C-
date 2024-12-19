@@ -21,7 +21,10 @@ public:
 
 
 	}
-	void Update(Player* player);
+	void Update(Player* player)
+	{
+
+	}
 	void Draw(sf::RenderWindow& window)
 	{
 		window.draw(m_text); 

@@ -41,7 +41,7 @@ public:
 		p_hitbox.setFillColor(sf::Color::Transparent);
 
 
-		m_bloodyscreen.loadFromFile("C:/Users/JanSa/OneDrive/Desktop/Programmieren/Projekte/ProcMapGen/ProcGen/Assets/Player/Textures/player_received_damage.png"); 
+		m_bloodyscreen.loadFromFile("C:/Users/JanSa/source/repos/tmpGameRepo/"); 
 		m_bloodscreen.setTexture(m_bloodyscreen); 
 		m_bloodscreen.setPosition(0, 0); 
 		m_bloodscreen.setColor(sf::Color(100, 0, 0, 150)); 
@@ -93,10 +93,7 @@ public:
 			if (lastEnemyID != other.objectID) {
 				p_health -= 10;
 				lastEnemyID = other.objectID;
-			}
-			if (!DamnThatBloodyDuration())
-			{
-				ToBeDrawn = true; 
+				ToBeDrawn = true;
 			}
 			break; 
 		}
@@ -115,16 +112,6 @@ public:
 private:
 
 	// for HUD class
-	bool DamnThatBloodyDuration()
-	{
-		if (this->timer.getElapsedTime().asMilliseconds() >= this->durationinms)
-		{
-			this->timer.restart();
-			ToBeDrawn = false; 
-			return true;
-		}
-		return false;
-	}
 
 	void MovePlayer(const float& dt, MapGenerator& map)
 	{
@@ -212,6 +199,8 @@ private:
 public: 
 	sf::RectangleShape p_hitbox;
 	int				   p_health;
+
+	bool p_onhit = false; 
 private: 
 
 	sf::Sprite		   m_sprite; 
@@ -228,6 +217,6 @@ private:
 	sf::Texture m_bloodyscreen; 
 
 	sf::Clock timer; 
-	int durationinms = 500; 
+	int durationinms = 2000; 
 	bool ToBeDrawn = false; 
 };

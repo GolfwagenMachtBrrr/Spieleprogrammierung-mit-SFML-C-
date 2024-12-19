@@ -176,6 +176,9 @@
     <ClInclude Include="ScoreBoard.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="Effects.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Zombie.txt" />

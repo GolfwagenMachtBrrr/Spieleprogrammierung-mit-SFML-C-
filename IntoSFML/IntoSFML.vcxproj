@@ -160,6 +160,7 @@
     <ClInclude Include="BiomSetter.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="CollisionManager.h" />
+    <ClInclude Include="Effects.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemyManager.h" />
     <ClInclude Include="Entity.h" />

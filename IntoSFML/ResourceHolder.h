@@ -20,6 +20,7 @@ namespace Textures
 		House,
 		Bandit,
 		Player,
+		BloodScreen, 
 	};
 
 

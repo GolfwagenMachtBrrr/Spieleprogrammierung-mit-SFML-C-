@@ -17,6 +17,8 @@
 #include "MapManager.h"
 #include "CollisionManager.h"
 
+#include "HUD.h"
+
 
 #include <iostream>
 #include <random>
@@ -45,8 +47,8 @@ public:
 
     void InitTextures()
     {
-        //std::string SYSTEMPATH = "C:/Users/JanSa/source/repos/tmpGameRepo/";
-        std::string SYSTEMPATH = "C:/Users/JanSa/OneDrive/Desktop/Programmieren/Projekte/ProcMapGen/ProcGen/"; 
+        std::string SYSTEMPATH = "C:/Users/JanSa/source/repos/tmpGameRepo/";
+        //std::string SYSTEMPATH = "C:/Users/JanSa/OneDrive/Desktop/Programmieren/Projekte/ProcMapGen/ProcGen/"; 
         m_textures.Load(Textures::ID::Spawner,   SYSTEMPATH + "Assets/AssetPack/Pixel Art Top Down - Basic/Texture/Statue.png");
         m_textures.Load(Textures::ID::Cursor,    SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/UI/Pointers/01.png"); 
         m_textures.Load(Textures::ID::Skeleton,  SYSTEMPATH + "Assets/Player/Textures/skeletonsprite.png");
@@ -56,6 +58,7 @@ public:
         m_textures.Load(Textures::ID::Sword,     SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/Sword.png");
         m_textures.Load(Textures::ID::Wand,      SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/Wand.png");
         m_textures.Load(Textures::ID::House,     SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Blue.png");
+        m_textures.Load(Textures::ID::BloodScreen,     SYSTEMPATH + "Assets / Player / Textures / player_received_damage.png"); 
          
     }
 
@@ -85,6 +88,11 @@ public:
         this->m_map.Generate();
         this->m_mapM.Initialize(m_textures, m_map, m_collisionmanager); 
         
+    }
+
+    void InitHUD()
+    {
+        m_gameHUD.Initalize(m_textures, m_window.getSize().x, m_window.getSize().y);
     }
 
     void InitViewer()
@@ -139,6 +147,7 @@ public:
             this->m_mapM.Update(m_dt, m_player, m_map);
             this->m_playergun.Update(m_dt, m_player->GetPosition(), ConvertedPosition1, m_mapM, m_collisionmanager);
             this->m_inventory.Update(m_cursor.getPosition());
+            this->m_gameHUD.Update(m_cursor.getPosition(), m_player);
             this->m_gameview.Update(m_dt);
             this->m_collisionmanager.checkCollisions(); 
           
@@ -155,7 +164,7 @@ public:
             // Changing Views
             this->m_window.setView(m_inventory.p_view);
             this->m_window.draw(m_cursor);
-            this->m_inventory.Draw(m_window);
+            this->m_gameHUD.Draw(m_window);
 
 
             m_window.display();
@@ -183,6 +192,7 @@ private:
     Player* m_player; 
     Gun m_playergun; 
 
+    HUD m_gameHUD; 
    
 
     sf::Sprite m_cursor; 
