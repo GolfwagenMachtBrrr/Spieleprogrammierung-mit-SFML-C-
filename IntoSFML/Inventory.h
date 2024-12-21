@@ -1,11 +1,12 @@
 #pragma once
 #include "SFML/Graphics.hpp"
 #include "ResourceHolder.h"
-#include <vector>
-#include <map>
+#include "Item.h"
 #include "Player.h"
 
 #include <iostream>
+#include <vector>
+#include <map>
 
 //tmp
 #include "ScoreBoard.h"
@@ -23,51 +24,43 @@ public:
 		Shield,
 	};
 
-	Inventory() : m_size(3)
+	Inventory()
 	{}
 
 	void Initialize(const TextureHolder& textures, const int& width, const int& height)
 	{
-		m_scorboard.Initialize(); 
+		p_view = sf::View(sf::FloatRect(0, 0, width, height));
 
-		this->p_view = sf::View(sf::FloatRect(0, 0, width, height));
-		std::cout << m_size << " Size " << std::endl; 
-
-		int boxWidth = 128, boxHeight = 128;
-
-		for (int i = 0; i < m_size; i++)
+		for (int i = 0; i < m_slots; i++)
 		{
-			sf::RectangleShape box; m_storage.push_back(box);
+			sf::RectangleShape* box = new sf::RectangleShape(); 
+			m_storage.push_back(box);
 		}
 
-		for (int i = 0; i < m_size; i++) {
-			m_storage[i].setFillColor(sf::Color::Transparent);
-			m_storage[i].setOutlineColor(sf::Color::Black);
-			m_storage[i].setOutlineThickness(1);
-			m_storage[i].setSize(sf::Vector2f(boxWidth, boxHeight));
-			m_storage[i].setPosition(sf::Vector2f(width - boxWidth * (i + 1), height - boxHeight));
+		m_backgroundcolor_slots = sf::Color(245,245,220,200);
+
+		for (int i = 0; i < m_slots; i++) {
+			m_storage[i]->setFillColor(sf::Color::Yellow);
+			m_storage[i]->setOutlineColor(m_backgroundcolor_slots);
+			m_storage[i]->setOutlineThickness(1);
+			m_storage[i]->setSize(sf::Vector2f(m_slot_sizeX, m_slot_sizeY));
+			m_storage[i]->setPosition(sf::Vector2f(width - m_slot_sizeX * (i + 1), height - m_slot_sizeY));
 		}
 		
-
-		AddGlobalItem(toTextureID(Wand), textures);
-		AddGlobalItem(toTextureID(Sword), textures);
-
-		AddItem(toTextureID(Wand)); 
-		AddItem(toTextureID(Sword));
+		//AddItem(toTextureID(Wand)); 
+		//AddItem(toTextureID(Sword));
 	}
 	void Update(const sf::Vector2f& mouseposition)
 	{
-		//m_scorboard.Update(); 
-
 		for (auto& box : m_storage)
 		{
-			if (box.getGlobalBounds().contains(mouseposition))
+			if (box->getGlobalBounds().contains(mouseposition))
 			{
-				box.setFillColor(sf::Color::Yellow);
+				box->setFillColor(sf::Color::Yellow);
 			}
 			else
 			{
-				box.setFillColor(sf::Color::Transparent);
+				box->setFillColor(m_backgroundcolor_slots);
 			}
 
 		}
@@ -81,22 +74,24 @@ public:
 	}
 	void Draw(sf::RenderWindow& window)
 	{
-		m_scorboard.Draw(window); 
 		window.draw(m_background);
-		for (const auto& box : m_storage) { window.draw(box); }
-		for (const auto& item : m_items) { window.draw(item); }
+		for (const auto& box : m_storage) { window.draw(*box); }
+		for (const auto& item : m_items)  { }
 	}
 
-	void AddItem(Textures::ID id) {
-		auto found = m_itemlist.find(id);
-		m_items.push_back(found->second); 
-		
+	void AddItem(Textures::ID ID, const TextureHolder& textures) {
+
+		Item* item; m_items.push_back(item);
 		int currindex = m_items.size()-1; 
 
-		if (currindex <= m_size) {
-			m_items[currindex].setPosition(sf::Vector2f
-			(m_storage[m_size-1  - currindex].getPosition().x + 32, m_storage[m_size - 1 - currindex].getPosition().y + 32));
-			m_items[currindex].scale(sf::Vector2f(4, 4)); 
+		// Nicht mehr Items als im inventar platz hat
+		if (currindex <= m_slots) {
+
+			sf::Vector2f calculatedposition;
+			calculatedposition.x = m_storage[m_slots - 1 - currindex]->getPosition().x + 32; 
+			calculatedposition.y = m_storage[m_slots - 1 - currindex]->getPosition().y + 32; 
+
+			item->Initialize(textures, ID, calculatedposition); 
 		}
 		else {
 			std::cout << "Inventory Full - Drop an Item to make space in your Inventory"; 
@@ -114,13 +109,6 @@ private:
 			return Textures::ID::Wand; 
 		}
 	}
-
-	void AddGlobalItem(Textures::ID id, const TextureHolder &textures)
-	{
-		sf::Sprite item(textures.Get(id));
-		m_itemlist.insert(std::make_pair(id, item)); 
-	}
-
 	bool TimePassed()
 	{
 		int timepassed = m_clock.getElapsedTime().asMilliseconds();
@@ -135,19 +123,18 @@ public:
 	sf::View p_view; 
 	 
 private:
-
-	int m_size; 
+	int m_slots = 3; 
+	int m_slot_sizeX = 128, m_slot_sizeY = 128;
 
 	sf::Sprite m_background; 
 
-	std::vector<sf::Sprite>				  m_items;
-	std::map<Textures::ID, sf::Sprite>	  m_itemlist;
-	std::vector<sf::RectangleShape>       m_storage; 
+	std::vector<Item*>				  m_items;
+	std::vector<sf::RectangleShape*>  m_storage; 
 
 	sf::Clock m_clock; 
 	int		  m_itemDropPickTimer = 500; 
 
-	ScoreBoard m_scorboard; 
+	sf::Color m_backgroundcolor_slots; 
 };
 
 

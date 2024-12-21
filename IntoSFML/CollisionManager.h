@@ -25,12 +25,12 @@ public:
 
     void addObject(GameObject* obj) {
         m_objects.push_back(obj);
-        obj->objectID = m_objects.size(); 
+        obj->u_objectID = m_objects.size(); 
     }
 
     void clearInactiveObjects() {
         for (int i = 0; i < m_objects.size(); i++) {
-            if (!m_objects[i]->active) {
+            if (!m_objects[i]->u_active) {
                 std::swap(m_objects[i], m_objects[m_objects.size() - 1]);
                 m_objects.pop_back();
             }

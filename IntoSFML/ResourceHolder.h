@@ -1,7 +1,16 @@
 #pragma once
 #include "SFML/Graphics.hpp"
+#include "SFML/Audio.hpp"
+
 #include <map>
 #include <string>
+
+
+namespace GameData
+{
+	static sf::Vector2u data_tilesize(16, 16);
+	static int			data_renderrange = 30;
+}
 
 
 namespace Textures
@@ -22,8 +31,17 @@ namespace Textures
 		Player,
 		BloodScreen, 
 	};
+}
 
-
+namespace Sounds
+{
+	enum ID
+	{
+		SoundtrackGame,
+		SoundtrackMenue, 
+		SoundGun, 
+		SoundZombie,
+	};
 }
 
 
@@ -80,5 +98,6 @@ private:
 
 };
 
-typedef ResourceHolder<sf::Texture, Textures::ID> TextureHolder;
+typedef ResourceHolder<sf::Texture, Textures::ID>   TextureHolder;
+typedef ResourceHolder<sf::SoundBuffer, Sounds::ID> SoundHolder; 
 

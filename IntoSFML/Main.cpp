@@ -78,6 +78,6 @@ int main()
 {
     MenuWindow mw; 
     GameWindow gw; 
-    gw.Start(1); 
+    gw.Start(); 
     return 0;
 }

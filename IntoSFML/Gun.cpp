@@ -33,20 +33,20 @@ bool AABB(sf::FloatRect a, sf::FloatRect b)
 	return false;
 }
 
-void Gun::Update(const float &dt, const sf::Vector2f &player_position, const sf::Vector2f& mouse_position, MapManager &mapm, CollisionManager& collisionmanager)
+void Gun::Update(const float &dt, const sf::Vector2f &player_position, const sf::Vector2f& mouse_position, CollisionManager* collisionmanager)
 {
-	
+	m_duration = 500;
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
 		
-		if (this->GetAttackTimer())
+		if (this->CheckTimer())
 		{
 			Bullet* bullet = new Bullet(10, 0.5, Textures::ID::Wand_bullet);
 			bullet->body.setSize(sf::Vector2f(5, 2.5));
 			bullet->body.setPosition(player_position);
 			bullet->objectType = bullet->type;
 			m_bullets.push_back(bullet);
-			collisionmanager.addObject(bullet);
+			collisionmanager->addObject(bullet);
 			CreateBulletTarget(m_bullets.size() - 1, mouse_position);
 		}
 
@@ -56,25 +56,20 @@ void Gun::Update(const float &dt, const sf::Vector2f &player_position, const sf:
 	{
 		sf::Vector2f bulletDirection = m_bullets[i]->target.getPosition() - m_bullets[i]->body.getPosition();
 		bulletDirection = Normalize(bulletDirection);
-
 		m_bullets[i]->body.setPosition(m_bullets[i]->body.getPosition() + bulletDirection * m_bullets[i]->speed);
 	}
 
 
 	for (size_t i = 0; i < m_bullets.size(); i++)
 	{
-		// StackOverflow code: 
-
-		
 		if (m_bullets[i]->target_reached) {
-			std::cout << "target r" << std::endl; 
-			m_bullets[i]->active = false;
+			m_bullets[i]->u_active = false;
 			std::swap(m_bullets[i], m_bullets[m_bullets.size() - 1]); 
 			m_bullets.pop_back(); 
 			break; 
 		}
 		if (m_bullets[i]->GetBoundingBox().intersects(m_bullets[i]->target.getGlobalBounds())) {
-			m_bullets[i]->active = false;
+			m_bullets[i]->u_active = false;
 			std::swap(m_bullets[i], m_bullets[m_bullets.size() - 1]);
 			m_bullets.pop_back();
 			break; 
@@ -91,17 +86,8 @@ void Gun::CreateBulletTarget(const int& index, const sf::Vector2f& mousePos)
 	boundingRect.setOutlineColor(sf::Color::Blue);
 	boundingRect.setOutlineThickness(1);
 	boundingRect.setPosition(sf::Vector2f(mousePos.x, mousePos.y));
-	this->m_bullets[index]->target = boundingRect;
-}
 
-bool Gun::GetAttackTimer()
-{
-	if (this->m_attacktimer.getElapsedTime().asMilliseconds() >= this->m_attacktimermax)
-	{
-		this->m_attacktimer.restart();
-		return true; 
-	}
-	return false;
+	m_bullets[index]->target = boundingRect;
 }
 
 void Gun::Draw(sf::RenderWindow& window)

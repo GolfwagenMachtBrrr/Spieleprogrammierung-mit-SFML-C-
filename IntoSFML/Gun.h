@@ -1,39 +1,31 @@
 #pragma once
 #include "SFML/Graphics.hpp"
+
 #include "Bullet.h"
-#include "Spawner.h"
-#include "MapManager.h"
+
 #include "CollisionManager.h"
+#include "TimeObject.h"
 
 #include <vector>
 #include <deque>
 
-class Gun
+
+class Gun : public TimeObject
 {
 public: 
-
-	enum CollisionType
+	Gun()
 	{
-		COLLISION_NONE = NULL, 
-		ENTITY_COLLISION,
-		ENEMY_COLLISION,
-	};
+		m_duration = 300; 
+	}
 
-	Gun(){}
-
-	void Update(const float& dt, const sf::Vector2f& player_position, const sf::Vector2f& mouse_position, MapManager& mapm, CollisionManager &collisionmanager);
+	void Update(const float& dt, const sf::Vector2f& player_position, const sf::Vector2f& mouse_position, CollisionManager* collisionmanager);
 	void Draw(sf::RenderWindow& window); 
 
 private:
 	void CreateBulletTarget(const int& index, const sf::Vector2f& mousePos);
-	bool GetAttackTimer(); 
 	
 private: 
-	std::vector<Bullet*> m_bullets_vec; 
 	std::deque<Bullet* > m_bullets; 
-
-	sf::Clock m_attacktimer; 
-	sf::Int32 m_attacktimermax = 300; 
 
 	// TO ADD: Bullet Animation | texture
 

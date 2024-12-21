@@ -1,22 +1,25 @@
 #pragma once
 #include "SFML/Graphics.hpp"
 #include "ResourceHolder.h"
+#include "GameObject.h"
 
-struct Item
+struct Item : public GameObject
 {
 	Item()
 	{}
+	
+	void Initialize(const TextureHolder& textures,
+					Textures::ID ID,
+					const sf::Vector2f& position)
+	{
+		m_position = position; 
+		m_sprite.setTexture(textures.Get(ID)); 
 
-	Item(const Textures::ID ID, sf::Vector2f* Position, sf::RectangleShape* Hitbox)
-		: id(ID), position(Position), hitbox(hitbox)
-	{}
+		objectType = ID;
 
-	// Sollten die nicht eine textur haben? 
-
-	Textures::ID		 id		  = static_cast<Textures::ID>(-1); 
-	sf::Vector2f*		 position = new sf::Vector2f(); 
-	sf::RectangleShape*	 hitbox   = new sf::RectangleShape();
-	bool				 isActive = false; 
+		// ????
+		m_sprite.setScale(sf::Vector2f(4, 4)); 
+	}
 
 
 };

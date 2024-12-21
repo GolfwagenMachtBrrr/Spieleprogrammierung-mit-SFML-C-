@@ -8,6 +8,7 @@
 #include "ResourceHolder.h"
 #include <iostream>
 #include <vector>
+#include "Player.h"
 
 
 typedef ResourceHolder<sf::Texture, Textures::ID> TextureHolder;
@@ -23,17 +24,14 @@ public:
 	{
 		m_tilesprite.setTexture(textures.Get(Textures::ID::Grass));
 		m_tileSize = tilesize;
-		m_width = width; m_width = 100;
-		m_height = height; m_height = 100;
-
+		m_width = width*4; 
+		m_height = height*4; 
 
 		m_biomeSetter.Initialize();
 		m_noise.Initialize(m_width, m_height, 1, sf::Vector2f(0, 0));
 	}
 	void Generate()
 	{
-		m_height = 100, m_width = 100;
-
 		for (int i = 0; i < m_width; i++)
 		{
 			std::vector<Tile> tileMap_row;
@@ -53,18 +51,17 @@ public:
 		}
 	}
 	// https://gist.github.com/lxndrdagreat/da4400e23ac611ec3567
-	void Update(sf::View& gameView, sf::RenderWindow& Window); // const ?
-	void Draw(sf::RenderWindow& Window, Viewer& view)	// const ? 
+	
+	void Draw(sf::RenderWindow& Window, Player* player)	// const ? 
 	{
-		int range = 25;
+		int range = GameData::data_renderrange;
 
-		int fromX = (view.GetPosition().x / m_tileSize.x) - range;
-		int fromY = (view.GetPosition().y / m_tileSize.y) - range;
+		int fromX = (player->GetPosition().x / m_tileSize.x) - range;
+		int fromY = (player->GetPosition().y / m_tileSize.y) - range;
 
-		int toX = (view.GetPosition().x / m_tileSize.x) + range;
-		int toY = (view.GetPosition().y / m_tileSize.y) + range;
+		int toX = (player->GetPosition().x / m_tileSize.x) + range;
+		int toY = (player->GetPosition().y / m_tileSize.y) + range;
 
-		//std::cout << fromX << " " << toX << " " << fromY << " " << toY << std::endl; 
 
 		if (fromX < 0)
 			fromX = 0;
@@ -100,7 +97,6 @@ public:
 	std::vector<std::vector<Tile>> p_tileMap;
 
 private:
-
 	int m_width;  
 	int m_height;
 
@@ -108,7 +104,6 @@ private:
 	NoizeGenerator m_noise;
 
 	sf::Sprite m_tilesprite; 
-
 	std::string m_tileSheet;
 	sf::Vector2u m_tileSize;
 

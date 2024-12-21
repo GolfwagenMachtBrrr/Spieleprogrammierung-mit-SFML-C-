@@ -14,7 +14,7 @@
 
 typedef ResourceHolder<sf::Texture, Textures::ID> TextureHolder;
 
-class Spawner
+class Spawner : public GameObject, public TimeObject
 {
 
 public:
@@ -22,7 +22,7 @@ public:
 	Spawner()
 	{}
 
-	void Initialize(const sf::Vector2f &position, std::vector<Textures::ID> &spawntypes, const TextureHolder& textures, CollisionManager &collisionmanager)
+	void Initialize(const sf::Vector2f &position, std::vector<Textures::ID> &spawntypes, const TextureHolder& textures, CollisionManager* collisionmanager)
 	{
 		m_sprite.setTexture(textures.Get(Textures::ID::Spawner)); 
 		m_sprite.setPosition(position);
@@ -40,13 +40,11 @@ public:
 		m_stack = spawntypes; 
 		for (int i = 0; i < spawntypes.size(); i++) 
 		{ 
-			Enemy* enemy = new Enemy(textures, spawntypes[i]);
-			enemy->objectType = Textures::ID::Zombie; 
-			collisionmanager.addObject(enemy); 
+			Enemy* enemy = new Enemy();
 			m_spawn.push_back(enemy); 
 		}
 	}
-	void Update(const int &deltatime, Player* player, MapGenerator &map)
+	void Update(const int &deltatime, Player* player, const TextureHolder& textures, CollisionManager* collisionmanager)
 	{
 		
 		if (p_health <= 0)
@@ -60,14 +58,13 @@ public:
 		if (this->TimePassed() && m_stack.size() > 0 && p_isActive)
 		{
 			Textures::ID currtype = m_stack[m_stack.size() - 1];
-			this->SpawnNPC(player->GetPosition(), currtype);
+			this->SpawnNPC(player->GetPosition(), currtype, textures, collisionmanager);
 		}
 		
 		for (int i = 0; i < m_spawn.size(); i++)
 		{
-			m_spawn[i]->Update(deltatime, player, map);
-			if (m_spawn[i]->p_health <= 0) {
-				m_spawn[i]->active = false; 
+			m_spawn[i]->Update(deltatime, player);
+			if (m_spawn[i]->u_active == false) {
 				m_spawn.erase(m_spawn.begin()+i); 
 				break; 
 			}
@@ -75,47 +72,50 @@ public:
 		}
 		
 	}
-	void Draw(sf::RenderWindow& window)
+	void Draw(sf::RenderWindow& window, Player *player)
 	{
 		if (!p_isActive) {
 			return; 
 		}
-		window.draw(m_sprite); 
-		window.draw(m_text);
+
+		if (player->ValidateRendering(m_position)) {
+			window.draw(m_sprite);
+			window.draw(m_text);
+		}
 
 		for (auto& enemy : m_spawn)
 		{
 			if (enemy->p_isActive) {
-				enemy->Draw(window);
+				enemy->Draw(window, player);
 			}
 		}
 	}
 
-	const void addToStack(const Textures::ID& enemy)
+
+	sf::Vector2f GetPosition() const override
 	{
-		m_stack.push_back(enemy);
+		return m_position;
+	}
+	sf::FloatRect GetBoundingBox() const override
+	{
+		return m_sprite.getGlobalBounds();
 	}
 
+	void OnCollision(GameObject& other) override {}
 	
 private: 
 
-	void SpawnNPC(const sf::Vector2f &player_position, const Textures::ID &type)
+	void SpawnNPC(const sf::Vector2f &player_position, const Textures::ID &type, const TextureHolder& textures, CollisionManager* collisionmanager)
 	{
-		if (m_stack.size() == 0)
-		{
-			return;
-		}
-
-		WayPoint wp;
-		wp.position = CalculatePosition();
-		wp.target = player_position;
-
+		if (m_stack.size() == 0) {return;}
 		m_enemycount++;
+
 
 		switch (type)
 		{
 		case Textures::ID::Zombie:
-			m_spawn[m_stack.size()-1]->Initialize(0.125/2, 10, 100, wp, sf::Color::White, m_enemycount); //stats sollen aus zombie.txt gelesen werden
+			m_spawn[m_stack.size()-1]->Initialize(textures, Textures::ID::Zombie, CalculatePosition()); //stats sollen aus zombie.txt gelesen werden
+			collisionmanager->addObject(m_spawn[m_stack.size() - 1]); 
 			break;
 		case Textures::ID::Skeleton:
 			break;
@@ -181,6 +181,8 @@ private:
 
 	sf::Clock	 m_clock;
 	sf::Vector2f m_position; 
+
+	sf::Vector2u m_tilesize; 
 
 private:
 	std::vector<Textures::ID> m_stack; 

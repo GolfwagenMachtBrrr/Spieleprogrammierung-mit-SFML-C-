@@ -2,14 +2,18 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 
-#include "Bullet.h"
+#include <iostream>
+#include <vector>
+
 #include "ResourceHolder.h"
-#include "Item.h"
-#include "MapGenerator.h"
+#include "CollisionManager.h"
+
 #include "GameObject.h"
+#include "TimeObject.h"
 #include "Entity.h"
 
-#include <vector>
+#include "Gun.h"
+
 
 
 #define SPRITEUNIT 64
@@ -21,202 +25,149 @@
 #define SECOND 5
 
 
-class Player : public GameObject
+class Player : public TimeObject, public GameObject, public Entity 
 {
 public: 
+	Player() {}
 
-	Player() 
-		: m_speed(0.125), p_health(100)
-	{}
-
-	void Initalize(TextureHolder& textures)
+	void Initalize(const TextureHolder& textures)
 	{
+		// Initalizing player stats
+		m_speed = 0.125; 
+		m_health = 100; 
+
 		m_sprite.setTexture(textures.Get(Textures::ID::Skeleton));
 		m_sprite.setTextureRect(sf::IntRect(0, 0, 64, 64));
 		m_sprite.setPosition(450, 300);
 
-		p_hitbox.setSize(sf::Vector2f(64, 64));
-		p_hitbox.setOutlineColor(sf::Color::Red);
-		p_hitbox.setOutlineThickness(1);
-		p_hitbox.setFillColor(sf::Color::Transparent);
-
-
-		m_bloodyscreen.loadFromFile("C:/Users/JanSa/source/repos/tmpGameRepo/"); 
-		m_bloodscreen.setTexture(m_bloodyscreen); 
-		m_bloodscreen.setPosition(0, 0); 
-		m_bloodscreen.setColor(sf::Color(100, 0, 0, 150)); 
-
+		// Weapons: 
+		// TODO - Überarbeitung: 
+		m_gun = new Gun(); 
 	}
 
-	void Update(const float& dt, sf::RenderWindow& window, MapGenerator &map)
+	void Update(const float& dt, const sf::Vector2f convertedmouseposition, CollisionManager* collisonmanager)
 	{
-		MovePlayer(dt, map);
-		p_hitbox.setPosition(m_position);
-		if (p_health < 0) {
+		MovePlayer(dt);
+		if (m_health < 0) {
 			std::cout << "Huh Dead! " << std::endl; 
 		}
+
+		//Weapons: 
+		m_gun->Update(dt, m_position, convertedmouseposition, collisonmanager); 
 	}
 
 	void Draw(sf::RenderWindow& window)
 	{
 		window.draw(m_sprite);
-		if (ToBeDrawn) {
-			window.draw(m_bloodscreen); 
-		}
+
+		//weapons
+		m_gun->Draw(window); 
 	}
 
-	sf::Vector2f GetPosition()
+	sf::Vector2f GetPosition() const override
 	{
-		return this->m_position; 
+		return m_position; 
 	}
 
 	sf::FloatRect GetBoundingBox() const override
 	{
-		return p_hitbox.getGlobalBounds();
+		return m_sprite.getGlobalBounds();
 	}
 
 	void OnCollision(GameObject& other) override
 	{
-		Entity* otherEntity = dynamic_cast<Entity*>(&other);
-
-		if (otherEntity) {
-			HandleEntityCollision(otherEntity);
-		}
 
 		switch (other.objectType)
 		{
 		case Textures::ID::House:
-			HandleEntityCollision(otherEntity);
+			HandleCollision(other.GetPosition(), 5);
+			break;
+		case Textures::ID::Spawner:
+			HandleCollision(other.GetPosition(), 5);
 			break;
 		case Textures::ID::Zombie:
 			std::cout << "Dammit, it collides" << std::endl; 
-			if (lastEnemyID != other.objectID) {
-				p_health -= 10;
-				lastEnemyID = other.objectID;
-				ToBeDrawn = true;
+			if (lastEnemyID != other.u_objectID) {
+				m_health -= 10;
+				lastEnemyID = other.u_objectID;
+				p_onhit = true; 
 			}
 			break; 
 		}
 	}
 
-	void HandleEntityCollision(Entity* entity) {
-		// Einfache Abstoßungslogik (basierend auf den Positionen)
-		sf::Vector2f direction = m_position - entity->p_position;
-		float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
-		if (length > 0) {
-			direction /= length; // Normalisieren
-			m_sprite.setPosition(m_position + direction * 5.0f);
-		}
+	bool ValidateRendering(const sf::Vector2f& objectposition) const
+	{
+		// O...Object, P...Player, D...Difference
+		int xO = objectposition.x / GameData::data_tilesize.x, yO = objectposition.y / GameData::data_tilesize.y;
+		int xP = m_position.x / GameData::data_tilesize.x, yP = m_position.y / GameData::data_tilesize.y;
+		int xD = std::abs(xP - xO), yD = std::abs(yP - yO);
+
+		return (xD < GameData::data_renderrange && yD < GameData::data_renderrange);
 	}
 
 private:
-
-	// for HUD class
-
-	void MovePlayer(const float& dt, MapGenerator& map)
+	void MovePlayer(const float& dt)
 	{
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-			sf::Vector2f newposition = m_position + sf::Vector2f(0, -1) * m_speed * dt; 
+			sf::Vector2f newposition = m_position + sf::Vector2f(0, -1) * m_speed * dt;
 
-			if (true) {
-				m_sprite.setPosition(newposition);
-				m_sprite.setTextureRect(sf::IntRect((movementIndicator / MOVEMENT) * SPRITEUNIT, FORWARD, SPRITEUNIT, SPRITEUNIT));
-				movementIndicator++;
-				if (movementIndicator / MOVEMENT == 9) {
-					movementIndicator = 0;
-				}
+			m_sprite.setPosition(newposition);
+			m_sprite.setTextureRect(sf::IntRect((movementIndicator / MOVEMENT) * SPRITEUNIT, FORWARD, SPRITEUNIT, SPRITEUNIT));
+			movementIndicator++;
+			if (movementIndicator / MOVEMENT == 9) {
+				movementIndicator = 0;
 			}
-			
-			
+
 		}
+
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
 			sf::Vector2f newposition = m_position + sf::Vector2f(0, 1) * m_speed * dt;
 
-			if (true) {
-				m_sprite.setPosition(newposition);
-				m_sprite.setTextureRect(sf::IntRect((movementIndicator / MOVEMENT) * SPRITEUNIT, BACKWARD * SPRITEUNIT, SPRITEUNIT, SPRITEUNIT));
-				movementIndicator++;
-				if (movementIndicator / MOVEMENT == 9) {
-					movementIndicator = 0;
-				}
+			m_sprite.setPosition(newposition);
+			m_sprite.setTextureRect(sf::IntRect((movementIndicator / MOVEMENT) * SPRITEUNIT, BACKWARD * SPRITEUNIT, SPRITEUNIT, SPRITEUNIT));
+			movementIndicator++;
+			if (movementIndicator / MOVEMENT == 9) {
+				movementIndicator = 0;
 			}
-			
+
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-			sf::Vector2f newposition = m_position + sf::Vector2f(1,0) * m_speed * dt;
+			sf::Vector2f newposition = m_position + sf::Vector2f(1, 0) * m_speed * dt;
 
-			if (true) {
-				m_sprite.setPosition(m_position + sf::Vector2f(1, 0) * m_speed * dt);
-				m_sprite.setTextureRect(sf::IntRect((movementIndicator / MOVEMENT) * SPRITEUNIT, RIGHTWARD * SPRITEUNIT, SPRITEUNIT, SPRITEUNIT));
-				movementIndicator++;
-				if (movementIndicator / MOVEMENT == 9) {
-					movementIndicator = 0;
-				}
+
+			m_sprite.setPosition(m_position + sf::Vector2f(1, 0) * m_speed * dt);
+			m_sprite.setTextureRect(sf::IntRect((movementIndicator / MOVEMENT) * SPRITEUNIT, RIGHTWARD * SPRITEUNIT, SPRITEUNIT, SPRITEUNIT));
+			movementIndicator++;
+			if (movementIndicator / MOVEMENT == 9) {
+				movementIndicator = 0;
 			}
-			
+
+
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
 			sf::Vector2f newposition = m_position + sf::Vector2f(-1, 0) * m_speed * dt;
 
-			if (true) {
-				m_sprite.setPosition(m_position + sf::Vector2f(-1, 0) * m_speed * dt);
-				m_sprite.setTextureRect(sf::IntRect((movementIndicator / MOVEMENT) * SPRITEUNIT, LEFTWARD * SPRITEUNIT, SPRITEUNIT, SPRITEUNIT));
-				movementIndicator++;
-				if (movementIndicator / MOVEMENT == 9) {
-					movementIndicator = 0;
-				}
+
+			m_sprite.setPosition(m_position + sf::Vector2f(-1, 0) * m_speed * dt);
+			m_sprite.setTextureRect(sf::IntRect((movementIndicator / MOVEMENT) * SPRITEUNIT, LEFTWARD * SPRITEUNIT, SPRITEUNIT, SPRITEUNIT));
+			movementIndicator++;
+			if (movementIndicator / MOVEMENT == 9) {
+				movementIndicator = 0;
 			}
-			
+
 		}
 
 		m_position = m_sprite.getPosition();
 	}
-
-	bool YouShallPass(const sf::Vector2f& reisepass, MapGenerator &map) {
-		float x = reisepass.x / map.GetTileSize().x, y = reisepass.y / map.GetTileSize().y;
-		if (map.p_tileMap[x][y].occupied == false || IsEnemy(map, x,y)) {
-			return true; 
-		}
-		return false; 
-	}
-
-	bool IsEnemy(MapGenerator& map, int x, int y) {
-		Textures::ID type = map.p_tileMap[x][y].occupationID; 
-		switch (type)
-		{
-		case Textures::ID::Zombie:
-			return true; 
-		}
-		
-		return false; 
-	}
-
-	/*void PickUpItem(Inventory &inventory, Item &item)
-	{
-		inventory.AddItem(item.id); 
-	}*/
-
 public: 
-	sf::RectangleShape p_hitbox;
-	int				   p_health;
-
 	bool p_onhit = false; 
+
+private:
+	Gun* m_gun; 
+
 private: 
-
-	sf::Sprite		   m_sprite; 
-
-	sf::Vector2f	   m_position;
-	float			   m_speed; 
-
 	// until its fixed
-	int movementIndicator = 0; 
+	int movementIndicator = 0;
 	int lastEnemyID = -42;
-
-	// Alles kommt dann in die HUD klasse:	
-	sf::Sprite m_bloodscreen; 
-	sf::Texture m_bloodyscreen; 
-
-	sf::Clock timer; 
-	int durationinms = 2000; 
-	bool ToBeDrawn = false; 
 };

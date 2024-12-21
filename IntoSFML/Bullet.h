@@ -12,12 +12,18 @@ struct Bullet : public GameObject
 	Textures::ID type; 
 
 	sf::Vector2f direction;
-	sf::Vector2f position;
 
 	sf::RectangleShape body;
 	sf::RectangleShape target;
 
 	bool target_reached = false; 
+
+	// GameObject
+
+	sf::Vector2f GetPosition() const override
+	{
+		return m_position; 
+	}
 
 	sf::FloatRect GetBoundingBox() const override
 	{
@@ -37,5 +43,10 @@ struct Bullet : public GameObject
 			break; 
 		}
 	}
+
+
+private: 
+	sf::Vector2f m_position;
+
 };
 

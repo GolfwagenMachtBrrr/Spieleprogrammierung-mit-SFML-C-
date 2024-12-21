@@ -21,7 +21,7 @@ class MenuWindow
 {
 public:
 
-	void start()
+	void Start()
 	{
 		this->InitFont();
 		this->InitWindow();
@@ -79,7 +79,7 @@ public:
 					switch (i)
 					{
 					case START:
-						m_game.Start(true); 
+						m_game.Start(); 
 						break;
 
 					case EXIT:

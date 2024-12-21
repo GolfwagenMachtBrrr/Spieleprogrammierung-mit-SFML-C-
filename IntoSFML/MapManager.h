@@ -1,69 +1,100 @@
 #pragma once
 #include "SFML/Graphics.hpp"
+#include "TimeObject.h"
 
-#include "Entity.h"
-#include "Item.h"
 #include "ResourceHolder.h"
+#include "CollisionManager.h"
+
+#include "Building.h" 
+#include "Item.h"
+
 #include "Spawner.h"
 #include "Player.h"
 #include "MapGenerator.h"
-#include "CollisionManager.h"
+
+
 
 #include <random>
 #include <vector>
 
 
-class MapManager
+class MapManager : public TimeObject
 {
 public: 
-	void Initialize(const TextureHolder& textures, MapGenerator& map, CollisionManager &collisionmanager)
+	void Initialize(const TextureHolder& textures, const sf::Vector2u tilesize)
 	{
-		InitHouses(textures, 10, map, collisionmanager); 
+		// Collisionsmanager
+		m_collisionmanager = new CollisionManager();
 
-		InitSpawner(textures, 1, 2, map, collisionmanager);
+		// Player
+		p_player = new Player(); 
+		p_player->Initalize(textures);
+		p_player->objectType = Textures::ID::Player;
+		m_collisionmanager->addObject(p_player);
 
+		//Map
+		p_map = new MapGenerator(); 
+		p_map->Initialize(tilesize, textures, 1920 / tilesize.x, 1080 / tilesize.y); 
+		p_map->Generate(); 
+
+		//Game Objects
+		InitHouses(textures, 10);
+		InitSpawner(textures, 1, 2);
 	}
-	void Update(const float &deltatime, Player* player, MapGenerator &map)
+	void Update(const sf::Vector2f& convertedmousepos, const TextureHolder& textures)
 	{
-		for (auto& entity : p_entities) { entity->Update();}
-		for (auto& spawner :p_spawners) { spawner->Update(deltatime, player, map); }
+		// Calculating deltatime
+		CalculateDeltatime(); 
+
+		//Updateing GameObjects
+		p_player->Update(m_deltatime, convertedmousepos, m_collisionmanager);
+
+		for (auto& spawner :m_spawners) { spawner->Update(m_deltatime, p_player, textures, m_collisionmanager); }
+
+		// Collisions
+		m_collisionmanager->checkCollisions(); 
 	}
 	void Draw(sf::RenderWindow& window)
 	{ 
-		for(auto& spawner : p_spawners) { spawner->Draw(window); }
-		for (auto& entity  : p_entities) { entity->Draw(window);	}
-		// Item Draw
+		p_view.setCenter(p_player->GetPosition());
+		window.setView(p_view);
+
+		p_map->Draw(window, p_player); 
+		p_player->Draw(window); 
+
+		for(auto& spawner : m_spawners) { spawner->Draw(window, p_player); }
+		for (auto& entity : m_buildings) { entity->Draw(window, p_player);	}
 	}
 
 	void AddSpawner(const int& amount); 
 	void AddEntities(Textures::ID ID, const int& amount); 
 
 private: 
-	void InitSpawner(const TextureHolder& textures, const int& amount, const int& density, MapGenerator &map, CollisionManager& collisionmanager)
+	void InitSpawner(const TextureHolder& textures, const int& amount, const int& density)
 	{
-		for (int i = 0; i < amount; i++) { Spawner* spawner = new Spawner(); p_spawners.push_back(spawner); }
-		for (auto& spawner : p_spawners) {
+		for (int i = 0; i < amount; i++) { Spawner* spawner = new Spawner(); m_spawners.push_back(spawner); }
+		for (auto& spawner : m_spawners) {
 			std::vector<Textures::ID> spawntypes; 
 			for (int i = 0; i < density; i++) { spawntypes.push_back(Textures::ID::Zombie); }
-			spawner->Initialize(CalculatePosition(map, Textures::ID::Spawner), spawntypes, textures, collisionmanager);
+			spawner->Initialize(CalculatePosition(p_map, Textures::ID::Spawner), spawntypes, textures, m_collisionmanager);
 		}
 	}
-	void InitHouses(const TextureHolder& textures, const int& amount, MapGenerator &map, CollisionManager& collisionmanager)
+	void InitHouses(const TextureHolder& textures, const int& amount)
 	{
-		int latestIndex = p_entities.size() - 1; 
+		int latestIndex = m_buildings.size() - 1;
 		for (int i = 0; i < amount; i++) {
 			// Houses Setup
-			sf::Vector2f newposition = CalculatePosition(map, Textures::ID::House);
-			Entity* entity = new Entity(textures,
+			sf::Vector2f newposition = CalculatePosition(p_map, Textures::ID::House);
+			Building* house = new Building(textures,
 										Textures::ID::House, 
 										GetTextureSize(Textures::ID::House), 
 										newposition);
-			collisionmanager.addObject(entity);
-			p_entities.push_back(entity); 
+			m_collisionmanager->addObject(house);
+			m_buildings.push_back(house);
 		}
 	}
 
-	sf::Vector2f CalculatePosition(MapGenerator& map, Textures::ID ID)
+	sf::Vector2f CalculatePosition(MapGenerator* map, Textures::ID ID)
 	{
 		sf::Vector2f calculatedposition; 
 		
@@ -79,9 +110,9 @@ private:
 		return calculatedposition;
 	}
 
-	void AdjustTileMap(MapGenerator& map, const sf::Vector2f &calculatedposition, Textures::ID ID)
+	void AdjustTileMap(MapGenerator* map, const sf::Vector2f &calculatedposition, Textures::ID ID)
 	{
-		sf::Vector2f tilesize = static_cast<sf::Vector2f>(map.GetTileSize());
+		sf::Vector2f tilesize = static_cast<sf::Vector2f>(map->GetTileSize());
 		int startX = calculatedposition.x / tilesize.x, endX = GetTextureSize(ID).x / tilesize.x;
 		int startY = calculatedposition.y / tilesize.y, endY = GetTextureSize(ID).y / tilesize.y;
 		int range = 0; 
@@ -89,14 +120,14 @@ private:
 		for (int i = startX; i < startX + endX+range; i++) {
 			for (int j = startY; j < startY + endY + range; j++)
 			{
-				map.p_tileMap[i][j].occupied = true; 
-				map.p_tileMap[i][j].occupationID = ID; 
+				map->p_tileMap[i][j].occupied = true; 
+				map->p_tileMap[i][j].occupationID = ID; 
 			}
 		}
 	}
 
-	bool Overlapping(MapGenerator& map, const sf::Vector2f& calculatedposition, Textures::ID ID) {
-		sf::Vector2f tilesize = static_cast<sf::Vector2f>(map.GetTileSize());
+	bool Overlapping(MapGenerator* map, const sf::Vector2f& calculatedposition, Textures::ID ID) {
+		sf::Vector2f tilesize = static_cast<sf::Vector2f>(map->GetTileSize());
 		int startX = calculatedposition.x / tilesize.x, endX = GetTextureSize(ID).x / tilesize.x;
 		int startY = calculatedposition.y / tilesize.y, endY = GetTextureSize(ID).y / tilesize.y;
 	
@@ -115,39 +146,13 @@ private:
 		for (int i = startX; i < startX + endX; i++) {
 			for (int j = startY; j < startY + endY; j++)
 			{
-				if (map.p_tileMap[i][j].occupied == true) {
+				if (map->p_tileMap[i][j].occupied == true) {
 					return false; 
 				}
 			}
 		}
 
-
 		return true; 
-	}
-
-	bool EntityIsOverlapping(const sf::Vector2f &position)
-	{
-		sf::RectangleShape hypotheticalHitbox; hypotheticalHitbox.setPosition(position); 
-		for (int i = 0; i < p_entities.size() - 1; i++) {
-			if (CollisionCheck(hypotheticalHitbox.getGlobalBounds(),
-				p_entities[i]->p_hitbox.getGlobalBounds()))
-			{
-				return true; 
-			}
-		}
-		return false; 
-	}
-
-	bool CollisionCheck(const sf::FloatRect& a, const sf::FloatRect& b)
-	{
-		if (a.left + a.width > b.left &&
-			b.left + b.width > a.left &&
-			b.top + b.height > a.top &&
-			a.top + a.height > b.top)
-		{
-			return true;
-		}
-		return false;
 	}
 
 	const sf::Vector2f GetTextureSize(Textures::ID ID)
@@ -161,25 +166,28 @@ private:
 		}
 	}
 
-	bool TimePassed()
+	void CalculateDeltatime()
 	{
-		int timepassed = m_clock.getElapsedTime().asMilliseconds();
-		if (timepassed >= m_timer) {
-			m_clock.restart();
-			return true;
+		m_deltatime = m_deltatimeclock.getElapsedTime().asMilliseconds();
+		if (m_deltatime != 0) {
+			m_deltatimeclock.restart();
 		}
-		return false;
 	}
 
-public: 
-	std::vector<Spawner*> p_spawners;
-	std::vector<Entity*>  p_entities;
-	std::vector<Item*>	 p_items;
+public:
+	MapGenerator* p_map;
+	Player*       p_player;
+	sf::View      p_view;
 
 private: 
-	std::vector<Spawner> notavectorofspawners;
-	sf::Clock m_clock; 
-	int m_timer = 500;
+	std::vector<Spawner*>   m_spawners;
+	std::vector<Building*>  m_buildings;
+	std::vector<Item*>	    m_items;
 
+	CollisionManager* m_collisionmanager; 
+
+private:
+	sf::Clock m_deltatimeclock; 
+	float     m_deltatime;
 };
 

@@ -158,11 +158,11 @@
   <ItemGroup>
     <ClInclude Include="Bioms.h" />
     <ClInclude Include="BiomSetter.h" />
+    <ClInclude Include="Building.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="Effects.h" />
     <ClInclude Include="Enemy.h" />
-    <ClInclude Include="EnemyManager.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="EventHandler.h" />
     <ClInclude Include="GameObject.h" />
@@ -184,6 +184,7 @@
     <ClInclude Include="ResourceHolder.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="TileMap.h" />
+    <ClInclude Include="TimeObject.h" />
     <ClInclude Include="Viewer.h" />
     <ClInclude Include="Wave.h" />
     <ClInclude Include="WayPoint.h" />
