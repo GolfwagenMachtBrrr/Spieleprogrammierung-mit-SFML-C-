@@ -14,7 +14,7 @@
 
 typedef ResourceHolder<sf::Texture, Textures::ID> TextureHolder;
 
-class Spawner : public GameObject, public TimeObject
+class Spawner : public GameObject, public TimeObject, public Entity
 {
 
 public:
@@ -31,11 +31,8 @@ public:
 		m_text.setFont(m_font); 
 		m_text.setPosition(sf::Vector2f(position.x, position.y-50));
 
-		p_hitbox.setPosition(position);
-		p_hitbox.setSize((sf::Vector2f)textures.Get(Textures::ID::Spawner).getSize());
-		p_hitbox.setOutlineColor(sf::Color::Red);
-		p_hitbox.setOutlineThickness(1);
-		p_hitbox.setFillColor(sf::Color::Transparent);
+		m_health = 100; 
+		m_duration = 2000;
 
 		m_stack = spawntypes; 
 		for (int i = 0; i < spawntypes.size(); i++) 
@@ -47,15 +44,15 @@ public:
 	void Update(const int &deltatime, Player* player, const TextureHolder& textures, CollisionManager* collisionmanager)
 	{
 		
-		if (p_health <= 0)
+		if (m_health <= 0)
 		{
 			KillAllNPCs();
-			p_isActive = false; 
+			u_active = false;
 		}
 
-		m_text.setString(std::to_string(p_health));
+		m_text.setString(std::to_string(m_health));
 		
-		if (this->TimePassed() && m_stack.size() > 0 && p_isActive)
+		if (this->CheckTimer() && m_stack.size() > 0 && u_active)
 		{
 			Textures::ID currtype = m_stack[m_stack.size() - 1];
 			this->SpawnNPC(player->GetPosition(), currtype, textures, collisionmanager);
@@ -65,6 +62,7 @@ public:
 		{
 			m_spawn[i]->Update(deltatime, player);
 			if (m_spawn[i]->u_active == false) {
+				m_entity_death_count++; 
 				m_spawn.erase(m_spawn.begin()+i); 
 				break; 
 			}
@@ -74,11 +72,11 @@ public:
 	}
 	void Draw(sf::RenderWindow& window, Player *player)
 	{
-		if (!p_isActive) {
+		if (!u_active) {
 			return; 
 		}
 
-		if (player->ValidateRendering(m_position)) {
+		if (player->ValidateRendering(m_sprite)) {
 			window.draw(m_sprite);
 			window.draw(m_text);
 		}
@@ -91,16 +89,6 @@ public:
 		}
 	}
 
-
-	sf::Vector2f GetPosition() const override
-	{
-		return m_position;
-	}
-	sf::FloatRect GetBoundingBox() const override
-	{
-		return m_sprite.getGlobalBounds();
-	}
-
 	void OnCollision(GameObject& other) override {}
 	
 private: 
@@ -109,7 +97,7 @@ private:
 	{
 		if (m_stack.size() == 0) {return;}
 		m_enemycount++;
-
+		std::cout << "Im here" << std::endl; 
 
 		switch (type)
 		{
@@ -152,46 +140,18 @@ private:
 		return nPosition;
 	}
 
-	bool TimePassed()
-	{
-		int timeellapsed = this->m_clock.getElapsedTime().asMilliseconds();
-		if (timeellapsed >= this->m_spawnrate)
-		{
-			this->m_clock.restart();
-			return true;
-		}
-		return false; 
-	}
-
 private:
-	// Utillity
-	sf::Vector2f u_playerposition;
-	int		     u_deltatime; 
 	int		     m_spawnradius = 400; // not entire radius
-	int		     m_capacity = 0; 
 	int		     m_enemycount = 0; 
-
-	__int32 m_spawnrate = 2000; 
-
-	sf::Sprite	 m_sprite;
-	sf::Sprite	 m_spawnsprite; 
 
 	sf::Font	 m_font; 
 	sf::Text     m_text; 
 
-	sf::Clock	 m_clock;
-	sf::Vector2f m_position; 
-
-	sf::Vector2u m_tilesize; 
-
 private:
 	std::vector<Textures::ID> m_stack; 
 public:
-
 	std::vector<Enemy*> m_spawn;
-	Textures::ID	   p_type;
-	int				   p_health = 100;
-	bool			   p_isActive = true;
-	sf::RectangleShape p_hitbox;
+	// Killcount
+	int m_entity_death_count = 0;
 };
 

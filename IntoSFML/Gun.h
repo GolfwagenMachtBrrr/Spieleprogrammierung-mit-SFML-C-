@@ -18,7 +18,12 @@ public:
 		m_duration = 300; 
 	}
 
-	void Update(const float& dt, const sf::Vector2f& player_position, const sf::Vector2f& mouse_position, CollisionManager* collisionmanager);
+	void Update(const float& dt,
+				const sf::Vector2f& player_position,
+				const sf::Vector2f& mouse_position,
+				const TextureHolder& textures,
+				CollisionManager* collisionmanager);
+
 	void Draw(sf::RenderWindow& window); 
 
 private:
@@ -33,7 +38,8 @@ public:
 
 	bool		        p_bulletReachedTarget; 
 	sf::RectangleShape  p_bulletTarget; 
-
 	int damage = 10; 
+	
+	bool isActive = true; 
 };
 

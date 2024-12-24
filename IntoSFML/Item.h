@@ -14,12 +14,16 @@ struct Item : public GameObject
 	{
 		m_position = position; 
 		m_sprite.setTexture(textures.Get(ID)); 
+		m_sprite.setPosition(position); 
 
 		objectType = ID;
 
 		// ????
 		m_sprite.setScale(sf::Vector2f(4, 4)); 
+		u_active = false; 
 	}
 
+	void OnCollision(GameObject& other) override {}
 
+	
 };

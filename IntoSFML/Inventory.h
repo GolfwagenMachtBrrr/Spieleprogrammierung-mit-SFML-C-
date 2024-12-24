@@ -1,6 +1,7 @@
 #pragma once
 #include "SFML/Graphics.hpp"
 #include "ResourceHolder.h"
+#include "TimeObject.h"
 #include "Item.h"
 #include "Player.h"
 
@@ -13,7 +14,7 @@
 
 typedef ResourceHolder<sf::Texture, Textures::ID> TextureHolder;
 
-class Inventory
+class Inventory : public TimeObject 
 {
 public:
 
@@ -47,10 +48,10 @@ public:
 			m_storage[i]->setPosition(sf::Vector2f(width - m_slot_sizeX * (i + 1), height - m_slot_sizeY));
 		}
 		
-		//AddItem(toTextureID(Wand)); 
-		//AddItem(toTextureID(Sword));
+		AddItem(Textures::ID::Wand, textures); 
+		AddItem(Textures::ID::Sword, textures);
 	}
-	void Update(const sf::Vector2f& mouseposition)
+	void Update(const sf::Vector2f& mouseposition, Player* player)
 	{
 		for (auto& box : m_storage)
 		{
@@ -66,8 +67,8 @@ public:
 		}
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::F)) {
-			if (m_items.size() != 0 && TimePassed()) {
-				m_items.pop_back();
+			if (m_items.size() != 0 && CheckTimer()) {
+				player->m_gun->isActive = false; 
 			}
 			
 		}
@@ -76,20 +77,20 @@ public:
 	{
 		window.draw(m_background);
 		for (const auto& box : m_storage) { window.draw(*box); }
-		for (const auto& item : m_items)  { }
+		for (const auto& item : m_items) { item->Draw(window); }
 	}
 
 	void AddItem(Textures::ID ID, const TextureHolder& textures) {
 
-		Item* item; m_items.push_back(item);
+		Item* item = new Item(); m_items.push_back(item);
 		int currindex = m_items.size()-1; 
 
 		// Nicht mehr Items als im inventar platz hat
-		if (currindex <= m_slots) {
+		if (currindex < m_slots) {
 
 			sf::Vector2f calculatedposition;
-			calculatedposition.x = m_storage[m_slots - 1 - currindex]->getPosition().x + 32; 
-			calculatedposition.y = m_storage[m_slots - 1 - currindex]->getPosition().y + 32; 
+			calculatedposition.x = m_storage[m_slots - currindex - 1]->getPosition().x + 32; 
+			calculatedposition.y = m_storage[m_slots - currindex - 1]->getPosition().y + 32; 
 
 			item->Initialize(textures, ID, calculatedposition); 
 		}
@@ -98,27 +99,6 @@ public:
 		}
 	}
 	
-private: 
-	// Ausm Buch
-	Textures::ID toTextureID(Inventory::Items item) {
-		switch (item)
-		{
-		case Items::Sword:
-			return Textures::ID::Sword; 
-		case Items::Wand:
-			return Textures::ID::Wand; 
-		}
-	}
-	bool TimePassed()
-	{
-		int timepassed = m_clock.getElapsedTime().asMilliseconds();
-		if (timepassed >= m_itemDropPickTimer) {
-			m_clock.restart(); 
-			return true; 
-		}
-		return false;
-	}
-
 public:
 	sf::View p_view; 
 	 
@@ -130,9 +110,6 @@ private:
 
 	std::vector<Item*>				  m_items;
 	std::vector<sf::RectangleShape*>  m_storage; 
-
-	sf::Clock m_clock; 
-	int		  m_itemDropPickTimer = 500; 
 
 	sf::Color m_backgroundcolor_slots; 
 };

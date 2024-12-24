@@ -38,16 +38,19 @@ public:
 		p_map->Generate(); 
 
 		//Game Objects
-		InitHouses(textures, 10);
-		InitSpawner(textures, 1, 2);
+		InitHouses(textures, 20);
+		InitSpawner(textures, 5, 5);
 	}
 	void Update(const sf::Vector2f& convertedmousepos, const TextureHolder& textures)
 	{
+		// Killcount
+		UpdateKillcount(); 
+
 		// Calculating deltatime
 		CalculateDeltatime(); 
 
 		//Updateing GameObjects
-		p_player->Update(m_deltatime, convertedmousepos, m_collisionmanager);
+		p_player->Update(m_deltatime, convertedmousepos, m_collisionmanager, textures);
 
 		for (auto& spawner :m_spawners) { spawner->Update(m_deltatime, p_player, textures, m_collisionmanager); }
 
@@ -92,6 +95,16 @@ private:
 			m_collisionmanager->addObject(house);
 			m_buildings.push_back(house);
 		}
+	}
+
+	void UpdateKillcount()
+	{
+		int newkc = 0; 
+		for (auto& spawner : m_spawners)
+		{
+			newkc += spawner->m_entity_death_count; 
+		}
+		p_player->SetKillcount(newkc); 
 	}
 
 	sf::Vector2f CalculatePosition(MapGenerator* map, Textures::ID ID)

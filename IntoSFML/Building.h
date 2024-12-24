@@ -14,6 +14,7 @@ struct Building : public GameObject
 		const sf::Vector2f& position)
 	{
 		m_sprite.setTexture(textures.Get(ID));
+		m_sprite.setOrigin(m_sprite.getLocalBounds().width / 2, m_sprite.getLocalBounds().height / 2);
 		m_sprite.setPosition(position);
 
 		objectType = ID;
@@ -22,20 +23,9 @@ struct Building : public GameObject
 
 	void Draw(sf::RenderWindow& window, Player* player)
 	{
-		if (player->ValidateRendering(m_position)) {
+		if (player->ValidateRendering(m_sprite)) {
 			window.draw(m_sprite);
 		}
-	}
-
-	// GameObject
-	sf::FloatRect GetBoundingBox() const override
-	{
-		return m_sprite.getGlobalBounds();
-	}
-
-	sf::Vector2f GetPosition() const override
-	{
-		return m_position;
 	}
 
 	void OnCollision(GameObject& other) override

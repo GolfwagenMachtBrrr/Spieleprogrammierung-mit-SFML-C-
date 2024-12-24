@@ -57,12 +57,14 @@ public:
 		m_speed = 0.125/3;
 		m_damage = 10;
 		m_attackspeed = 500;
+		m_health = 10; 
 	}
 
 	void Update(const float& dt, Player* player)
 	{
 		if (!m_health) {
 			p_isActive = false; 
+			u_active = false; 
 			return; 
 		}
 		m_text.setString(std::to_string(m_health));
@@ -76,7 +78,7 @@ public:
 
 	void Draw(sf::RenderWindow& window, Player* player) const
 	{
-		if(player->ValidateRendering(m_position))
+		if(player->ValidateRendering(m_sprite))
 		{
 			window.draw(m_sprite);
 			window.draw(p_hitbox);
@@ -86,16 +88,6 @@ public:
 	} 
 
 public:
-	// Getter Functions
-	sf::Vector2f GetPosition() const override
-	{
-		return m_position; 
-	}
-
-	sf::FloatRect GetBoundingBox() const override
-	{
-		return m_sprite.getGlobalBounds();
-	}
 
 	void OnCollision(GameObject& other) override
 	{

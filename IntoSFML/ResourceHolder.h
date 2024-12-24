@@ -9,7 +9,7 @@
 namespace GameData
 {
 	static sf::Vector2u data_tilesize(16, 16);
-	static int			data_renderrange = 30;
+	static int			data_renderrange = 12;
 }
 
 

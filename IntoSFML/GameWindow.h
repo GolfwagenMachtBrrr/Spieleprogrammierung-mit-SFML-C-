@@ -38,6 +38,7 @@ public:
         //Creating the Sounds
         InitSounds(); 
         m_gamesoundtrack.setBuffer(m_sounds.Get(Sounds::ID::SoundtrackGame)); 
+        m_gamesoundtrack.setVolume(20); 
         m_gamesoundtrack.setLoop(true); 
         m_gamesoundtrack.play();
 
@@ -68,6 +69,7 @@ public:
         m_textures.Load(Textures::ID::Undefined,   SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/UI/Icons/Disable_01.png");
         m_textures.Load(Textures::ID::Sword,       SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/Sword.png");
         m_textures.Load(Textures::ID::Wand,        SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/Wand.png");
+        m_textures.Load(Textures::ID::Wand_bullet, SYSTEMPATH + "Assets/Origin/lpc_entry/lpc_entry/png/bow/arrow.png");
         m_textures.Load(Textures::ID::House,       SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Blue.png");
         m_textures.Load(Textures::ID::BloodScreen, SYSTEMPATH + "Assets/Player/Textures/player_received_damage.png"); 
          

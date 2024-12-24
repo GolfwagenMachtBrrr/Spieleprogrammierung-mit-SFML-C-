@@ -33,18 +33,24 @@ bool AABB(sf::FloatRect a, sf::FloatRect b)
 	return false;
 }
 
-void Gun::Update(const float &dt, const sf::Vector2f &player_position, const sf::Vector2f& mouse_position, CollisionManager* collisionmanager)
+void Gun::Update(const float &dt, 
+				 const sf::Vector2f &player_position, 
+				 const sf::Vector2f& mouse_position, 
+				 const TextureHolder& textures,
+	             CollisionManager* collisionmanager)
 {
-	m_duration = 500;
+	if (!isActive) { return;}
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
 		
 		if (this->CheckTimer())
 		{
-			Bullet* bullet = new Bullet(10, 0.5, Textures::ID::Wand_bullet);
-			bullet->body.setSize(sf::Vector2f(5, 2.5));
-			bullet->body.setPosition(player_position);
-			bullet->objectType = bullet->type;
+			float rotation = std::atan2(mouse_position.x - player_position.x, mouse_position.y - player_position.y);
+			rotation *= (180 / 3.14) * -1; 
+
+			Bullet* bullet = new Bullet(textures, 
+										Textures::ID::Wand_bullet,
+										player_position, rotation);
 			m_bullets.push_back(bullet);
 			collisionmanager->addObject(bullet);
 			CreateBulletTarget(m_bullets.size() - 1, mouse_position);
@@ -54,9 +60,9 @@ void Gun::Update(const float &dt, const sf::Vector2f &player_position, const sf:
 
 	for (int i = 0; i < m_bullets.size(); i++)
 	{
-		sf::Vector2f bulletDirection = m_bullets[i]->target.getPosition() - m_bullets[i]->body.getPosition();
+		sf::Vector2f bulletDirection = m_bullets[i]->target.getPosition() - m_bullets[i]->GetPosition();
 		bulletDirection = Normalize(bulletDirection);
-		m_bullets[i]->body.setPosition(m_bullets[i]->body.getPosition() + bulletDirection * m_bullets[i]->speed);
+		m_bullets[i]->SetPosition(m_bullets[i]->GetPosition() + bulletDirection * m_bullets[i]->GetSpeed());
 	}
 
 
@@ -92,6 +98,6 @@ void Gun::CreateBulletTarget(const int& index, const sf::Vector2f& mousePos)
 
 void Gun::Draw(sf::RenderWindow& window)
 {
-	for (const auto& bullet : m_bullets) { window.draw(bullet->body); }
+	for (const auto& bullet : m_bullets) { bullet->Draw(window); }
 	for (const auto& bullet : m_bullets) { window.draw(bullet->target); }
 }

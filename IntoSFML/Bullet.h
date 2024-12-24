@@ -1,40 +1,35 @@
 #pragma once
 #include "SFML/Graphics.hpp"
 #include "GameObject.h"
+#include "Entity.h"
 
-struct Bullet : public GameObject
+struct Bullet : public GameObject, public Entity 
 {
-	Bullet(const int &damage, const float &speed, Textures::ID id) : damage(damage), speed(speed), type(id) {}
+	Bullet(const TextureHolder& textures, Textures::ID ID, const sf::Vector2f& position, float rotation) 
+	{
+		// Entity & Gameobject values set
+		Entity::m_damage = 10; 
+		Entity::m_speed = 0.125; 
 
-	int damage;
-	float speed;
+		GameObject::m_position = position;
+		GameObject::objectType = ID; 
+	
+		GameObject::m_sprite.setTexture(textures.Get(ID));
+		GameObject::m_sprite.setPosition(position);
 
-	Textures::ID type; 
+		GameObject::m_sprite.setOrigin(GameObject::m_sprite.getLocalBounds().width / 2, 0);
+		GameObject::m_sprite.setRotation(-90);
+		GameObject::m_sprite.rotate(rotation);
 
-	sf::Vector2f direction;
+	}
 
-	sf::RectangleShape body;
 	sf::RectangleShape target;
-
-	bool target_reached = false; 
-
-	// GameObject
-
-	sf::Vector2f GetPosition() const override
-	{
-		return m_position; 
-	}
-
-	sf::FloatRect GetBoundingBox() const override
-	{
-		return body.getGlobalBounds();
-	}
+	bool			   target_reached = false; 
 
 	void OnCollision(GameObject& other) override
 	{
 		switch (other.objectType)
 		{
-			// Skeleton == Player
 		case Textures::ID::Player:
 			break; 
 
@@ -43,10 +38,5 @@ struct Bullet : public GameObject
 			break; 
 		}
 	}
-
-
-private: 
-	sf::Vector2f m_position;
-
 };
 

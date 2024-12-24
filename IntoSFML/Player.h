@@ -45,7 +45,7 @@ public:
 		m_gun = new Gun(); 
 	}
 
-	void Update(const float& dt, const sf::Vector2f convertedmouseposition, CollisionManager* collisonmanager)
+	void Update(const float& dt, const sf::Vector2f convertedmouseposition, CollisionManager* collisonmanager, const TextureHolder& textures)
 	{
 		MovePlayer(dt);
 		if (m_health < 0) {
@@ -53,7 +53,8 @@ public:
 		}
 
 		//Weapons: 
-		m_gun->Update(dt, m_position, convertedmouseposition, collisonmanager); 
+		m_gun->Update(dt, m_position, convertedmouseposition, textures, collisonmanager); 
+
 	}
 
 	void Draw(sf::RenderWindow& window)
@@ -64,23 +65,14 @@ public:
 		m_gun->Draw(window); 
 	}
 
-	sf::Vector2f GetPosition() const override
-	{
-		return m_position; 
-	}
-
-	sf::FloatRect GetBoundingBox() const override
-	{
-		return m_sprite.getGlobalBounds();
-	}
-
 	void OnCollision(GameObject& other) override
 	{
 
 		switch (other.objectType)
 		{
 		case Textures::ID::House:
-			HandleCollision(other.GetPosition(), 5);
+			std::cout << "Dammit, it collides" << std::endl;
+			HandleCollision(other.GetPosition(), 1);
 			break;
 		case Textures::ID::Spawner:
 			HandleCollision(other.GetPosition(), 5);
@@ -96,14 +88,30 @@ public:
 		}
 	}
 
-	bool ValidateRendering(const sf::Vector2f& objectposition) const
+	bool ValidateRendering(const sf::Sprite& otherobj) const
 	{
 		// O...Object, P...Player, D...Difference
-		int xO = objectposition.x / GameData::data_tilesize.x, yO = objectposition.y / GameData::data_tilesize.y;
+		int xO = otherobj.getPosition().x / GameData::data_tilesize.x, yO = otherobj.getPosition().y / GameData::data_tilesize.y;
 		int xP = m_position.x / GameData::data_tilesize.x, yP = m_position.y / GameData::data_tilesize.y;
 		int xD = std::abs(xP - xO), yD = std::abs(yP - yO);
 
 		return (xD < GameData::data_renderrange && yD < GameData::data_renderrange);
+	}
+
+	void SetKillcount(int x)
+	{
+		m_killcount = x; 
+	}
+
+	int  GetKillcount() const
+	{
+		return m_killcount; 
+	}
+
+	void SetHealth(int x);
+	int GetHealth() const
+	{
+		return m_health; 
 	}
 
 private:
@@ -160,14 +168,18 @@ private:
 
 		m_position = m_sprite.getPosition();
 	}
+
 public: 
+	Gun* m_gun;
 	bool p_onhit = false; 
 
 private:
-	Gun* m_gun; 
+ 
+
 
 private: 
 	// until its fixed
 	int movementIndicator = 0;
 	int lastEnemyID = -42;
+	int m_killcount = 0; 
 };

@@ -10,9 +10,26 @@ class GameObject
 {
 public:
 	virtual void OnCollision(GameObject& other) = 0;
-	virtual sf::FloatRect GetBoundingBox() const = 0;
 
-	virtual sf::Vector2f GetPosition() const = 0;
+	virtual sf::FloatRect GetBoundingBox()
+	{
+		return m_sprite.getGlobalBounds(); 
+	}
+	virtual sf::Vector2f GetPosition()
+	{
+		return m_position; 
+	}
+
+	virtual void SetPosition(const sf::Vector2f& position)
+	{
+		m_position = position; 
+		m_sprite.setPosition(position); 
+	}
+
+	virtual void Draw(sf::RenderWindow& window) const
+	{
+		window.draw(m_sprite); 
+	}
 
 protected:
 	void HandleCollision(const sf::Vector2f objectposition, float force) {

@@ -25,7 +25,7 @@ public:
 
 	void Update(const sf::Vector2f& adjustedmouseposition, Player* player)
 	{
-		p_inventory.Update(adjustedmouseposition);
+		p_inventory.Update(adjustedmouseposition, player);
 		p_scoreboard.Update(player);
 		p_effects.Update(player); 
 
