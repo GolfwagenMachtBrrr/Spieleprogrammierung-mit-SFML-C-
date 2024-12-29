@@ -1,44 +1,38 @@
-#pragma once
-#include "SFML/Graphics.hpp"
-
+#include "Common.h"
+#include "nGameData.h"
 
 class ScoreBoard
 {
 public:
 	void Initialize()
 	{
-		m_font.loadFromFile("C:/Users/JanSa/OneDrive/Desktop/Programmieren/Projekte/ProcMapGen/ProcGen/Assets/Fonts/NotoSansThai-Regular.ttf");
-		m_text.setFont(m_font); 
-		m_text.setCharacterSize(24); 
-		m_text.setPosition(sf::Vector2f(1920 - 128 * 2, 0));
+		m_texts = std::vector<sf::Text>(2);
+		m_texts[0].setFont(Fonts::_FontHolder.Get(Fonts::ID::OnlyFont));
+		m_texts[0].setCharacterSize(24);
+		m_texts[0].setPosition(sf::Vector2f(1920 - 128 * 2, 0));
 
-		m_text1.setFont(m_font);
-		m_text1.setCharacterSize(24);
-		m_text1.setPosition(sf::Vector2f(1920 - 128 * 2, 128/4));
+		m_texts[1].setFont(Fonts::_FontHolder.Get(Fonts::ID::OnlyFont));
+		m_texts[1].setCharacterSize(24);
+		m_texts[1].setPosition(sf::Vector2f(1920 - 128 * 2, 128 / 4));
 
-		m_text.setString("Hier wird text angezeigt");
 
 		m_displaybox.setSize(sf::Vector2f(128 * 2, 128));
 		m_displaybox.setPosition(sf::Vector2f(1920 - 128 * 2, 0));
 		m_displaybox.setFillColor(sf::Color(100, 100, 100, 150));
-
 	}
-	void Update(Player* player)
+	void Update()
 	{
-		m_text.setString("Current Kills: " + std::to_string(player->GetKillcount()));
-		m_text1.setString("Current Health: " + std::to_string(player->GetHealth()));
+		m_texts[0].setString("Current Kills: " + std::to_string(GameData::Player::_TotalEnemiesKilled));
+		m_texts[1].setString("Current Health: Hier wird etwas sinvolles stehen");
 	}
 	void Draw(sf::RenderWindow& window)
 	{
-		window.draw(m_text); 
-		window.draw(m_text1);
+		for (auto& text : m_texts) { window.draw(text); }
 		window.draw(m_displaybox);
 	}
 
 private:
-	sf::Font m_font; 
-	sf::Text m_text;
-	sf::Text m_text1;
-	sf::RectangleShape m_displaybox;
+	std::vector<sf::Text>  m_texts; 
+	sf::RectangleShape     m_displaybox;
 
 };

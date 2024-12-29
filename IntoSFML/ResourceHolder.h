@@ -1,48 +1,5 @@
-#pragma once
-#include "SFML/Graphics.hpp"
-#include "SFML/Audio.hpp"
-
-#include <map>
 #include <string>
-
-
-namespace GameData
-{
-	static sf::Vector2u data_tilesize(16, 16);
-	static int			data_renderrange = 12;
-}
-
-
-namespace Textures
-{
-	enum ID
-	{
-		Undefined = -1,
-		Spawner,
-		Cursor,
-		Skeleton,
-		Grass,
-		Zombie,
-		Wand,
-		Wand_bullet,
-		Sword,
-		House,
-		Bandit,
-		Player,
-		BloodScreen, 
-	};
-}
-
-namespace Sounds
-{
-	enum ID
-	{
-		SoundtrackGame,
-		SoundtrackMenue, 
-		SoundGun, 
-		SoundZombie,
-	};
-}
+#include <map>
 
 
 template<typename Resource, typename Identifier>
@@ -97,7 +54,3 @@ private:
 	std::map<Identifier, std::unique_ptr<Resource>> m_ResourceMap;
 
 };
-
-typedef ResourceHolder<sf::Texture, Textures::ID>   TextureHolder;
-typedef ResourceHolder<sf::SoundBuffer, Sounds::ID> SoundHolder; 
-

@@ -1,15 +1,4 @@
-#pragma once
-#include "SFML/Graphics.hpp"
-#include "WayPoint.h"
-#include "ResourceHolder.h"
-#include "Player.h"
-#include "MapGenerator.h"
-#include "game_algorithm.h"
-#include "GameObject.h"
-#include "Entity.h"
-
-#include <string>
-#include <iostream>
+#include "Common.h"
 
 #define SPRITEUNIT 32
 #define MOVEMENT 1
@@ -19,105 +8,63 @@
 #define BACKWARD 1
 #define RIGHTWARD 5
 
-typedef ResourceHolder<sf::Texture, Textures::ID> TextureHolder;
-
 class Enemy : public GameObject, public Entity
 {
 public:
 
-	Enemy() {}
-
-	void LoadAssets(const sf::Vector2f &startingPos)
+	Enemy(const Textures::ID tID, const Fonts::ID fID, const sf::Vector2f& InitalPosition, const sf::IntRect& TextureRect)
+		: GameObject(tID, fID, InitalPosition, TextureRect)
 	{
-		this->m_sprite.setTextureRect(sf::IntRect(32*0, 32*1, 32, 32));
-		this->m_sprite.setPosition(startingPos);
-
-		this->m_font.loadFromFile("C:/Users/JanSa/OneDrive/Desktop/Programmieren/Projekte/ProcMapGen/ProcGen/Assets/Fonts/NotoSansThai-Regular.ttf");
-		this->m_text.setFont(m_font); 
-		this->m_text.setCharacterSize(10); 
-		
-		// Fürs debuggen bleibt die Hitbox
-		p_hitbox.setSize(sf::Vector2f(32, 32)); 
-		p_hitbox.setPosition(startingPos); 
-		p_hitbox.setOutlineColor(sf::Color::Red);
-		p_hitbox.setOutlineThickness(1);
-		p_hitbox.setFillColor(sf::Color::Transparent);
+		SetupEntity("", 100, 10, 0.125 / 3, 500);
 	}
-	
-
-	void Initialize(const TextureHolder &texures, Textures::ID ID, const sf::Vector2f& position)
+	void mUpdate(const float& dt)
 	{
-		LoadAssets(position);
+		if (!m_health) { active = false; return; }
 
-		m_position = position;
-		objectType = ID;
-
-		m_sprite.setTexture(texures.Get(ID));
-
-		m_speed = 0.125/3;
-		m_damage = 10;
-		m_attackspeed = 500;
-		m_health = 10; 
-	}
-
-	void Update(const float& dt, Player* player)
-	{
-		if (!m_health) {
-			p_isActive = false; 
-			u_active = false; 
-			return; 
-		}
 		m_text.setString(std::to_string(m_health));
-		m_text.setPosition(m_position); 
+		m_text.setPosition(m_position);
 
-		p_hitbox.setPosition(m_position); 
 
-		this->Move(dt, player->GetPosition());
+		Move(dt, GameData::Player::_PlayerPosition);
+	}
+	void Update() override
+	{
 
 	}
-
-	void Draw(sf::RenderWindow& window, Player* player) const
+	void Draw(sf::RenderWindow& window) const noexcept override
 	{
-		if(player->ValidateRendering(m_sprite))
+		if (GameData::Player::ValidateRendering(m_sprite))
 		{
 			window.draw(m_sprite);
-			window.draw(p_hitbox);
 			window.draw(m_text);
 		}
-
-	} 
-
-public:
-
+	}
 	void OnCollision(GameObject& other) override
 	{
-
-		switch (other.objectType)
+		switch (other.GetObjectTextureID())
 		{
 		case Textures::ID::Zombie:
 			HandleCollision(other.GetPosition(), 20);
-			break; 
+			break;
 		case Textures::ID::House:
 			HandleCollision(other.GetPosition(), 5);
-			break; 
+			break;
 		case Textures::ID::Spawner:
 			HandleCollision(other.GetPosition(), 5);
 			break;
 
 		case Textures::ID::Wand_bullet:
-			if (LastBulletID != other.u_objectID) {
+
+			if (other.enabled)
+			{
 				m_health -= 10;
-				LastBulletID = other.u_objectID;
+				other.enabled = false;
 			}
-			break; 
+
+			break;
 		}
-		
 	}
-
-	//quickfix
-private: 
-	int LastBulletID = -23; 
-
+	
 private:
 	// Movement/shooting Calculations
 	sf::Vector2f NormalizeVector(sf::Vector2f& input) const
@@ -130,7 +77,6 @@ private:
 
 		return normalizedVector;
 	}
-
 	sf::Vector2f GetDirectionVector() const
 	{
 		sf::Vector2f direction;
@@ -139,7 +85,6 @@ private:
 
 		return direction;
 	}
-
 	sf::Vector2f GetDirectionVector(const sf::Vector2f& target) const
 	{
 		sf::Vector2f direction;
@@ -148,7 +93,6 @@ private:
 
 		return direction;
 	}
-
 	sf::Vector2f GetClosestTarget(const sf::Vector2f& firstTarget, const sf::Vector2f& secondTarget) const
 	{
 		float diff_first = std::abs(firstTarget.x - this->m_position.x);
@@ -172,97 +116,67 @@ private:
 
 
 		if (hypotheticalPosition.x < 0 || hypotheticalPosition.y < 0) {
-			direction.x = 0; 
+			direction.x = 0;
 			direction.y = 0;
 			hypotheticalPosition = m_position + direction * dt * m_speed;
 		}
-
-		if (m_oncollision) {
-			direction.x *= -1; 
-			direction.y *= -1; 
-
-			for (int i = 0; i < 10; i++) {
-				hypotheticalPosition = m_position + direction * dt * m_speed;
-				this->m_sprite.setPosition(hypotheticalPosition);
-			}
-			
-			m_oncollision = false; 
-		}
-
 
 		//AdjustTileMap(map, hypotheticalPosition); 
 		this->m_sprite.setPosition(hypotheticalPosition);
 		this->m_position = this->m_sprite.getPosition();
 
 		//impl enemy animations 
-	    this->WalkAnimation(direction, dt);
+		this->WalkAnimation(direction, dt);
 	}
-
-	void WalkAnimation(const sf::Vector2f& direction, const float &deltatime)
-	{	
+	void WalkAnimation(const sf::Vector2f& direction, const float& deltatime)
+	{
 		if (direction.x == 0 && direction.y == 0) {
-			return; 
+			return;
 		}
 
 		if (direction.x > 0 && direction.y < 0) {
-			m_sprite.setTextureRect(sf::IntRect((u_movementindicator / MOVEMENT) * SPRITEUNIT, FORWARD*SPRITEUNIT, SPRITEUNIT, SPRITEUNIT));
-			u_movementindicator++;
-			if (u_movementindicator / MOVEMENT == 3) {
-				u_movementindicator = 0;
+			m_sprite.setTextureRect(sf::IntRect((movementindicator / MOVEMENT) * SPRITEUNIT, FORWARD * SPRITEUNIT, SPRITEUNIT, SPRITEUNIT));
+			movementindicator++;
+			if (movementindicator / MOVEMENT == 3) {
+				movementindicator = 0;
 			}
 		}
 
 		else if (direction.x > 0 && direction.y > 0 && direction.x < direction.y) {
 
-			//std::cout << "Backward" << std::endl;
-
-			m_sprite.setTextureRect(sf::IntRect((u_movementindicator / MOVEMENT) * SPRITEUNIT, BACKWARD * SPRITEUNIT, SPRITEUNIT, SPRITEUNIT));
-			u_movementindicator++;
-			if (u_movementindicator / MOVEMENT == 3) {
-				u_movementindicator = 0;
+			m_sprite.setTextureRect(sf::IntRect((movementindicator / MOVEMENT) * SPRITEUNIT, BACKWARD * SPRITEUNIT, SPRITEUNIT, SPRITEUNIT));
+			movementindicator++;
+			if (movementindicator / MOVEMENT == 3) {
+				movementindicator = 0;
 			}
 		}
 
 		else if (direction.x < 0 && direction.y > 0) {
 
-			//std::cout << "Leftward" << std::endl;
-
-			m_sprite.setTextureRect(sf::IntRect((u_movementindicator / MOVEMENT) * SPRITEUNIT, LEFTWARD * SPRITEUNIT, SPRITEUNIT, SPRITEUNIT));
-			u_movementindicator++;
-			if (u_movementindicator / MOVEMENT == 3) {
-				u_movementindicator = 0;
+			m_sprite.setTextureRect(sf::IntRect((movementindicator / MOVEMENT) * SPRITEUNIT, LEFTWARD * SPRITEUNIT, SPRITEUNIT, SPRITEUNIT));
+			movementindicator++;
+			if (movementindicator / MOVEMENT == 3) {
+				movementindicator = 0;
 			}
 		}
 
 		else if (direction.x > 0 && direction.y > 0 && direction.x > direction.y) {
 
-			//std::cout << "Rightward" << std::endl;
-
-			m_sprite.setTextureRect(sf::IntRect((u_movementindicator/MOVEMENT) * SPRITEUNIT, RIGHTWARD * SPRITEUNIT, SPRITEUNIT, SPRITEUNIT));
-			u_movementindicator++;
-			if (u_movementindicator / MOVEMENT == 3) {
-				u_movementindicator = 0;
+			m_sprite.setTextureRect(sf::IntRect((movementindicator / MOVEMENT) * SPRITEUNIT, RIGHTWARD * SPRITEUNIT, SPRITEUNIT, SPRITEUNIT));
+			movementindicator++;
+			if (movementindicator / MOVEMENT == 3) {
+				movementindicator = 0;
 			}
 		}
 
-		
+
 	}
-
-
-private:
-	sf::RectangleShape p_hitbox; 
-
-public: 
-	int		p_ID = -1; 
-	bool    p_isActive = true; 
-	bool    m_oncollision = false;
-	int     u_movementindicator = 0;
 
 private:
 	sf::Vector2f m_target;
-
-	sf::Font m_font; 
 	sf::Text m_text; 
 
-	int m_attackspeed; 
+private: 
+	//quickfix
+	int     movementindicator = 0;
 };

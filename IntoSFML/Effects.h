@@ -1,47 +1,46 @@
 #pragma once
-#include "SFML/Graphics.hpp"
-#include "ResourceHolder.h"
-#include "Player.h"
+#include "Common.h"
 
 
 class Effects
 {
 public:
-	void Initialize(const TextureHolder& textures)
+	enum Effect
 	{
-		m_bloodscreen.setTexture(textures.Get(Textures::ID::BloodScreen));
-		m_bloodscreen.setColor(sf::Color(100, 0, 0, 150)); 
-		m_bloodscreen.setPosition(0, 0); 
+		Bloodscreen = 0,
+	};
+
+	void Initialize()
+	{
+		sf::Sprite sprite;
+		auto toInsert = std::make_pair(Effect::Bloodscreen, sprite);
+		m_effectsprites.insert(toInsert);
 	}
-	void Update(Player* player)
+	void Update()
 	{
-		DamnThatBloodyDuration(player); 
-		playerhit = player->p_onhit; 
+		m_hitscreentimer.CheckTimer(GameData::Player::_Enabled);
 	}
 	void Draw(sf::RenderWindow& window) const
 	{
-		if (playerhit) {
-			window.draw(m_bloodscreen); 
-		}
+		if (!GameData::Player::_Enabled) { window.draw(m_effectsprites.find(Bloodscreen)->second); }
 	}
+	
 
-private: 
-	bool DamnThatBloodyDuration(Player* player)
+private:
+	void InitBloodScreen()
 	{
-		if (this->m_thatbigclock.getElapsedTime().asMilliseconds() >= this->m_duration)
-		{
-			this->m_thatbigclock.restart();
-			player->p_onhit = false; 
-			return true;
-		}
-		return false;
+		auto find = m_effectsprites.find(Effect::Bloodscreen);
+		find->second.setTexture(Textures::_TextureHolder.Get(Textures::ID::BloodScreen));
+		find->second.setColor(sf::Color(100, 0, 0, 150));
+	}
+	void InitDeathScreen()
+	{
+		// TODO: Hintergrund transparent-schwarz einfärben, score anzeigen, neustart oder exit anbieten.
+
+
 	}
 
 private:
-	sf::Sprite m_bloodscreen; 
-	sf::Clock  m_thatbigclock; 
-
-
-	int m_duration = 2500; 
-	bool playerhit = false;  
+	std::map<Effects::Effect, sf::Sprite> m_effectsprites;  
+	Timer m_hitscreentimer; 
 };

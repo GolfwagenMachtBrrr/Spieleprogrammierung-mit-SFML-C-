@@ -1,29 +1,48 @@
 #pragma once
-#include "SFML/Graphics.hpp"
-#include "ResourceHolder.h"
-#include "GameObject.h"
+
 
 struct Item : public GameObject
 {
-	Item()
-	{}
-	
-	void Initialize(const TextureHolder& textures,
-					Textures::ID ID,
-					const sf::Vector2f& position)
+
+	Item(Textures::ID tID, Fonts::ID fID, const sf::Vector2f& InitialPosition) : GameObject(tID, fID, InitialPosition)
 	{
-		m_position = position; 
-		m_sprite.setTexture(textures.Get(ID)); 
-		m_sprite.setPosition(position); 
-
-		objectType = ID;
-
-		// ????
-		m_sprite.setScale(sf::Vector2f(4, 4)); 
-		u_active = false; 
+		m_sprite.setScale(sf::Vector2f(4, 4));
 	}
+
+
+	void Update() override 
+	{
+		if (!interactive) { return; }
+
+	}
+
+	void Draw(sf::RenderWindow& windows) const noexcept override
+	{
+		if (!active) { return; }
+		windows.draw(m_sprite); 
+	}
+
 
 	void OnCollision(GameObject& other) override {}
 
-	
+public:
+	bool interactive = false; // Wird im inventar angezeigt ist aber nicht benutzbar 
 };
+
+namespace Items
+{
+	enum Weapons
+	{
+		Crossbow, 
+		Sword,
+		Shield,
+	};
+
+	enum Consumables
+	{
+		Cake, 
+		Schwammerl,
+		Gulasch,
+	};
+
+}

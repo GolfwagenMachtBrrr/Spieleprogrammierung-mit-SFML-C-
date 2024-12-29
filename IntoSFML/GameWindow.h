@@ -1,26 +1,10 @@
 #pragma once
-#include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
-#include <SFML/System.hpp>
-#include <SFML/Window.hpp>
-#include <SFML/Network.hpp>
-
-
-#include "MapGenerator.h"
-#include "NoizeGenerator.h"
-#include "Player.h"
-#include "Gun.h"
-#include "ResourceHolder.h"
-#include "Inventory.h"
-#include "Spawner.h"
-#include "MapManager.h"
-#include "CollisionManager.h"
+#include "MaperManag.h"
+#include "Common.h"
+#include "nRessources.h"
 
 #include "HUD.h"
 
-
-#include <iostream>
-#include <random>
 
 
 class GameWindow
@@ -32,58 +16,66 @@ public:
 
     void Start()
     {
+
+        //std::string SYSTEMPATH = "C:/Users/JanSa/source/repos/tmpGameRepo/";
+        std::string SYSTEMPATH = "C:/Users/JanSa/OneDrive/Desktop/Programmieren/Projekte/ProcMapGen/ProcGen/";
+
+        // Creating Fonts
+        InitFonts(SYSTEMPATH);
+
         //Creating the Textures
-        InitTextures();
+        InitTextures(SYSTEMPATH);
 
         //Creating the Sounds
-        InitSounds(); 
-        m_gamesoundtrack.setBuffer(m_sounds.Get(Sounds::ID::SoundtrackGame)); 
-        m_gamesoundtrack.setVolume(20); 
-        m_gamesoundtrack.setLoop(true); 
+        InitSounds(SYSTEMPATH);
+        m_gamesoundtrack.setBuffer(Sounds::_SoundHolder.Get(Sounds::ID::SoundtrackGame));
+        m_gamesoundtrack.setVolume(0);
+        m_gamesoundtrack.setLoop(true);
         m_gamesoundtrack.play();
+
 
         // Creating the Window
         m_window.create(sf::VideoMode(1920, 1080), "GameWindow");
         m_window.setMouseCursorVisible(false);
 
         //Creating the Map
-        tilesize.x = 16; 
-        tilesize.y = 16;
-        m_gameManager.Initialize(m_textures, tilesize);
+        m_gameManager.Initialize();
 
         // Creating the GameHUD
-        m_gameHUD.Initalize(m_textures, m_window.getSize().x, m_window.getSize().y);
+        m_gameHUD.Initalize(m_window.getSize().x, m_window.getSize().y);
+        
 
         GameLoop();
     }
 
-    void InitTextures()
+    void InitTextures(const std::string& SYSTEMPATH)
     {
-        //std::string SYSTEMPATH = "C:/Users/JanSa/source/repos/tmpGameRepo/";
-        std::string SYSTEMPATH = "C:/Users/JanSa/OneDrive/Desktop/Programmieren/Projekte/ProcMapGen/ProcGen/"; 
-        m_textures.Load(Textures::ID::Spawner,     SYSTEMPATH + "Assets/AssetPack/Pixel Art Top Down - Basic/Texture/Statue.png");
-        m_textures.Load(Textures::ID::Cursor,      SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/UI/Pointers/01.png"); 
-        m_textures.Load(Textures::ID::Skeleton,    SYSTEMPATH + "Assets/Player/Textures/skeletonsprite.png");
-        m_textures.Load(Textures::ID::Grass,       SYSTEMPATH + "Assets/AssetPack/Pixel Art Top Down - Basic/Texture/TX Tileset Grass.png");
-        m_textures.Load(Textures::ID::Zombie,      SYSTEMPATH + "Assets/Enemy/Textures/zombie_n_skeleton2.png");
-        m_textures.Load(Textures::ID::Undefined,   SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/UI/Icons/Disable_01.png");
-        m_textures.Load(Textures::ID::Sword,       SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/Sword.png");
-        m_textures.Load(Textures::ID::Wand,        SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/Wand.png");
-        m_textures.Load(Textures::ID::Wand_bullet, SYSTEMPATH + "Assets/Origin/lpc_entry/lpc_entry/png/bow/arrow.png");
-        m_textures.Load(Textures::ID::House,       SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Blue.png");
-        m_textures.Load(Textures::ID::BloodScreen, SYSTEMPATH + "Assets/Player/Textures/player_received_damage.png"); 
-         
+        Textures::_TextureHolder.Load(Textures::ID::Spawner,     SYSTEMPATH + "Assets/AssetPack/Pixel Art Top Down - Basic/Texture/Statue.png");
+        Textures::_TextureHolder.Load(Textures::ID::Cursor,      SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/UI/Pointers/01.png");
+        Textures::_TextureHolder.Load(Textures::ID::Player,      SYSTEMPATH + "Assets/Player/Textures/skeletonsprite.png");
+        Textures::_TextureHolder.Load(Textures::ID::Grass,       SYSTEMPATH + "Assets/AssetPack/Pixel Art Top Down - Basic/Texture/TX Tileset Grass.png");
+        Textures::_TextureHolder.Load(Textures::ID::Zombie,      SYSTEMPATH + "Assets/Enemy/Textures/zombie_n_skeleton2.png");
+        Textures::_TextureHolder.Load(Textures::ID::Undefined,   SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/UI/Icons/Disable_01.png");
+        Textures::_TextureHolder.Load(Textures::ID::Sword,       SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/Sword.png");
+        Textures::_TextureHolder.Load(Textures::ID::Wand,        SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/Wand.png");
+        Textures::_TextureHolder.Load(Textures::ID::Wand_bullet, SYSTEMPATH + "Assets/Origin/lpc_entry/lpc_entry/png/bow/arrow.png");
+        Textures::_TextureHolder.Load(Textures::ID::House,       SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Blue.png");
+        Textures::_TextureHolder.Load(Textures::ID::BloodScreen, SYSTEMPATH + "Assets/Player/Textures/player_received_damage.png");
     }
 
-    void InitSounds()
+    void InitSounds(const std::string& SYSTEMPATH)
     {
-        //std::string SYSTEMPATH = "C:/Users/JanSa/source/repos/tmpGameRepo/";
-        std::string SYSTEMPATH = "C:/Users/JanSa/OneDrive/Desktop/Programmieren/Projekte/ProcMapGen/ProcGen/";
-        m_sounds.Load(Sounds::ID::SoundtrackGame,  SYSTEMPATH + "Assets/Music & Sounds/Soundtrack/SoundTrackGame.mp3");
-        m_sounds.Load(Sounds::ID::SoundtrackMenue, SYSTEMPATH + "Assets/Music & Sounds/Soundtrack/SoundTrackMenue.wav");
-        m_sounds.Load(Sounds::ID::SoundZombie,     SYSTEMPATH + "Assets/Music & Sounds/Sounds/zombie.wav");
-        m_sounds.Load(Sounds::ID::SoundGun,        SYSTEMPATH + "Assets/Music & Sounds/Sounds/gun.flac");
-    }                                              
+        Sounds::_SoundHolder.Load(Sounds::ID::SoundtrackGame,    SYSTEMPATH + "Assets/Music & Sounds/Soundtrack/SoundTrackGame.mp3");
+        Sounds::_SoundHolder.Load(Sounds::ID::SoundtrackMenue,   SYSTEMPATH + "Assets/Music & Sounds/Soundtrack/SoundTrackMenue.wav");
+        Sounds::_SoundHolder.Load(Sounds::ID::SoundZombie,       SYSTEMPATH + "Assets/Music & Sounds/Sounds/zombie.wav");
+        Sounds::_SoundHolder.Load(Sounds::ID::SoundGun,          SYSTEMPATH + "Assets/Music & Sounds/Sounds/gun.flac");
+    }     
+
+
+    void InitFonts(const std::string& SYSTEMPATH)
+    {
+        Fonts::_FontHolder.Load(Fonts::ID::OnlyFont,             SYSTEMPATH + "Assets/Fonts/NotoSansThai-Regular.ttf");
+    }
 
     
     int GameLoop()
@@ -102,14 +94,14 @@ public:
             }
 
             sf::Vector2i cursorPosition = sf::Mouse::getPosition(m_window);
-            sf::Vector2f ConvertedPosition1 = m_window.mapPixelToCoords(cursorPosition, m_gameManager.p_view);
-            sf::Vector2f ConvertedPosition2 = m_window.mapPixelToCoords(cursorPosition);
+            sf::Vector2f mpos1 = m_window.mapPixelToCoords(cursorPosition, m_window.getView());
+            sf::Vector2f mpos2 = m_window.mapPixelToCoords(cursorPosition);
 
             m_window.clear();
 
             // Updates
-            m_gameManager.Update(ConvertedPosition1, m_textures);
-            m_gameHUD.Update(ConvertedPosition2, m_gameManager.p_player);
+            m_gameManager.Update();
+            m_gameHUD.Update();
 
             // Draws
             m_gameManager.Draw(m_window);
@@ -125,16 +117,9 @@ public:
 private:
     sf::RenderWindow m_window;
 
-    //Ressources
-    TextureHolder    m_textures;
-    SoundHolder      m_sounds;
-
     // Gameclasses 
-    MapManager       m_gameManager; 
+    MaperManag       m_gameManager; 
     HUD              m_gameHUD;
-
-    //Info
-    sf::Vector2u tilesize;
 
     //Musik
     sf::Sound m_gamesoundtrack; 

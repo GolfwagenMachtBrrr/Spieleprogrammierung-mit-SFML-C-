@@ -1,109 +1,112 @@
 #pragma once
-#include "SFML/Graphics.hpp"
-#include <random>
-#include <vector>
-#include <iostream>
+#include "Common.h"
 
-#include "Enemy.h"
 #include "Player.h"
-#include "ResourceHolder.h"
-#include "CollisionManager.h"
+#include "Enemy.h"
+#include "nRessources.h"
+#include "nCollision.h"
 
- // https://www.geeksforgeeks.org/rand-and-srand-in-ccpp/ -> random number between upper&lower bound
+// https://www.geeksforgeeks.org/rand-and-srand-in-ccpp/ -> random number between upper&lower bound
 // https://www.sfml-dev.org/tutorials/2.6/graphics-text.php
 
-typedef ResourceHolder<sf::Texture, Textures::ID> TextureHolder;
 
-class Spawner : public GameObject, public TimeObject, public Entity
+class Spawner : public GameObject, public Entity
 {
-
 public:
-
-	Spawner()
-	{}
-
-	void Initialize(const sf::Vector2f &position, std::vector<Textures::ID> &spawntypes, const TextureHolder& textures, CollisionManager* collisionmanager)
+	Spawner(Textures::ID tID, Fonts::ID fID, const sf::Vector2f& InitalPosition, int SpawnerID)
+		: GameObject(tID, fID, InitalPosition), m_spawnerID(SpawnerID)
 	{
-		m_sprite.setTexture(textures.Get(Textures::ID::Spawner)); 
-		m_sprite.setPosition(position);
+		SetupEntity("Spawner" + std::to_string(SpawnerID), 500, 10, 0.125 / 2, 500);
 
-		m_font.loadFromFile("C:/Users/JanSa/OneDrive/Desktop/Programmieren/Projekte/ProcMapGen/ProcGen/Assets/Fonts/NotoSansThai-Regular.ttf");
-		m_text.setFont(m_font); 
-		m_text.setPosition(sf::Vector2f(position.x, position.y-50));
+		m_text.setPosition(sf::Vector2f(InitalPosition.x, InitalPosition.y - 50));;
+		m_spawnrate.SetDuration(2000);
+	}
 
-		m_health = 100; 
-		m_duration = 2000;
+	void AddToStack(const std::vector<Textures::ID>& newSpawn)
+	{
+		for (auto spawn : newSpawn)
+		{
+			m_stack.push_back(spawn);
 
-		m_stack = spawntypes; 
-		for (int i = 0; i < spawntypes.size(); i++) 
-		{ 
-			Enemy* enemy = new Enemy();
-			m_spawn.push_back(enemy); 
+			Enemy* newEnemy = new Enemy(spawn, Fonts::ID::OnlyFont, CalculatePosition(), sf::IntRect(32 * 0, 32 * 1, 32, 32));
+			std::string name = "Zombie" + std::to_string(m_spawn.size()) + std::to_string(m_spawnerID);
+			m_spawn.push_back(newEnemy);
 		}
 	}
-	void Update(const int &deltatime, Player* player, const TextureHolder& textures, CollisionManager* collisionmanager)
+	void mUpdate(const int& deltatime, const sf::Vector2f& PlayerPosition)
 	{
-		
 		if (m_health <= 0)
 		{
 			KillAllNPCs();
-			u_active = false;
+			active = false;
 		}
 
 		m_text.setString(std::to_string(m_health));
-		
-		if (this->CheckTimer() && m_stack.size() > 0 && u_active)
+
+		if (m_spawnrate.CheckTimer() && m_stack.size() > 0 && active)
 		{
 			Textures::ID currtype = m_stack[m_stack.size() - 1];
-			this->SpawnNPC(player->GetPosition(), currtype, textures, collisionmanager);
-		}
-		
-		for (int i = 0; i < m_spawn.size(); i++)
-		{
-			m_spawn[i]->Update(deltatime, player);
-			if (m_spawn[i]->u_active == false) {
-				m_entity_death_count++; 
-				m_spawn.erase(m_spawn.begin()+i); 
-				break; 
-			}
-	
-		}
-		
-	}
-	void Draw(sf::RenderWindow& window, Player *player)
-	{
-		if (!u_active) {
-			return; 
+			this->SpawnNPC(PlayerPosition, currtype);
 		}
 
-		if (player->ValidateRendering(m_sprite)) {
+		for (int i = 0; i < m_spawn.size(); i++)
+		{
+			if (m_spawn[i]->GetHealth() <= 0) {
+				m_spawn[i]->active = false;
+				m_entity_death_count++;
+				m_spawn.erase(m_spawn.begin() + i);
+				break;
+			}
+
+			if (m_spawn[i]->active)
+			{
+				m_spawn[i]->mUpdate(deltatime);
+			}
+
+		}
+	}
+	void Update() override
+	{
+
+	}
+	void Draw(sf::RenderWindow& window) const noexcept override
+	{
+		if (!active) { return; }
+
+		if (GameData::Player::ValidateRendering(m_sprite)) {
 			window.draw(m_sprite);
 			window.draw(m_text);
 		}
 
-		for (auto& enemy : m_spawn)
+		for (auto& enemy : m_spawn) { if (enemy->active) { enemy->Draw(window); } }
+	}
+	void OnCollision(GameObject& other) override
+	{
+		switch (other.GetObjectTextureID())
 		{
-			if (enemy->p_isActive) {
-				enemy->Draw(window, player);
+		case Textures::ID::Wand_bullet:
+			if (other.enabled)
+			{
+				other.enabled = false;
+				m_health -= 10; // There may be a better way
 			}
+			break;
+		default:
+			break;
 		}
 	}
-
-	void OnCollision(GameObject& other) override {}
 	
 private: 
-
-	void SpawnNPC(const sf::Vector2f &player_position, const Textures::ID &type, const TextureHolder& textures, CollisionManager* collisionmanager)
+	void SpawnNPC(const sf::Vector2f& player_position, Textures::ID ID)
 	{
-		if (m_stack.size() == 0) {return;}
-		m_enemycount++;
-		std::cout << "Im here" << std::endl; 
+		if (m_stack.size() == 0) { return; }
 
-		switch (type)
+		switch (ID)
 		{
 		case Textures::ID::Zombie:
-			m_spawn[m_stack.size()-1]->Initialize(textures, Textures::ID::Zombie, CalculatePosition()); //stats sollen aus zombie.txt gelesen werden
-			collisionmanager->addObject(m_spawn[m_stack.size() - 1]); 
+			m_spawn[m_stack.size() - 1]->active = true;
+			m_spawn[m_stack.size() - 1]->PrintEntityStats();
+			Collisions::_CollisionManager.addObject(m_spawn[m_stack.size() - 1]);
 			break;
 		case Textures::ID::Skeleton:
 			break;
@@ -112,46 +115,41 @@ private:
 		default:
 			break;
 		}
-		
+
 		m_stack.pop_back();
 	}
-
 	void KillAllNPCs()
 	{
 		while (!m_spawn.empty()) {
 			m_spawn.pop_back();
 		}
 	}
+	sf::Vector2f CalculatePosition()
+	{
+		sf::Vector2f nPosition; int spawnradius = 50;
 
-	sf::Vector2f CalculatePosition() 
-	{ 
-		sf::Vector2f nPosition; 
-
-		int nPosX, nPosY; 
-		int ubX = this->m_position.x + this->m_spawnradius, lbX = this->m_position.x - this->m_spawnradius;
-		int ubY = this->m_position.y + this->m_spawnradius, lbY = this->m_position.y - this->m_spawnradius;
+		int nPosX, nPosY;
+		int ubX = m_position.x + spawnradius, lbX = m_position.x - spawnradius;
+		int ubY = m_position.y + spawnradius, lbY = m_position.y - spawnradius;
 
 		nPosX = (rand() % (ubX - lbX + 1)) + lbX;
 		nPosY = (rand() % (ubY - lbY + 1)) + lbY;
 
-		nPosition.x = std::abs(nPosX); 
-		nPosition.y = std::abs(nPosY); 
+		nPosition.x = std::abs(nPosX);
+		nPosition.y = std::abs(nPosY);
 
 		return nPosition;
 	}
 
-private:
-	int		     m_spawnradius = 400; // not entire radius
-	int		     m_enemycount = 0; 
-
-	sf::Font	 m_font; 
-	sf::Text     m_text; 
 
 private:
-	std::vector<Textures::ID> m_stack; 
-public:
-	std::vector<Enemy*> m_spawn;
-	// Killcount
+	int			m_spawnerID; 
+	Timer		m_spawnrate;
+
+private:
+	std::vector<Textures::ID> m_stack;
+	std::vector<Enemy*>       m_spawn;
+
 	int m_entity_death_count = 0;
 };
 

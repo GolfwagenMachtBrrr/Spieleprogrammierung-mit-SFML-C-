@@ -1,11 +1,11 @@
 #pragma once
 #include "SFML/Graphics.hpp"
 
-class TimeObject
+class Timer
 {
 public:
 
-	virtual bool CheckTimer()
+	bool CheckTimer()
 	{
 		if (this->m_clock.getElapsedTime().asMilliseconds() >= this->m_duration)
 		{
@@ -15,7 +15,30 @@ public:
 		return false;
 	}
 
-protected:
+	bool CheckTimer(bool &conditional)
+	{
+		if (this->m_clock.getElapsedTime().asMilliseconds() >= this->m_duration)
+		{
+			this->m_clock.restart();
+			conditional = true; 
+			return true;
+		}
+		return false;
+	}
+
+	void CalculateDeltaTime()
+	{
+		m_deltatime = m_clock.getElapsedTime().asMilliseconds();
+		if (m_deltatime != 0) { m_clock.restart(); }
+	}
+
+public:
+	void SetDuration(int XinMS) { m_duration = XinMS; }
+	float GetDeltatime() const noexcept { return m_deltatime;  };
+
+private:
 	sf::Clock m_clock; 
 	sf::Int32 m_duration = 500;
+	
+	float m_deltatime = 0.0f; 
 };

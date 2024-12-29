@@ -1,6 +1,6 @@
 #pragma once
 #include "SFML/Graphics.hpp"
-#include "ResourceHolder.h"
+#include "nRessources.h"
 
 struct Tile
 {
@@ -30,8 +30,7 @@ struct Tile
 	sf::Vector2f tile_position;
 	sf::Sprite   tile_sprite;
 
-
 	int			 occupierID	  = -1; 
 	bool		 occupied	  = false; 
-	Textures::ID occupationID = Textures::ID::Undefined; 
+	Textures::ID occupationID = Textures::ID::Undefined;
 };

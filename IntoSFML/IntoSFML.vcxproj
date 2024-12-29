@@ -122,6 +122,9 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)\External\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp14</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <EnableModules>true</EnableModules>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -133,27 +136,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BiomSetter.cpp" />
-    <ClCompile Include="Bullet.cpp" />
-    <ClCompile Include="Entity.cpp" />
-    <ClCompile Include="EventHandler.cpp" />
-    <ClCompile Include="GameWindow.cpp" />
-    <ClCompile Include="game_algorithm.cpp" />
-    <ClCompile Include="Gun.cpp" />
-    <ClCompile Include="HUD.cpp" />
-    <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="MapGenerator.cpp" />
-    <ClCompile Include="MapManager.cpp" />
-    <ClCompile Include="MenuWindow.cpp" />
-    <ClCompile Include="NoizeGenerator.cpp" />
-    <ClCompile Include="Player.cpp" />
-    <ClCompile Include="Settings.cpp" />
-    <ClCompile Include="Spawner.cpp" />
-    <ClCompile Include="TexturHolderN.cpp" />
-    <ClCompile Include="TileMap.cpp" />
-    <ClCompile Include="Viewer.cpp" />
-    <ClCompile Include="Wave.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bioms.h" />
@@ -161,6 +144,8 @@
     <ClInclude Include="Building.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="CollisionManager.h" />
+    <ClInclude Include="Common.h" />
+    <ClInclude Include="CommonCPP.h" />
     <ClInclude Include="Effects.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Entity.h" />
@@ -172,10 +157,14 @@
     <ClInclude Include="HUD.h" />
     <ClInclude Include="Inventory.h" />
     <ClInclude Include="Item.h" />
-    <ClInclude Include="MapManager.h" />
+    <ClInclude Include="MaperManag.h" />
     <ClInclude Include="MenuWindow.h" />
     <ClInclude Include="MapGenerator.h" />
+    <ClInclude Include="nCollision.h" />
+    <ClInclude Include="nGameData.h" />
     <ClInclude Include="NoizeGenerator.h" />
+    <ClInclude Include="nRessources.h" />
+    <ClInclude Include="nUtility.h" />
     <ClInclude Include="PerlinMath.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="ScoreBoard.h" />

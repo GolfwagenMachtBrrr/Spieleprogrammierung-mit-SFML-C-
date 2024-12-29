@@ -1,7 +1,4 @@
-#pragma once
-#include <vector>
-#include <deque>
-#include "GameObject.h"
+
 
 class CollisionManager {
 private:
@@ -25,12 +22,12 @@ public:
 
     void addObject(GameObject* obj) {
         m_objects.push_back(obj);
-        obj->u_objectID = m_objects.size(); 
+        obj->SetColliderReference(m_objects.size());
     }
 
     void clearInactiveObjects() {
         for (int i = 0; i < m_objects.size(); i++) {
-            if (!m_objects[i]->u_active) {
+            if (!m_objects[i]->active) {
                 std::swap(m_objects[i], m_objects[m_objects.size() - 1]);
                 m_objects.pop_back();
             }

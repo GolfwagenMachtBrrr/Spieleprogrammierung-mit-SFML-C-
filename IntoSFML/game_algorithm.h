@@ -1,18 +1,6 @@
 #pragma once
-#include "SFML/Graphics.hpp"
-
-#include <stack>
-#include <vector>
-#include <set>
-#include <array>
-#include <list>
-
-#include <algorithm>
-
-#include <iostream>
-
-#include "Tile.h"
-#include "MapGenerator.h"
+#include "Common.h"
+#include "nGameData.h"
 
 
 
@@ -129,14 +117,14 @@ namespace Algorithms
 												 sf::Vector2f(1, -1), sf::Vector2f(-1, 1), sf::Vector2f(1, 1), sf::Vector2f(-1, -1)};
 
 	protected:
-		std::vector<sf::Vector2f> Search(sf::Vector2f start, sf::Vector2f dest, MapGenerator& map)
+		std::vector<sf::Vector2f> Search(sf::Vector2f start, sf::Vector2f dest, MapGenerator* map)
 		{
 			// Oft wiederholt sollte das ausbessern* 
-			start.x /= (float)map.GetTileSize().x, start.y /= (float)map.GetTileSize().y; 
-			dest.x /= (float)map.GetTileSize().x, dest.y /= (float)map.GetTileSize().y;
+			start.x /= (float)GameData::_TileSize.x, start.y /= (float)GameData::_TileSize.y;
+			dest.x /= (float)GameData::_TileSize.x, dest.y /= (float)GameData::_TileSize.y;
 
 			std::vector<sf::Vector2f> path; //path.push_back(sf::Vector2f(0, 0)); 
-			int width = map.GetMapSize().x, height = map.GetMapSize().y;
+			int width = map->GetMapSize().x, height = map->GetMapSize().y;
 
 			// Setup
 			if (start.x == dest.x && start.y == dest.y) {
@@ -179,7 +167,7 @@ namespace Algorithms
 					if (tmp.x >= width or tmp.x >= height or tmp.y >= width or tmp.y >= height) { continue; }
 
 					if (visited[tmp.x][tmp.y]) { continue; }
-					if (map.p_tileMap[tmp.x][tmp.y].occupied) { continue; }
+					if (map->p_tileMap[tmp.x][tmp.y].occupied) { continue; }
 
 					stack.push(tmp);
 					visited[tmp.x][tmp.y] = true;

@@ -1,53 +1,52 @@
-#pragma once
-#include "SFML/Graphics.hpp"
+#pragma once 
+#include "Common.h"
 
 #include "Inventory.h"
 #include "ScoreBoard.h"
 #include "Effects.h"
 
-#include "ResourceHolder.h"
-#include "Player.h"
 
-
-// TODO
+#include "nRessources.h"
+#include "nGameData.h"
 
 class HUD
 {
 public:
-	void Initalize(const TextureHolder &textures, int window_width, int window_height)
+	void Initalize(int window_width, int window_height)
 	{
-		p_inventory.Initialize(textures, window_width, window_height); 
-		p_scoreboard.Initialize();
-		p_effects.Initialize(textures);
+		HUDView = sf::View(sf::FloatRect(0, 0, window_width, window_height));
+		m_inventory.Initialize(window_width, window_height);
+		m_scoreboard.Initialize();
+		m_effects.Initialize();
 
-		this->m_cursor.setTexture(textures.Get(Textures::ID::Cursor));
+		this->m_cursor.setTexture(Textures::_TextureHolder.Get(Textures::ID::Cursor));
 	}
-
-	void Update(const sf::Vector2f& adjustedmouseposition, Player* player)
+	void Update()
 	{
-		p_inventory.Update(adjustedmouseposition, player);
-		p_scoreboard.Update(player);
-		p_effects.Update(player); 
+		m_inventory.Update();
+		m_scoreboard.Update();
+		m_effects.Update();
 
-		m_cursor.setPosition(adjustedmouseposition);
+		m_cursor.setPosition(GameData::Views::_HUDMousePosition);
 	}
-
 	void Draw(sf::RenderWindow& window)
 	{
-		window.setView(p_inventory.p_view);
+		window.setView(GameData::Views::_HUDView);
 
-		p_inventory.Draw(window); 
-		p_scoreboard.Draw(window);
-		p_effects.Draw(window); 
+		m_inventory.Draw(window);
+		m_scoreboard.Draw(window);
+		m_effects.Draw(window);
 
-		window.draw(m_cursor); 
+		window.draw(m_cursor);
 	}
 
-	Inventory  p_inventory; 
-	ScoreBoard p_scoreboard; 
-	Effects	   p_effects; 
+private:
+	Inventory  m_inventory; 
+	ScoreBoard m_scoreboard; 
+	Effects	   m_effects; 
 	
-private: 
 	sf::Sprite m_cursor; 
+
+	sf::View HUDView; 
 };
 
