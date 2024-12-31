@@ -1,6 +1,6 @@
 #include "Common.h"
 
-struct Bullet : public GameObject, public Entity 
+struct Bullet : public GameObject
 {
 	Bullet(Textures::ID ID, const sf::Vector2f InitialPosition, float newRotation) : GameObject(ID, InitialPosition)
 	{
@@ -13,12 +13,8 @@ struct Bullet : public GameObject, public Entity
 
 	}
 
-	void Update() override
-	{
 
-	}
-
-	void Draw(sf::RenderWindow& window) const noexcept override{
+	void Draw(sf::RenderWindow& window) const noexcept{
 		window.draw(m_sprite);
 	}
 

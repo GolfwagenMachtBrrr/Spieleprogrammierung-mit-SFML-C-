@@ -1,7 +1,6 @@
 #pragma once
-class Wave
+struct Wave
 {
-public: 
 
 	float seed; 
 	float frequency; 

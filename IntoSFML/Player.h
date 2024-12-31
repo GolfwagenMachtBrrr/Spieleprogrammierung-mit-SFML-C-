@@ -13,7 +13,7 @@
 
 
 
-class Player : public GameObject, public Entity 
+class Player : public GameObject 
 {
 public: 
 	Player(const Textures::ID tID, const Fonts::ID fID, const sf::Vector2f& InitalPosition, const sf::IntRect& TextureRect)
@@ -22,11 +22,16 @@ public:
 		SetupEntity("username", 100, NULL, 0.125, NULL);
 	}
 
-	void Update() override
+	void Update() 
 	{
+		HitTimer.CheckTimerConditional(enabled); 
 		MovePlayer();
+
+		
+		GameData::Player::_Enabled = enabled;
+		GameData::Player::_PlayerHealth = m_health;
 	}
-	void Draw(sf::RenderWindow& window) const noexcept override
+	void Draw(sf::RenderWindow& window) const noexcept 
 	{
 		window.draw(m_sprite);
 	}
@@ -42,7 +47,7 @@ public:
 			HandleCollision(other.GetPosition(), 5);
 			break;
 		case Textures::ID::Zombie:
-			if (other.enabled)
+			if (other.enabled && enabled)
 			{
 				m_health -= 10;
 				other.enabled = false;
@@ -110,4 +115,7 @@ private:
 
 	int movementIndicator = 0;
 	int movgoal = 9; 
+
+private:
+	Timer HitTimer; 
 };

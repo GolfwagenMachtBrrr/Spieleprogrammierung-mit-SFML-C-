@@ -3,6 +3,7 @@
 
 struct Item : public GameObject
 {
+	Item(){}
 
 	Item(Textures::ID tID, Fonts::ID fID, const sf::Vector2f& InitialPosition) : GameObject(tID, fID, InitialPosition)
 	{
@@ -10,13 +11,7 @@ struct Item : public GameObject
 	}
 
 
-	void Update() override 
-	{
-		if (!interactive) { return; }
-
-	}
-
-	void Draw(sf::RenderWindow& windows) const noexcept override
+	void Draw(sf::RenderWindow& windows) const noexcept
 	{
 		if (!active) { return; }
 		windows.draw(m_sprite); 

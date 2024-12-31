@@ -10,18 +10,18 @@
 struct Entity
 {
 public:
-    void SetHealth(int x) noexcept { m_health = (x >= 0) ? x : 0; }
-    void SetDamage(int x) noexcept { m_damage = (x >= 0) ? x : 0; }
-    void SetSpeed(float x) noexcept { m_speed = (x >= 0) ? x : 0.0f; }
-    void SetAttackSpeed(int x) noexcept { m_attackspeed = (x >= 0) ? x : 0; }
+    virtual void SetHealth(int x) noexcept { m_health = (x >= 0) ? x : 0; }
+    virtual void SetDamage(int x) noexcept { m_damage = (x >= 0) ? x : 0; }
+    virtual void SetSpeed(float x) noexcept { m_speed = (x >= 0) ? x : 0.0f; }
+    virtual void SetAttackSpeed(int x) noexcept { m_attackspeed = (x >= 0) ? x : 0; }
 
-    int GetHealth() const noexcept { return m_health; }
-    int GetDamage() const noexcept { return m_damage; }
-    float GetSpeed() const noexcept { return m_speed; }
-    int GetAttackSpeed() const noexcept { return m_attackspeed; }
+    virtual int GetHealth() const noexcept { return m_health; }
+    virtual int GetDamage() const noexcept { return m_damage; }
+    virtual float GetSpeed() const noexcept { return m_speed; }
+    virtual int GetAttackSpeed() const noexcept { return m_attackspeed; }
 
     // Util
-    void PrintEntityStats()
+    virtual void PrintEntityStats()
     {
         std::cout << "Name: " << m_name << std::endl;
         std::cout << "..................................." << std::endl; 
@@ -32,7 +32,7 @@ public:
         std::cout << "..................................." << std::endl;
     }
 
-    void SetupEntity(std::string name, int health, int damage, float speed, int attackspeed) // NULL if unspecified
+    virtual void SetupEntity(std::string name, int health, int damage, float speed, int attackspeed) // NULL if unspecified
     {
         m_name = name;
         m_health = (health >= 0) ? health : -1; 

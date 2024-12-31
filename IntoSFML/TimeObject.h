@@ -15,12 +15,12 @@ public:
 		return false;
 	}
 
-	bool CheckTimer(bool &conditional)
+	bool CheckTimerConditional(bool& conditional)
 	{
 		if (this->m_clock.getElapsedTime().asMilliseconds() >= this->m_duration)
 		{
 			this->m_clock.restart();
-			conditional = true; 
+			conditional = true;
 			return true;
 		}
 		return false;
@@ -34,11 +34,12 @@ public:
 
 public:
 	void SetDuration(int XinMS) { m_duration = XinMS; }
-	float GetDeltatime() const noexcept { return m_deltatime;  };
+	float GetDeltatime() const noexcept { return m_deltatime; }
 
 private:
 	sf::Clock m_clock; 
 	sf::Int32 m_duration = 500;
 	
 	float m_deltatime = 0.0f; 
+public:
 };

@@ -1,11 +1,13 @@
 #pragma once
-
+#include <iostream>
+#define errmsg std::cout << "errmsg" << std::endl
 
 namespace GameData
 {
 	static sf::Vector2u _TileSize(16, 16);
 	static int			_RenderRange = 12;
 	static float		_DeltaTime;
+	static sf::Vector2f _WindowSize(1920, 1080); 
 
 	namespace Views
 	{
@@ -20,8 +22,8 @@ namespace GameData
 	{
 		static int			_TotalEnemiesKilled;
 		static sf::Vector2f _PlayerPosition; 
-		static bool			_Enabled; 
-
+		static int			_PlayerHealth; 
+		static bool			_Enabled;
 
 		static const bool ValidateRendering(const sf::Sprite& otherobj)
 		{

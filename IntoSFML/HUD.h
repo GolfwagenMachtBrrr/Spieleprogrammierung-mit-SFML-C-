@@ -31,7 +31,7 @@ public:
 	}
 	void Draw(sf::RenderWindow& window)
 	{
-		window.setView(GameData::Views::_HUDView);
+		window.setView(HUDView);
 
 		m_inventory.Draw(window);
 		m_scoreboard.Draw(window);

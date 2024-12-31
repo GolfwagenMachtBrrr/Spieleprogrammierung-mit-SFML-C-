@@ -23,7 +23,7 @@ public:
 	void Update()
 	{
 		m_texts[0].setString("Current Kills: " + std::to_string(GameData::Player::_TotalEnemiesKilled));
-		m_texts[1].setString("Current Health: Hier wird etwas sinvolles stehen");
+		m_texts[1].setString("Current Health: " + std::to_string(GameData::Player::_PlayerHealth));
 	}
 	void Draw(sf::RenderWindow& window)
 	{

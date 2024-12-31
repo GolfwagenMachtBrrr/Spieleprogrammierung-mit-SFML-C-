@@ -8,7 +8,11 @@
 #define BACKWARD 1
 #define RIGHTWARD 5
 
-class Enemy : public GameObject, public Entity
+#include <string>
+
+#define lerrmsg std::cout << "I`m at Enemy->OnCollision()" << std::endl; 
+
+class Enemy : public GameObject
 {
 public:
 
@@ -17,7 +21,7 @@ public:
 	{
 		SetupEntity("", 100, 10, 0.125 / 3, 500);
 	}
-	void mUpdate(const float& dt)
+	void Update(const float& dt)
 	{
 		if (!m_health) { active = false; return; }
 
@@ -27,11 +31,8 @@ public:
 
 		Move(dt, GameData::Player::_PlayerPosition);
 	}
-	void Update() override
-	{
-
-	}
-	void Draw(sf::RenderWindow& window) const noexcept override
+	
+	void Draw(sf::RenderWindow& window) const noexcept 
 	{
 		if (GameData::Player::ValidateRendering(m_sprite))
 		{
@@ -60,8 +61,14 @@ public:
 				m_health -= 10;
 				other.enabled = false;
 			}
-
 			break;
+
+		case Textures::ID::Player:
+			if (other.enabled)
+			{
+				other.enabled = false; 
+				other.SetHealth(other.GetHealth() - m_damage); 
+			}
 		}
 	}
 	
@@ -173,8 +180,7 @@ private:
 	}
 
 private:
-	sf::Vector2f m_target;
-	sf::Text m_text; 
+	sf::Vector2f m_target; 
 
 private: 
 	//quickfix

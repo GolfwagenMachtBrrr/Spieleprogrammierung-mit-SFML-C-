@@ -15,35 +15,23 @@ class Gun : public Item
 {
 public:
 
+	Gun(){}
+
 	Gun(const Textures::ID tID, const Fonts::ID fID, const sf::Vector2f Initialposition)
 		: Item(tID, fID, Initialposition)
 	{
-		m_firetimer.SetDuration(300);
 	}
-	void iUpdate(const float dt, const sf::Vector2f& PlayerPosition, const sf::Vector2f& MousePosition)
+	void Update()
 	{
-		if (!Item::interactive) { return; }
-
-		Shoot(PlayerPosition, MousePosition);
-		CalculatingBullets(dt);
-
-
-		GameData::Player::_PlayerPosition = PlayerPosition;
-		GameData::Views::_GameMousePosition = MousePosition;
-		GameData::_DeltaTime = dt;
-
+		Shoot(GameData::Player::_PlayerPosition, GameData::Views::_GameMousePosition);
+		CalculatingBullets(GameData::_DeltaTime);
 	}
-	void Update() override
+	
+	void Draw(sf::RenderWindow& window) const noexcept 
 	{
-
-	}
-	void Draw(sf::RenderWindow& window) const noexcept override
-	{
-		window.setView(GameData::Views::_GameView);
 		for (const auto& bullet : m_bullets) {
 			bullet->Draw(window);
 		}
-		window.setView(GameData::Views::_HUDView);
 	}
 
 private:
@@ -51,8 +39,9 @@ private:
 	{
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
 
-			if (m_firetimer.CheckTimer())
+			if (thetimehascome())
 			{
+				errmsg;
 				float angle = Utility::CalculateAngleInDegrees(player_position, mouse_position) * -1;
 				Bullet* bullet = new Bullet(Textures::ID::Wand_bullet, player_position, angle);
 
@@ -101,14 +90,23 @@ private:
 		m_bullets[index]->SetTarget(boundingRect.getGlobalBounds().getPosition());
 
 	}
+
+	bool thetimehascome()
+	{
+		if (m_clock.getElapsedTime().asMilliseconds() >= duration) {
+			m_clock.restart(); 
+			return true;
+		}
+		return false; 
+	}
 	
 	
 private: 
-	std::deque<Bullet* > m_bullets; 
-	Timer                m_firetimer; 
+	std::vector<Bullet*> m_bullets; 
+	sf::Clock m_clock; 
+	int duration = 300; 
 
 private: 
 	sf::Vector2f player_position, mouse_position; 
 	float deltatime; 
 };
-

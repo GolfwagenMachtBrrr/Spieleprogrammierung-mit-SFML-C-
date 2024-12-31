@@ -2,19 +2,21 @@
 #include "Common.h"
 #include "nRessources.h"
 
+#include "Entity.h"
+#include <iostream>
 
 // enabled sollte verwendet werden um zu überprüfen
 // ob z.b ein zombie bereits wieder angreifen kann. 
 // Sollte dann in enemy->Update() aktualisiert werden. 
 
-class GameObject
+class GameObject : public Entity
 {
 public:
 	virtual void OnCollision(GameObject& other) = 0;
-	virtual void Draw(sf::RenderWindow& window) const noexcept = 0;
-	virtual void Update() = 0; 
 
+	GameObject(){}
 protected:
+
 	GameObject(const Textures::ID tID, const sf::Vector2f& InitialPosition)
 		: m_tID(tID), m_position(InitialPosition), active(true), enabled(true)
 	{

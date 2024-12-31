@@ -18,6 +18,7 @@ namespace Utility
 	{
 		float rotation = std::atan2(target.x - source.x, target.y - source.y);
 		rotation *= (180 / 3.14); 
+		rotation += 180; 
 		return rotation; 
 	}
 }

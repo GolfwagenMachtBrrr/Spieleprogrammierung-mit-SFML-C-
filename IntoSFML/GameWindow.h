@@ -1,5 +1,5 @@
 #pragma once
-#include "MaperManag.h"
+#include "MapManager.h"
 #include "Common.h"
 #include "nRessources.h"
 
@@ -60,7 +60,8 @@ public:
         Textures::_TextureHolder.Load(Textures::ID::Wand,        SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/Wand.png");
         Textures::_TextureHolder.Load(Textures::ID::Wand_bullet, SYSTEMPATH + "Assets/Origin/lpc_entry/lpc_entry/png/bow/arrow.png");
         Textures::_TextureHolder.Load(Textures::ID::House,       SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Blue.png");
-        Textures::_TextureHolder.Load(Textures::ID::BloodScreen, SYSTEMPATH + "Assets/Player/Textures/player_received_damage.png");
+        Textures::_TextureHolder.Load(Textures::ID::BloodScreen, SYSTEMPATH + "Assets/Effects/player_received_damage.png");
+        Textures::_TextureHolder.Load(Textures::ID::DeathScreen, SYSTEMPATH + "Assets/Effects/OhNoImDEAD.png");
     }
 
     void InitSounds(const std::string& SYSTEMPATH)
@@ -69,6 +70,7 @@ public:
         Sounds::_SoundHolder.Load(Sounds::ID::SoundtrackMenue,   SYSTEMPATH + "Assets/Music & Sounds/Soundtrack/SoundTrackMenue.wav");
         Sounds::_SoundHolder.Load(Sounds::ID::SoundZombie,       SYSTEMPATH + "Assets/Music & Sounds/Sounds/zombie.wav");
         Sounds::_SoundHolder.Load(Sounds::ID::SoundGun,          SYSTEMPATH + "Assets/Music & Sounds/Sounds/gun.flac");
+        Sounds::_SoundHolder.Load(Sounds::ID::SoundPlayerDeath,  SYSTEMPATH + "Assets/Music & Sounds/Sounds/PlayerDeath/PlayerDeath.mp3");
     }     
 
 
@@ -94,8 +96,12 @@ public:
             }
 
             sf::Vector2i cursorPosition = sf::Mouse::getPosition(m_window);
-            sf::Vector2f mpos1 = m_window.mapPixelToCoords(cursorPosition, m_window.getView());
+            sf::Vector2f mpos1 = m_window.mapPixelToCoords(cursorPosition, GameData::Views::_HUDView);
             sf::Vector2f mpos2 = m_window.mapPixelToCoords(cursorPosition);
+
+
+            GameData::Views::_GameMousePosition = mpos1;
+            GameData::Views::_HUDMousePosition = mpos2; 
 
             m_window.clear();
 
@@ -118,7 +124,7 @@ private:
     sf::RenderWindow m_window;
 
     // Gameclasses 
-    MaperManag       m_gameManager; 
+    MapMaker       m_gameManager; 
     HUD              m_gameHUD;
 
     //Musik

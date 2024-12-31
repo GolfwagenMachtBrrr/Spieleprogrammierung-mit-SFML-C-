@@ -1,7 +1,7 @@
 #pragma once
 #include "nRessources.h"
 #include "ResourceHolder.h"
-
+#define errmsg std::cout << "Here " << std::endl
 namespace Textures
 {
 	enum ID
@@ -19,6 +19,7 @@ namespace Textures
 		Bandit,
 		Player,
 		BloodScreen,
+		DeathScreen,
 	};
 
 	static ResourceHolder<sf::Texture, Textures::ID> _TextureHolder;
@@ -32,6 +33,7 @@ namespace Sounds
 		SoundtrackMenue,
 		SoundGun,
 		SoundZombie,
+		SoundPlayerDeath,
 	};
 
 	static ResourceHolder <sf::SoundBuffer, Sounds::ID> _SoundHolder;

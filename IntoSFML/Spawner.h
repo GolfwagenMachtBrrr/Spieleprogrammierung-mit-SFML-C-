@@ -10,7 +10,7 @@
 // https://www.sfml-dev.org/tutorials/2.6/graphics-text.php
 
 
-class Spawner : public GameObject, public Entity
+class Spawner : public GameObject
 {
 public:
 	Spawner(Textures::ID tID, Fonts::ID fID, const sf::Vector2f& InitalPosition, int SpawnerID)
@@ -33,7 +33,7 @@ public:
 			m_spawn.push_back(newEnemy);
 		}
 	}
-	void mUpdate(const int& deltatime, const sf::Vector2f& PlayerPosition)
+	void Update(const int& deltatime, const sf::Vector2f& PlayerPosition)
 	{
 		if (m_health <= 0)
 		{
@@ -53,23 +53,20 @@ public:
 		{
 			if (m_spawn[i]->GetHealth() <= 0) {
 				m_spawn[i]->active = false;
-				m_entity_death_count++;
+				GameData::Player::_TotalEnemiesKilled++; 
 				m_spawn.erase(m_spawn.begin() + i);
 				break;
 			}
 
 			if (m_spawn[i]->active)
 			{
-				m_spawn[i]->mUpdate(deltatime);
+				m_spawn[i]->Update(deltatime);
 			}
 
 		}
 	}
-	void Update() override
-	{
-
-	}
-	void Draw(sf::RenderWindow& window) const noexcept override
+	
+	void Draw(sf::RenderWindow& window) const noexcept 
 	{
 		if (!active) { return; }
 

@@ -6,9 +6,11 @@
 
 #include "nCollision.h"
 
-class MaperManag
+class MapMaker
 {
 public:
+	MapMaker(){}
+
 	void Initialize()
 	{
 		// Player
@@ -32,12 +34,13 @@ public:
 	{
 		// Calculating deltatime
 		m_deltatimer.CalculateDeltaTime();
-		m_dt = m_deltatimer.GetDeltatime();
+		GameData::_DeltaTime = m_dt = m_deltatimer.GetDeltatime();
+		
 
 		//Updateing GameObjects
 		m_player->Update();
 
-		for (auto& spawner : m_spawners) { spawner->mUpdate(m_deltatimer.GetDeltatime(), m_player->GetPosition()); }
+		for (auto& spawner : m_spawners) { spawner->Update(m_deltatimer.GetDeltatime(), m_player->GetPosition()); }
 
 		UpdateBuildings();
 
@@ -55,6 +58,7 @@ public:
 		for (auto& entity : m_buildings) { entity->Draw(window); }
 
 		m_player->Draw(window);
+		m_gun.Draw(window);
 	}
 
 private:
@@ -89,8 +93,8 @@ private:
 		switch (tID)
 		{
 		case Textures::ID::Wand:
-			m_gun = new Gun(tID, fID, InitialPosition);
-			m_gun->interactive = true;
+			m_gun = Gun(tID, fID, InitialPosition);
+			m_gun.interactive = true;
 			m_items.push_back(m_gun);
 
 		default:
@@ -100,9 +104,9 @@ private:
 
 	void UpdateBuildings()
 	{
-		for (auto& spawner : m_spawners) { spawner->mUpdate(m_dt, m_player->GetPosition()); }
-		for (auto& building : m_buildings) { building->Update(); }
-		for (auto& item : m_items) { item->Update(); }
+		for (auto& spawner : m_spawners) { spawner->Update(m_dt, m_player->GetPosition()); }
+		m_gun.Update(); 
+
 	}
 private:
 	sf::Vector2f CalculatePosition(MapGenerator* map, Textures::ID ID)
@@ -178,11 +182,11 @@ private:
 private:
 	std::vector<Spawner*>   m_spawners;
 	std::vector<Building*>  m_buildings;
-	std::vector<Item*>	    m_items;
+	std::vector<Item>	    m_items;
 
 	MapGenerator* m_map;
 	Player* m_player;
-	Gun* m_gun;
+	Gun m_gun;
 
 	sf::View      m_gameview;
 	Timer		  m_deltatimer;

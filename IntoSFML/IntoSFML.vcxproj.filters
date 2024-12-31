@@ -21,6 +21,9 @@
     <ClCompile Include="Main.cpp">
       <Filter>Ressourcendateien</Filter>
     </ClCompile>
+    <ClCompile Include="TimeObject.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Wave.h">
@@ -36,12 +39,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="BiomSetter.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="TileMap.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="Viewer.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="Tile.h">
@@ -72,12 +69,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="Enemy.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="WayPoint.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="WayPointManager.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="Spawner.h">
@@ -137,7 +128,7 @@
     <ClInclude Include="CommonCPP.h">
       <Filter>Ressourcendateien</Filter>
     </ClInclude>
-    <ClInclude Include="MaperManag.h">
+    <ClInclude Include="MapManager.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

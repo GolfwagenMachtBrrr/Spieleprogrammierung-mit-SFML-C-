@@ -46,7 +46,7 @@ public:
 			}
 
 		}
-		for (auto& item : m_items) { item->Update(); }
+		
 	}
 	void Draw(sf::RenderWindow& window)
 	{
