@@ -28,7 +28,7 @@ public:
 		{
 			m_stack.push_back(spawn);
 
-			Enemy* newEnemy = new Enemy(spawn, Fonts::ID::OnlyFont, CalculatePosition(), sf::IntRect(32 * 0, 32 * 1, 32, 32));
+			std::shared_ptr<Enemy> newEnemy = std::make_shared<Enemy>(spawn, Fonts::ID::OnlyFont, CalculatePosition(), sf::IntRect(32 * 0, 32 * 1, 32, 32));
 			std::string name = "Zombie" + std::to_string(m_spawn.size()) + std::to_string(m_spawnerID);
 			m_spawn.push_back(newEnemy);
 		}
@@ -144,8 +144,8 @@ private:
 	Timer		m_spawnrate;
 
 private:
-	std::vector<Textures::ID> m_stack;
-	std::vector<Enemy*>       m_spawn;
+	std::vector<Textures::ID>				  m_stack;
+	std::vector<std::shared_ptr<Enemy>>       m_spawn;
 
 	int m_entity_death_count = 0;
 };

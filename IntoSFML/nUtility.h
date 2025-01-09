@@ -14,6 +14,13 @@ namespace Utility
 		return normalizedVector;
 	}
 
+	static float CalculateDistance(const Vector2f& src, const Vector2f& dst)
+	{
+		float nDistanceX = (dst.x - src.x) * (dst.x - src.x);
+		float nDistanceY = (dst.y - src.y) * (dst.y - src.y);
+		return sqrt(nDistanceX + nDistanceY);
+	}
+
 	const static float CalculateAngleInDegrees(const sf::Vector2f& target, const sf::Vector2f& source)
 	{
 		float rotation = std::atan2(target.x - source.x, target.y - source.y);

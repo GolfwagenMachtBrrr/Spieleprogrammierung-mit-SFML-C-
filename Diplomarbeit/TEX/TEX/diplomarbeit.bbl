@@ -1,0 +1,15 @@
+\begin{thebibliography}{Tur36}
+
+\bibitem[and]{android}
+{D}ownload {A}ndroid {S}tudio \& {A}pp {T}ools - {A}ndroid {D}evelopers ---
+  developer.android.com.
+\newblock \url{https://developer.android.com/studio}.
+\newblock [letzter Zugriff: 28-02-2024].
+
+\bibitem[Tur36]{Turing1936}
+Alan~Mathison Turing.
+\newblock On computable numbers, with an application to the
+  entscheidungsproblem.
+\newblock {\em J. of Math}, 58:345--363, 1936.
+
+\end{thebibliography}

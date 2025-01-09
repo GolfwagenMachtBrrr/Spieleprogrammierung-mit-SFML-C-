@@ -1,0 +1,79 @@
+\input{einstellungen/00_Einstellungen.tex}
+
+\begin{document}
+
+% Quellcode-Darstellung von Listings
+% Doku: https://mirror.ox.ac.uk/sites/ctan.org/macros/latex/contrib/listings/listings.pdf
+\lstset{numbers=left, numberstyle=\tiny, stepnumber=2, numbersep=5pt, backgroundcolor=\color{Hellgrau}, columns=[c|l|r]{fullflexible}, breaklines=true, basicstyle=\small\ttfamily}
+%% ENDE:Listingseinstellungen
+
+
+% HIER FINDEN SICH DIE LINKS ZU DEN ALLGEMEINEN KAPITELN
+% ab hier: römische Seitenzahlen	
+\frontmatter 
+
+\input{kapitel/00_Titel.tex}
+\input{kapitel/01_Kurzfassung.tex} 
+\input{kapitel/02_Abstract.tex} 
+\input{kapitel/02b_Eides.tex} 
+\input{kapitel/03_Danksagung.tex} 
+
+% Sprache wählen: english or naustrian.
+\selectlanguage{naustrian}
+
+% Inhaltsverzeichnis
+\tableofcontents 
+
+% Nummerierung ändern auf arabische Ziffern
+\mainmatter
+
+
+% AB HIER STARTEN DIE INHALTLICHEN KAPITEL
+\chapter{Einleitung}
+\input{kapitel/04_Einleitung.tex} 
+
+\chapter{Theorie}
+\input{kapitel/05_Theorie.tex} 
+
+\chapter{Programmierung der App}
+\input{kapitel/06_Programmierung.tex} 
+
+\chapter{Prozessmanagement}
+\input{kapitel/08_Prozessmanagement.tex} 
+
+
+\backmatter
+
+
+
+% =============================
+% Abbildungsverzeichnis
+\listoffigures % Starred version, i.e., \listoffigures*, removes the toc entry.
+\newpage
+% =============================
+% Tabellenverzeichnis.
+%\cleardoublepage % Start list of tables on the next empty right hand page.
+\listoftables % Starred version, i.e., \listoftables*, removes the toc entry.
+\newpage
+
+
+\lstlistoflistings
+% =============================
+
+% Optional: Algorithmus-Liste
+%\listofalgorithms
+%\addcontentsline{toc}{chapter}{List of Algorithms}
+% =============================
+% Optional: Stichwortverzeichnis
+%\printindex
+% =============================
+% Add a glossary.
+% \printglossaries
+% =============================
+% INHALTSVERZEICHNIS INKL. ZITIERSTIL.
+\bibliographystyle{alpha}
+\bibliography{intro}
+% =============================
+
+
+\end{document}

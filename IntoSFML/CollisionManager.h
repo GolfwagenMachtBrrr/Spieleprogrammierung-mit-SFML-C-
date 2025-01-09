@@ -2,7 +2,7 @@
 
 class CollisionManager {
 private:
-    std::deque<GameObject*> m_objects;
+    std::deque<std::shared_ptr<GameObject>> m_objects;
 public:
     
     void checkCollisions() {
@@ -20,7 +20,7 @@ public:
         }
     }
 
-    void addObject(GameObject* obj) {
+    void addObject(std::shared_ptr<GameObject> obj) {
         m_objects.push_back(obj);
         obj->SetColliderReference(m_objects.size());
     }

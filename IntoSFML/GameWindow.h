@@ -29,7 +29,7 @@ public:
         //Creating the Sounds
         InitSounds(SYSTEMPATH);
         m_gamesoundtrack.setBuffer(Sounds::_SoundHolder.Get(Sounds::ID::SoundtrackGame));
-        m_gamesoundtrack.setVolume(0);
+        m_gamesoundtrack.setVolume(20);
         m_gamesoundtrack.setLoop(true);
         m_gamesoundtrack.play();
 

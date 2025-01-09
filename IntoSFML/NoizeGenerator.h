@@ -43,6 +43,7 @@ public:
 	std::vector<float> Generate(const int& waveIndex)
 	{
 		std::vector<float> noiseMap(m_width * m_height, 0);
+		double average = 0; 
 
 		for (int i = 0; i < m_width; i++)
 		{
@@ -63,13 +64,17 @@ public:
 				noiseMap[index] /= normalization;
 				noiseMap[index] = std::abs(noiseMap[index]);
 
+				average += noiseMap[index]; 
 			}
 		}
 
 
+		std::cout << average / (m_width * m_height) << std::endl;
+
+
 		return noiseMap;
 	}
-	std::vector<float> GetBiomValues(const int& index)
+	std::vector<float> GetBiomValues(int index)
 	{
 		std::vector<float> vecToReturn;
 		for (int i = 0; i < m_size; i++) {

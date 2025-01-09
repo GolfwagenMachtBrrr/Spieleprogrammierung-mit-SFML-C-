@@ -20,3 +20,8 @@
 //Danger Zone
 #include "Item.h"
 #include "MapGenerator.h"
+
+
+using namespace std;
+using namespace sf;
+

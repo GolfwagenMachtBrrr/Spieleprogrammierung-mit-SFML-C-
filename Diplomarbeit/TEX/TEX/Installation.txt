@@ -1,0 +1,3 @@
+MikTex installieren => Updates installieren
+TexNicCenter
+https://www.getbibtex.com/

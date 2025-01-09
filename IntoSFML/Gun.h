@@ -43,7 +43,7 @@ private:
 			{
 				errmsg;
 				float angle = Utility::CalculateAngleInDegrees(player_position, mouse_position) * -1;
-				Bullet* bullet = new Bullet(Textures::ID::Wand_bullet, player_position, angle);
+				std::shared_ptr<Bullet> bullet = std::make_shared<Bullet>(Textures::ID::Wand_bullet, player_position, angle);
 
 				m_bullets.push_back(bullet);
 				Collisions::_CollisionManager.addObject(bullet);
@@ -102,7 +102,7 @@ private:
 	
 	
 private: 
-	std::vector<Bullet*> m_bullets; 
+	std::vector<std::shared_ptr<Bullet>> m_bullets; 
 	sf::Clock m_clock; 
 	int duration = 300; 
 

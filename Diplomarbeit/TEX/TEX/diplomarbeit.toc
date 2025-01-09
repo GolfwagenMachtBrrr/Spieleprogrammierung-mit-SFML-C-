@@ -1,0 +1,38 @@
+\babel@toc {naustrian}{}\relax 
+\babel@toc {naustrian}{}\relax 
+\babel@toc {naustrian}{}\relax 
+\babel@toc {naustrian}{}\relax 
+\babel@toc {naustrian}{}\relax 
+\babel@toc {english}{}\relax 
+\contentsline {chapter}{Abstract}{iii}{chapter*.2}%
+\babel@toc {naustrian}{}\relax 
+\babel@toc {naustrian}{}\relax 
+\contentsline {chapter}{Eidesstattliche Erklärung}{iv}{chapter*.3}%
+\babel@toc {naustrian}{}\relax 
+\babel@toc {naustrian}{}\relax 
+\contentsline {chapter}{Danksagung}{v}{chapter*.4}%
+\babel@toc {naustrian}{}\relax 
+\babel@toc {naustrian}{}\relax 
+\contentsline {chapter}{Inhaltsverzeichnis}{vi}{section*.5}%
+\contentsline {chapter}{\chapternumberline {1}Einleitung}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Bestehende Software}{1}{section.1.1}%
+\contentsline {subsection}{\numberline {1.1.1}Android}{1}{subsection.1.1.1}%
+\contentsline {chapter}{\chapternumberline {2}Theorie}{2}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Über Anroid Studio}{2}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Aufzählungen}{2}{section.2.2}%
+\contentsline {chapter}{\chapternumberline {3}Programmierung der App}{3}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Struktur}{3}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Schreibstil}{3}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Generieren der Karte}{5}{section.3.3}%
+\contentsline {section}{\numberline {3.4}Der Spieler}{10}{section.3.4}%
+\contentsline {chapter}{\chapternumberline {4}Prozessmanagement}{14}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Projektstrukturplan}{15}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Arbeitspakete}{15}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Projektwürdigkeitsanalyse}{15}{section.4.3}%
+\contentsline {section}{\numberline {4.4}Projektdurchführbarkeitsanalyse}{15}{section.4.4}%
+\contentsline {section}{\numberline {4.5}Meilensteinplan}{15}{section.4.5}%
+\contentsline {section}{\numberline {4.6}Tätigkeitsliste - PersonA}{15}{section.4.6}%
+\contentsline {chapter}{Abbildungsverzeichnis}{16}{section*.8}%
+\contentsline {chapter}{Tabellenverzeichnis}{17}{section*.9}%
+\contentsline {chapter}{Listings}{18}{section*.10}%
+\contentsline {chapter}{Literaturverzeichnis}{19}{chapter*.11}%

@@ -13,13 +13,13 @@ public:
 		// Biome sollen später via Engine hinzugefügt werden können.  
 
 		// "Dessert"
-		m_biomes.push_back(Biome(1, 0, 0, 0));
+		m_biomes.push_back(Biome(1, 0.0, 0.0, 0.0));
 		// "Forest"
-		m_biomes.push_back(Biome(2, 0.05, 0.05, 0.05));
+		m_biomes.push_back(Biome(2, 0.01, 0.01, 0.01));
 		// "Grassland"
-		m_biomes.push_back(Biome(3, 0.2, 0.2, 0.2));
+		m_biomes.push_back(Biome(3, 0.03, 0.03, 0.03));
 		// "Jungle"
-		m_biomes.push_back(Biome(4, 0.3, 0.3, 0.3));
+		m_biomes.push_back(Biome(4, 0.04, 0.04, 0.04));
 		// "Mountains"
 		m_biomes.push_back(Biome(5, 0.25, 0.25, 0.25));
 		// "Ocean"

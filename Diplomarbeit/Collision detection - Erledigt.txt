@@ -1,0 +1,12 @@
+Collision detection - Erledigt
+Chunk Rendering - Erledigt
+Waffen - 1/2 
+Leben / Game Over - Erledigt
+
+Game Saving
+CMAKE-Built
+
+
+Struktur: 
+Features - Zukünftige Verbesserungen … 
+Spieletyp 

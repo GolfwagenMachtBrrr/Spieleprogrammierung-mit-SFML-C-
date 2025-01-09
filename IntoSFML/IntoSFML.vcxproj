@@ -140,6 +140,7 @@
     <ClCompile Include="TimeObject.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Agent.h" />
     <ClInclude Include="Bioms.h" />
     <ClInclude Include="BiomSetter.h" />
     <ClInclude Include="Building.h" />
@@ -163,6 +164,7 @@
     <ClInclude Include="MapGenerator.h" />
     <ClInclude Include="nCollision.h" />
     <ClInclude Include="nGameData.h" />
+    <ClInclude Include="Noisetest.h" />
     <ClInclude Include="NoizeGenerator.h" />
     <ClInclude Include="nRessources.h" />
     <ClInclude Include="nUtility.h" />

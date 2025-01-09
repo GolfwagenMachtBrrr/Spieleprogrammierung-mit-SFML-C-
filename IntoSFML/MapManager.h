@@ -14,21 +14,21 @@ public:
 	void Initialize()
 	{
 		// Player
-		m_player = new Player(Textures::ID::Player, Fonts::ID::OnlyFont, sf::Vector2f(400, 300), sf::IntRect(0, 0, 64, 64));
+		m_player =  std::make_unique<Player>(Textures::ID::Player, Fonts::ID::OnlyFont, sf::Vector2f(400, 300), sf::IntRect(0, 0, 64, 64));
 		Collisions::_CollisionManager.addObject(m_player);
 
 		//Map
-		m_map = new MapGenerator();
+		m_map = std::make_unique<MapGenerator>(); 
 		int width = 1920 / GameData::_TileSize.x, height = 1080 / GameData::_TileSize.y;
 		m_map->Initialize(GameData::_TileSize, width, height);
 		m_map->Generate();
 
 		//Game Objects
-		InitHouses(20);
-		InitSpawner(1, 5);
+		//InitHouses(20);
+		//InitSpawner(1, 5);
 
 		// View
-		m_gameview.zoom(0.3);
+		m_gameview.zoom(1);
 	}
 	void Update()
 	{
@@ -66,7 +66,7 @@ private:
 	{
 		for (int i = 0; i < amount; i++)
 		{
-			Spawner* spawner = new Spawner(Textures::ID::Spawner, Fonts::ID::OnlyFont, CalculatePosition(m_map, Textures::ID::Spawner), i);
+			std::shared_ptr<Spawner> spawner = std::make_shared<Spawner>(Textures::ID::Spawner, Fonts::ID::OnlyFont, CalculatePosition(m_map, Textures::ID::Spawner), i);
 			m_spawners.push_back(spawner);
 		}
 
@@ -82,7 +82,7 @@ private:
 		for (int i = 0; i < amount; i++) {
 			// Houses Setup
 			sf::Vector2f newposition = CalculatePosition(m_map, Textures::ID::House);
-			Building* house = new Building(Textures::ID::House, Fonts::ID::OnlyFont, newposition);
+			std::shared_ptr<Building> house =  std::make_shared<Building>(Textures::ID::House, Fonts::ID::OnlyFont, newposition);
 
 			Collisions::_CollisionManager.addObject(house);
 			m_buildings.push_back(house);
@@ -109,7 +109,7 @@ private:
 
 	}
 private:
-	sf::Vector2f CalculatePosition(MapGenerator* map, Textures::ID ID)
+	sf::Vector2f CalculatePosition(std::shared_ptr<MapGenerator> map, Textures::ID ID)
 	{
 		sf::Vector2f calculatedposition;
 
@@ -124,7 +124,7 @@ private:
 
 		return calculatedposition;
 	}
-	void AdjustTileMap(MapGenerator* map, const sf::Vector2f& calculatedposition, Textures::ID ID)
+	void AdjustTileMap(std::shared_ptr<MapGenerator> map, const sf::Vector2f& calculatedposition, Textures::ID ID)
 	{
 		sf::Vector2f tilesize = static_cast<sf::Vector2f>(GameData::_TileSize);
 		int startX = calculatedposition.x / tilesize.x, endX = GetTextureSize(ID).x / tilesize.x;
@@ -139,7 +139,7 @@ private:
 			}
 		}
 	}
-	bool Overlapping(MapGenerator* map, const sf::Vector2f& calculatedposition, Textures::ID ID)
+	bool Overlapping(std::shared_ptr<MapGenerator> map, const sf::Vector2f& calculatedposition, Textures::ID ID)
 	{
 		sf::Vector2f tilesize = static_cast<sf::Vector2f>(GameData::_TileSize);
 		int startX = calculatedposition.x / tilesize.x, endX = GetTextureSize(ID).x / tilesize.x;
@@ -180,13 +180,17 @@ private:
 
 
 private:
-	std::vector<Spawner*>   m_spawners;
-	std::vector<Building*>  m_buildings;
-	std::vector<Item>	    m_items;
+	std::vector<std::shared_ptr<Spawner>>   m_spawners;
+	std::vector<std::shared_ptr<Building>>  m_buildings;
+	//std::vector<std::shared_ptr<Item>>	    m_items;
 
-	MapGenerator* m_map;
-	Player* m_player;
-	Gun m_gun;
+	//std::shared_ptr<Gun>		  m_gun;
+	std::shared_ptr<Player>		  m_player;
+
+	std::shared_ptr<MapGenerator> m_map;
+
+	Gun m_gun; 
+	std::vector<Item> m_items; 
 
 	sf::View      m_gameview;
 	Timer		  m_deltatimer;

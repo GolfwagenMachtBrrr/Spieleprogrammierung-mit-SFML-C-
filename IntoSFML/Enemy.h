@@ -45,7 +45,7 @@ public:
 		switch (other.GetObjectTextureID())
 		{
 		case Textures::ID::Zombie:
-			HandleCollision(other.GetPosition(), 20);
+			HandleCollision(other.GetPosition(), 5);
 			break;
 		case Textures::ID::House:
 			HandleCollision(other.GetPosition(), 5);

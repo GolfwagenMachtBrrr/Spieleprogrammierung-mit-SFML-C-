@@ -131,6 +131,12 @@
     <ClInclude Include="MapManager.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="Noisetest.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Agent.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Zombie.txt" />

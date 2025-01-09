@@ -1,0 +1,33 @@
+Strukturplan Diplomarbeit: 
+
+- Abstract
+- EE
+- Danksagung
+
+Inhalt: 
+
+- Einleitung (Idee, Tools)
+
+- Umsetzung:
+	- Ablauf
+	- Schwierigkeiten
+	- Erlernte Fähigkeiten 
+
+- Programmierung:
+	- C++
+	- SMFL
+	- APP (Funktion, Klassenübersicht (Flow-Charts))
+	- Ressource Holder
+	- Tile-Rendering
+	- Collision-Detection
+	- Perlin-Noise
+	- Verbesserungsvorschläge
+
+- Vertrieb:
+	- Marketing:
+		- Branchenanalyse
+		- SWOT-Analyse (Spiel)
+		- 4x7 P`s 
+	- Preisberechnung:
+
+
