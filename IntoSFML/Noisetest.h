@@ -325,6 +325,12 @@ private:
 			fBias -= 0.2;
 		}
 
+		if (Keyboard::isKeyPressed(Keyboard::Enter))
+		{
+			m_map.saveToFile("PNSC" + std::to_string(nPictureCount) + ".png");
+			nPictureCount++; 
+		}
+
 
 		if (nMode == 1)
 		{
@@ -481,7 +487,7 @@ private:
 
 
 private: 
-	int m_sizeX = 256*4, m_sizeY = 256*4;
+	int m_sizeX = 256, m_sizeY = 256;
 	Image m_map; 
 	Texture nMapTexture; 
 	Sprite nMapSprite; 
@@ -502,4 +508,5 @@ private:
 
 	int nMode; 
 
+	int nPictureCount = 0; 
 };
