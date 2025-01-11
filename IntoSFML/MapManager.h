@@ -24,11 +24,11 @@ public:
 		m_map->Generate();
 
 		//Game Objects
-		//InitHouses(20);
-		//InitSpawner(1, 5);
+		InitHouses(20);
+		InitSpawner(1, 5);
 
 		// View
-		m_gameview.zoom(1);
+		m_gameview.zoom(0.3);
 	}
 	void Update()
 	{

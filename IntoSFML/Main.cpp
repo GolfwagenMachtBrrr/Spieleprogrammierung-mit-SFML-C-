@@ -75,6 +75,6 @@ int main()
     GameWindow gw; 
     TestNoise tn; 
     FlockTest ft; 
-    tn.Start(); 
+    gw.Start(); 
     return 0;
 }

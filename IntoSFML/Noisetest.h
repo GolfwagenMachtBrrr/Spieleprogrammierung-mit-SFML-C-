@@ -267,50 +267,50 @@ private:
 
 	void OnUpdate()
 	{
-		if (Keyboard::isKeyPressed(Keyboard::Num1))
+		if (Keyboard::isKeyPressed(Keyboard::O))
 		{
 			nMode = 1; 
 			std::cout << "Clicked 1" << std::endl;
 		}
-		if (Keyboard::isKeyPressed(Keyboard::Num2))
+		if (Keyboard::isKeyPressed(Keyboard::P))
 		{
 			nMode = 2;
 			std::cout << "Clicked 2" << std::endl;
 		}
 
-		if (Keyboard::isKeyPressed(Keyboard::Numpad1))
+		if (Keyboard::isKeyPressed(Keyboard::Num1))
 		{
 			nOctavesCount = 1; 
 		}
-		if (Keyboard::isKeyPressed(Keyboard::Numpad2))
+		if (Keyboard::isKeyPressed(Keyboard::Num2))
 		{
 			nOctavesCount = 2;
 		}
-		if (Keyboard::isKeyPressed(Keyboard::Numpad3))
+		if (Keyboard::isKeyPressed(Keyboard::Num3))
 		{
 			nOctavesCount = 3;
 		}
-		if (Keyboard::isKeyPressed(Keyboard::Numpad4))
+		if (Keyboard::isKeyPressed(Keyboard::Num4))
 		{
 			nOctavesCount = 4;
 		}
-		if (Keyboard::isKeyPressed(Keyboard::Numpad5))
+		if (Keyboard::isKeyPressed(Keyboard::Num5))
 		{
 			nOctavesCount = 5;
 		}
-		if (Keyboard::isKeyPressed(Keyboard::Numpad6))
+		if (Keyboard::isKeyPressed(Keyboard::Num6))
 		{
 			nOctavesCount = 6;
 		}
-		if (Keyboard::isKeyPressed(Keyboard::Numpad7))
+		if (Keyboard::isKeyPressed(Keyboard::Num7))
 		{
 			nOctavesCount = 7;
 		}
-		if (Keyboard::isKeyPressed(Keyboard::Numpad8))
+		if (Keyboard::isKeyPressed(Keyboard::Num8))
 		{
 			nOctavesCount = 8;
 		}
-		if (Keyboard::isKeyPressed(Keyboard::Numpad9))
+		if (Keyboard::isKeyPressed(Keyboard::Num9))
 		{
 			nOctavesCount = 9;
 		}
@@ -487,7 +487,7 @@ private:
 
 
 private: 
-	int m_sizeX = 256, m_sizeY = 256;
+	int m_sizeX = 256*4, m_sizeY = 256*4;
 	Image m_map; 
 	Texture nMapTexture; 
 	Sprite nMapSprite; 
