@@ -140,7 +140,6 @@
     <ClCompile Include="TimeObject.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Agent.h" />
     <ClInclude Include="Bioms.h" />
     <ClInclude Include="BiomSetter.h" />
     <ClInclude Include="Building.h" />
@@ -159,7 +158,10 @@
     <ClInclude Include="HUD.h" />
     <ClInclude Include="Inventory.h" />
     <ClInclude Include="Item.h" />
+    <ClInclude Include="MapData.h" />
+    <ClInclude Include="MapEditor.h" />
     <ClInclude Include="MapManager.h" />
+    <ClInclude Include="MapDataManager.h" />
     <ClInclude Include="MenuWindow.h" />
     <ClInclude Include="MapGenerator.h" />
     <ClInclude Include="nCollision.h" />

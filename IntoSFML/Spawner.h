@@ -17,9 +17,11 @@ public:
 		: GameObject(tID, fID, InitalPosition), m_spawnerID(SpawnerID)
 	{
 		SetupEntity("Spawner" + std::to_string(SpawnerID), 500, 10, 0.125 / 2, 500);
+		m_sprite.setScale(0.5,0.5);
 
 		m_text.setPosition(sf::Vector2f(InitalPosition.x, InitalPosition.y - 50));;
 		m_spawnrate.SetDuration(2000);
+
 	}
 
 	void AddToStack(const std::vector<Textures::ID>& newSpawn)
@@ -33,7 +35,7 @@ public:
 			m_spawn.push_back(newEnemy);
 		}
 	}
-	void Update(const int& deltatime, const sf::Vector2f& PlayerPosition)
+	void Update(const sf::Vector2f& PlayerPosition)
 	{
 		if (m_health <= 0)
 		{
@@ -60,7 +62,7 @@ public:
 
 			if (m_spawn[i]->active)
 			{
-				m_spawn[i]->Update(deltatime);
+				m_spawn[i]->Update();
 			}
 
 		}

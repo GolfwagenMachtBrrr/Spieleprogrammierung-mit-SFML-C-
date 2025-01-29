@@ -134,7 +134,13 @@
     <ClInclude Include="Noisetest.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="Agent.h">
+    <ClInclude Include="MapEditor.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="MapDataManager.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="MapData.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

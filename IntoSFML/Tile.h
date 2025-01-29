@@ -18,8 +18,8 @@ struct Tile
 		: tile_ID(ID), tile_Biome(BiomID), tile_texRect(TextureRectangle),tile_sprite(sprite), tile_position(TilePosition) 
 	{
 		tile_sprite.setPosition(tile_position);
-		tile_sprite.setTextureRect(*tile_texRect);
 	}
+
 
 
 	unsigned int tile_ID;

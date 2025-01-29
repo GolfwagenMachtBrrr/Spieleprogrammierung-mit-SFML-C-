@@ -17,8 +17,8 @@ public:
     void Start()
     {
 
-        std::string SYSTEMPATH = "C:/Users/JanSa/source/repos/tmpGameRepo/";
-       // std::string SYSTEMPATH = "C:/Users/JanSa/OneDrive/Desktop/Programmieren/Projekte/ProcMapGen/ProcGen/";
+        //std::string SYSTEMPATH = "C:/Users/JanSa/source/repos/tmpGameRepo/";
+        std::string SYSTEMPATH = "C:/Users/JanSa/OneDrive/Desktop/Programmieren/Projekte/ProcMapGen/ProcGen/";
 
         // Creating Fonts
         InitFonts(SYSTEMPATH);
@@ -50,7 +50,7 @@ public:
 
     void InitTextures(const std::string& SYSTEMPATH)
     {
-        Textures::_TextureHolder.Load(Textures::ID::Spawner,     SYSTEMPATH + "Assets/AssetPack/Pixel Art Top Down - Basic/Texture/Statue.png");
+        Textures::_TextureHolder.Load(Textures::ID::Spawner,     SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Blue.png");
         Textures::_TextureHolder.Load(Textures::ID::Cursor,      SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/UI/Pointers/01.png");
         Textures::_TextureHolder.Load(Textures::ID::Player,      SYSTEMPATH + "Assets/Player/Textures/skeletonsprite.png");
         Textures::_TextureHolder.Load(Textures::ID::Grass,       SYSTEMPATH + "Assets/AssetPack/Pixel Art Top Down - Basic/Texture/TX Tileset Grass.png");
@@ -58,7 +58,7 @@ public:
         Textures::_TextureHolder.Load(Textures::ID::Undefined,   SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/UI/Icons/Disable_01.png");
         Textures::_TextureHolder.Load(Textures::ID::Sword,       SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/Sword.png");
         Textures::_TextureHolder.Load(Textures::ID::Wand,        SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/Wand.png");
-        Textures::_TextureHolder.Load(Textures::ID::Wand_bullet, SYSTEMPATH + "Assets/Origin/lpc_entry/lpc_entry/png/bow/arrow.png");
+        Textures::_TextureHolder.Load(Textures::ID::Wand_bullet, SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/wandbullet.png");
         Textures::_TextureHolder.Load(Textures::ID::House,       SYSTEMPATH + "Assets/AssetPack/Tiny Swords/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Blue.png");
         Textures::_TextureHolder.Load(Textures::ID::BloodScreen, SYSTEMPATH + "Assets/Effects/player_received_damage.png");
         Textures::_TextureHolder.Load(Textures::ID::DeathScreen, SYSTEMPATH + "Assets/Effects/OhNoImDEAD.png");

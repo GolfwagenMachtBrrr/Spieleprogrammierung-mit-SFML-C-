@@ -5,12 +5,6 @@ struct Bullet : public GameObject
 	Bullet(Textures::ID ID, const sf::Vector2f InitialPosition, float newRotation) : GameObject(ID, InitialPosition)
 	{
 		SetupEntity("Bullet", NULL, 10, 0.125/2, NULL); 
-
-		GameObject::m_sprite.setPosition(InitialPosition); 
-		GameObject::m_sprite.setOrigin(GameObject::m_sprite.getLocalBounds().width / 2, 0);
-		GameObject::m_sprite.setRotation(-90);
-		GameObject::m_sprite.rotate(newRotation);
-
 	}
 
 

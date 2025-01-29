@@ -1,22 +1,21 @@
 #pragma once
 #include "Common.h"
-#include "Agent.h"
 
 class Agent
 {
 public:
-	void Init(int x, int y)
+	void Init(int x, int y, int nAgentID)
 	{
+		mAgentID = nAgentID; 
 		Vector2f nPosition(x, y);
 
 		mBody.setPosition(nPosition);
-		mBody.setSize(Vector2f(1, 1));
+		mBody.setSize(Vector2f(10, 10));
 		mBody.setFillColor(sf::Color::White);
 
 
 		mVelocity.x = 2.0f * ((float)rand() / (float)RAND_MAX) - 1.0f, mVelocity.y = 2.0f * ((float)rand() / (float)RAND_MAX) - 1.0f;
 		
-		std::cout << mVelocity.x << " " << mVelocity.y << endl;
 
 		mAcceleration = Vector2f(0, 0);
 	}
@@ -29,23 +28,29 @@ public:
 
 	void Update()
 	{
-		mPosition = mBody.getPosition();
-		mVelocity += mAcceleration;
 
+		mPosition = mBody.getPosition();
+		mBody.setPosition(mPosition);
+
+		mVelocity += mAcceleration;
 		CheckVelocity(); 
+		
+		if (mPosition.x <= 0 || mPosition.x >= mWidth) {
+			mVelocity.x *= -1; 
+		}
+
+		if (mPosition.y <= 0 || mPosition.y >= mHeight) {
+			mVelocity.y *= -1;
+		}
+	
 
 		mBody.move(mVelocity);
-
-		mPosition.x = ((int)mPosition.x + mWidth) % mWidth;
-		mPosition.y = ((int)mPosition.y + mHeight) % mHeight;
-
 	}
 
 	void Draw(RenderWindow& nWindow)
 	{
 		nWindow.draw(mBody);
 	}
-
 	void CheckVelocity()
 	{
 		if (mVelocity.x >= mMaxSpeed)
@@ -57,8 +62,17 @@ public:
 		{
 			mVelocity.y = mMaxSpeed;
 		}
-	}
 
+		if (mVelocity.x <= -mMaxSpeed)
+		{
+			mVelocity.x = -mMaxSpeed;
+		}
+
+		if (mVelocity.y <= -mMaxSpeed)
+		{
+			mVelocity.y = -mMaxSpeed;
+		}
+	}
 	void CheckForce(Vector2f& vec)
 	{
 		if (vec.x >= mMaxForce)
@@ -70,7 +84,18 @@ public:
 		{
 			vec.y = mMaxForce;
 		}
+
+		if (vec.x <= -mMaxForce)
+		{
+			vec.x = -mMaxForce;
+		}
+
+		if (vec.y <= -mMaxForce)
+		{
+			vec.y = -mMaxForce;
+		}
 	}
+
 
 	void SteerAgentSteer(vector<shared_ptr<Agent>>& nOthers)
 	{
@@ -90,9 +115,9 @@ public:
 				nCountN++;
 			}
 
-			if (d > 0 && d < mNeighborDist)
+			if (d > 0 && d < mSperateDist)
 			{
-				Vector2f nPositionDiff =  (nOther->GetPosition() - mPosition);
+				Vector2f nPositionDiff = (mPosition - nOther->GetPosition());
 				Utility::Normalize(nPositionDiff); 
 
 				nPositionDiff.x /= d; nPositionDiff.y /= d;
@@ -106,7 +131,15 @@ public:
 				Target(nSumSeperate, mSeperateK); 
 			}
 
+			if (nCountN > 0)
+			{
+				Target(nSumAlign, mAlignK);
+				nSumCohere.x /= (float)nCountN, nSumCohere.y /= (float)nCountN;
+				nSumCohere.x -= mPosition.x, nSumCohere.y -= mPosition.y;
+				Target(nSumCohere, mCohereK);
+			}
 
+		
 		}
 
 	}
@@ -115,16 +148,18 @@ public:
 	void Target(Vector2f nTargetDir, float k)
 	{
 		// LOL
+		bool nNegativeX = (nTargetDir.x < 0), nNegativeY = (nTargetDir.y < 0);
 		Utility::Normalize(nTargetDir); 
-		nTargetDir.x *= mMaxSpeed; nTargetDir.y += mMaxSpeed; 
+		if (nNegativeX) { nTargetDir.x *= -1; } if (nNegativeY) { nTargetDir.y *= -1; }
+
+		nTargetDir.x *= mMaxSpeed; nTargetDir.y *= mMaxSpeed; 
 		nTargetDir -= mVelocity;
 		CheckForce(nTargetDir); 
-		nTargetDir.x *= k; nTargetDir.y += k;
+		nTargetDir.x *= k; nTargetDir.y *= k;
 		mAcceleration += nTargetDir; 
 	}
 
 	
-
 
 
 public:
@@ -140,10 +175,11 @@ private:
 	Vector2f mAcceleration;
 	Vector2f mPosition;
 
-	float mMaxSpeed = 1.0f / 128.0f*2;
+	float mMaxSpeed = 0.01;
 	float mMaxForce = 0.03f;
-	int mNeighborDist = 100, mSperateDist = 50; 
-	float mSeperateK = 1.8;
+	int mNeighborDist = 25, mSperateDist = 12; 
+	float mSeperateK = 1.8, mAlignK = 1, mCohereK = 1;
+	int mAgentID = -1; 
 	int mWidth, mHeight;
 
 public:
@@ -181,13 +217,23 @@ public:
 
 private: 
 
+	void CheckPositions()
+	{
+		for (auto& i : mAgents)
+		{
+			std::cout << "Position: " << i->GetPosition().x << " " << i->GetPosition().y << std::endl;
+			std::cout << "Velocity: " << i->GetVelocity().x << " " << i->GetVelocity().y << endl; 
+
+		}
+	}
+
 	void OnCreate()
 	{
 		for (int i = 0; i < 100; i++)
 		{
 			int nRandX = rand() % mWidth + 10, nRandY = rand() % mHeight + 10; 
 			shared_ptr<Agent> nAgent = make_shared<Agent>();
-			nAgent->Init(nRandX,nRandY);
+			nAgent->Init(nRandX,nRandY, i);
 			nAgent->SetWindowSize(mWidth, mHeight); 
 			mAgents.push_back(nAgent); 
 		}
@@ -195,7 +241,11 @@ private:
 	}
 	void OnUpdate()
 	{
-		for (auto& nAgent : mAgents) { nAgent->Update();}
+		if (Keyboard::isKeyPressed(Keyboard::Enter))
+		{
+			CheckPositions(); 
+		}
+		for (auto& nAgent : mAgents) { nAgent->Guide(mAgents); nAgent->Update(); }
 	}
 	
 	void Draw(RenderWindow& nWindow) {
@@ -205,7 +255,7 @@ private:
 
 private:
 	RenderWindow mWindow; 
-	int mWidth = 256*4, mHeight = 256 * 4;
+	int mWidth = 1920, mHeight = 1080;
 
 	vector<shared_ptr<Agent>> mAgents; 
 

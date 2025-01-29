@@ -16,8 +16,8 @@ namespace Utility
 
 	static float CalculateDistance(const Vector2f& src, const Vector2f& dst)
 	{
-		float nDistanceX = (dst.x - src.x) * (dst.x - src.x);
-		float nDistanceY = (dst.y - src.y) * (dst.y - src.y);
+		float nDistanceX = abs((dst.x - src.x) * (dst.x - src.x));
+		float nDistanceY = abs((dst.y - src.y) * (dst.y - src.y));
 		return sqrt(nDistanceX + nDistanceY);
 	}
 

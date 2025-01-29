@@ -14,7 +14,7 @@ public:
 	void Initialize()
 	{
 		// Player
-		m_player =  std::make_unique<Player>(Textures::ID::Player, Fonts::ID::OnlyFont, sf::Vector2f(400, 300), sf::IntRect(0, 0, 64, 64));
+		m_player = std::make_unique<Player>(Textures::ID::Player, Fonts::ID::OnlyFont, sf::Vector2f(400, 300), sf::IntRect(0, 0, 64, 64));
 		Collisions::_CollisionManager.addObject(m_player);
 
 		//Map
@@ -28,19 +28,18 @@ public:
 		InitSpawner(1, 5);
 
 		// View
-		m_gameview.zoom(0.3);
+		m_gameview.zoom(1);
 	}
 	void Update()
 	{
 		// Calculating deltatime
 		m_deltatimer.CalculateDeltaTime();
-		GameData::_DeltaTime = m_dt = m_deltatimer.GetDeltatime();
-		
+		GameData::_DeltaTime = m_deltatimer.GetDeltatime();
 
 		//Updateing GameObjects
 		m_player->Update();
 
-		for (auto& spawner : m_spawners) { spawner->Update(m_deltatimer.GetDeltatime(), m_player->GetPosition()); }
+		for (auto& spawner : m_spawners) { spawner->Update(m_player->GetPosition()); }
 
 		UpdateBuildings();
 
@@ -68,6 +67,7 @@ private:
 		{
 			std::shared_ptr<Spawner> spawner = std::make_shared<Spawner>(Textures::ID::Spawner, Fonts::ID::OnlyFont, CalculatePosition(m_map, Textures::ID::Spawner), i);
 			m_spawners.push_back(spawner);
+			Collisions::_CollisionManager.addObject(spawner); 
 		}
 
 		for (int i = 0; i < amount; i++) {
@@ -104,7 +104,7 @@ private:
 
 	void UpdateBuildings()
 	{
-		for (auto& spawner : m_spawners) { spawner->Update(m_dt, m_player->GetPosition()); }
+		for (auto& spawner : m_spawners) { spawner->Update(m_player->GetPosition()); }
 		m_gun.Update(); 
 
 	}

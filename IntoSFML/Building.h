@@ -4,7 +4,9 @@
 struct Building : public GameObject
 {
 
-	Building(const Textures::ID tID, const Fonts::ID fID, const sf::Vector2f& InitialPosition) : GameObject(tID, fID, InitialPosition) {}
+	Building(const Textures::ID tID, const Fonts::ID fID, const sf::Vector2f& InitialPosition) : GameObject(tID, fID, InitialPosition) {
+		m_sprite.setScale(0.8, 0.8);
+	}
 
 	void Draw(sf::RenderWindow& window) const noexcept 
 	{

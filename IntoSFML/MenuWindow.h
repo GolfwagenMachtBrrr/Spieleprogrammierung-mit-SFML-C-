@@ -7,6 +7,8 @@
 
 #include"GameWindow.h"
 #include "Settings.h"
+#include "MapEditor.h"
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -14,7 +16,8 @@
 #define START 0
 #define SETTINGS 1
 #define CONFIG 2
-#define EXIT 3
+#define MAPEDIT 3
+#define EXIT 4
 
 
 class MenuWindow
@@ -33,7 +36,7 @@ public:
 	{
 		this->m_menuFont.loadFromFile("C:/Users/JanSa/OneDrive/Desktop/Programmieren/Projekte/ProcMapGen/ProcGen/Assets/Fonts/NotoSansThai-Regular.ttf");
 	}
-	void InitTextures() // Schreib endlich den verdammten TextureHolder du fauler Sack! Hab ich gemacht du spast!
+	void InitTextures() // Schreib endlich den verdammten TextureHolder du fauler Sack! Hab ich gemacht du spast! Dein Code is kacke jan
 	{
 		m_menu_background.setPosition(sf::Vector2f(m_width / 4, 0));
 		m_menu_background.setSize(sf::Vector2f(sf::Vector2f(m_width / 2, m_height)));
@@ -45,7 +48,7 @@ public:
 		this->m_sprite_cursor.setTexture(m_texture_cursor);
 
 		this->m_sprite_Background.setScale(sf::Vector2f(2, 1.5)); 
-		this->m_menuTexts = std::vector<std::string>() = { "Start","Settings","Config","Exit" };
+		this->m_menuTexts = std::vector<std::string>() = { "Start","Settings","Config", "Map Editor" ,"Exit"};
 	
 
 		for (int i = 0; i < m_menuTexts.size(); i++)
@@ -79,8 +82,14 @@ public:
 					switch (i)
 					{
 					case START:
-						m_game.Start(); 
+						m_game = std::make_unique<GameWindow>(); 
+						m_game->Start(); 
 						break;
+
+					case MAPEDIT:
+						m_editor = std::make_unique<MapEditor>(); 
+						m_editor->Start(); 
+						break; 
 
 					case EXIT:
 						m_window.close();
@@ -141,6 +150,8 @@ private:
 	std::vector<std::string>  m_menuTexts;
 							 
 	Settings				  m_settings;
-	GameWindow				  m_game;
+
+	std::unique_ptr<GameWindow>	m_game;
+	std::unique_ptr<MapEditor>  m_editor; 
 };
 

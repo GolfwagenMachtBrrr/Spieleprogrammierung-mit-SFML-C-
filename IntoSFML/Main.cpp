@@ -5,6 +5,7 @@
 #include <SFML/Network.hpp>
 
 #include"GameWindow.h"
+#include "MenuWindow.h"
 #include "game_algorithm.h"
 #include "Noisetest.h"
 
@@ -72,9 +73,10 @@ void test_astar_with_labyrinth()
 
 int main()
  {
+    MenuWindow mw; 
     GameWindow gw; 
     TestNoise tn; 
     FlockTest ft; 
-    gw.Start(); 
+    mw.Start(); 
     return 0;
 }

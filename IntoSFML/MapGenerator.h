@@ -26,26 +26,42 @@ public:
 
 		m_biomeSetter.Initialize();
 		m_noise.Initialize(m_width, m_height, 1, sf::Vector2f(0, 0));
-	}
-	void Generate()
-	{
+
+
 		for (int i = 0; i < m_width; i++)
 		{
 			std::vector<Tile> tileMap_row;
 			for (int j = 0; j < m_height; j++)
 			{
 				int index = j + i * m_height;
-				int biome = m_biomeSetter.GetBiome(m_noise.GetBiomValues(index));
 
-				sf::IntRect texRect(GameData::_TileSize.x * (biome + 5), GameData::_TileSize.y * (biome + 10), GameData::_TileSize.x, GameData::_TileSize.y);
+				sf::IntRect texRect(0,0,0,0);
 				sf::Vector2f tilePos(GameData::_TileSize.x * i, GameData::_TileSize.y * j);
 
-				Tile tile(index, biome, &texRect, m_tilesprite, tilePos);
+				Tile tile(index, 0, &texRect, m_tilesprite, tilePos);
 
 				tileMap_row.push_back(tile);
 			}
 			p_tileMap.push_back(tileMap_row);
 		}
+	}
+
+	void Generate()
+	{
+		for (size_t x = 0; x < m_width; x++)
+		{
+			for (size_t y = 0; y < m_height; y++)
+			{
+				int index = y + m_height*x;
+				int biome = m_biomeSetter.GetBiome(m_noise.GetBiomValues(index));
+
+				p_tileMap[x][y].tile_Biome = biome; 
+
+				sf::IntRect texRect(GameData::_TileSize.x * (biome + 5), GameData::_TileSize.y * (biome + 10), GameData::_TileSize.x, GameData::_TileSize.y);
+				p_tileMap[x][y].tile_texRect = &texRect; p_tileMap[x][y].tile_sprite.setTextureRect(texRect); 
+			}
+		}
+
 	}
 	void Draw(sf::RenderWindow& Window, const sf::Vector2f& player_position)
 	{
